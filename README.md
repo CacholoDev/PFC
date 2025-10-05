@@ -6,31 +6,27 @@ Este proyecto consiste en el desarrollo de una **aplicación web para la gestió
 
 La idea principal es ofrecer a los clientes la posibilidad de consultar el catálogo de productos disponibles (panes, bollería y repostería), realizar pedidos online  y permitir a la panadería gestionar dichos pedidos.
 
-
 El objetivo es digitalizarle la panaderia a mi prima, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago),también me gustaría migrar el front a React cuando controle un poco mas de la librería
 
 ## Instalación / Puesta en marcha
 
 1. Clonar el repositorio: Aquí tengo pensado con el repo que nos dais en el GitLab poner enlace al repo del Spring initalizer en github o en el gitlab mismo para que lo podais clonar 
 
-2. Acceder al directorio del proyecto y levantar el backend: abrirlo en vscode y darle al run en el main de springBoot o cd pfcdaw
-
-    ```bash
-
-    ./mvnw spring-boot:run
-
-    ```
+2. Acceder al directorio del proyecto y levantar el backend: abrirlo en vscode y darle al run en el main de springBoot o  ./mvnw spring-boot:run
 
 3. Instalar xamp, en phpMyAdmin creamos bbdd panaderia y configurar el application.properties con usuario root y una contraseña vacia
-	```js
-spring.datasource.url=jdbc:mysql://localhost:3306/panaderia
-spring.datasource.username=root
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 
-	```
+ `spring.datasource.url=jdbc:mysql://localhost:3306/panaderia`
+    
+ `spring.datasource.username=root`
+    
+ `spring.datasource.password=`
+    
+ `spring.jpa.hibernate.ddl-auto=update`
+    
+ `spring.jpa.show-sql=true`
+    
+ `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect`
 
 4. Frontend:
 
