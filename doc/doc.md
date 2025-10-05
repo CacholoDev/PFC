@@ -1,69 +1,89 @@
-# Título de tu proyecto
+# Plataforma web de pedidos para panadería
 
-- [Introducción](#introducción)
-- [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
-- [Propósito](#propósito)
-- [Objetivos](#objetivos)
-- [Alcance](#alcance)
-- [TODO: A partir de este punto eres libre de organizar la documentación como estimes pero debes desarrollar el cuerpo de tu proyecto con apartados y subapartados que completen tu documentación](#todo-a-partir-de-este-punto-eres-libre-de-organizar-la-documentación-como-estimes-pero-debes-desarrollar-el-cuerpo-de-tu-proyecto-con-apartados-y-subapartados-que-completen-tu-documentación)
-- [Conclusiones](#conclusiones)
-- [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
+- [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
+  - [Introducción](#introducción)
+  - [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
+  - [Propósito](#propósito)
+  - [Objetivos](#objetivos)
+  - [Alcance](#alcance)
+    - [Funcionalidades incluidas:](#funcionalidades-incluidas)
+    - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
+    - [Contexto de uso:](#contexto-de-uso)
+  - [Conclusiones](#conclusiones)
+  - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
 
 ## Introducción
 
-> Profundiza en la descripción de tu proyecto más allá de lo que has puesto en el README
+El presente proyecto tiene como finalidad el diseño y desarrollo de una aplicación web orientada a la gestión de pedidos en una panadería. La motivación surge de la necesidad de digitalizar procesos tradicionales en pequeños comercios, permitiendo que clientes y negocio interactúen de una forma más eficiente y moderna.
+
+El sistema constará de un **backend desarrollado con Spring Boot** y persistencia en **MySQL**, junto con un **frontend sencillo en HTML, CSS y JavaScript**. Se busca crear un **prototipo funcional** que facilite el registro de productos, la consulta de catálogo y la realización de pedidos, constituyendo una base sólida que podría evolucionar en el futuro hacia un sistema más completo.
 
 ## Estado de arte o análisis del contexto
 
-> A quen vai destinada a aplicación? (Contexto social ou sector empresarial, tipo de persoas, ...)
-Cal é a necesidade ou necesidades que se pretenden cubrir ou satisfacer?
-Existen na actualidade aplicacións que tenten dar resposta a esa(s) necesidade(s)? En que medida o conseguen?
-O desenvolvemento da aplicación abre unha oportunidade de negocio? É posible comercializala? Como?
+En la actualidad, la digitalización en pequeños negocios de alimentación sigue siendo desigual. Mientras que grandes cadenas cuentan con aplicaciones móviles o webs personalizadas, muchas panaderías y negocios locales continúan gestionando pedidos únicamente de manera presencial o telefónica.
+
+La aplicación se orienta principalmente a:
+
+- **Clientes** habituales que buscan comodidad y rapidez al realizar sus pedidos.
+- **Propietarios de panaderías** que necesitan un método simple para organizar encargos sin recurrir a herramientas complejas o costosas.
+
+Existen soluciones en el mercado como aplicaciones de delivery (Glovo, Uber Eats), pero resultan demasiado generales o implican costes elevados para pequeños comercios. Nuestro enfoque propone una solución ligera, adaptable y pensada **específicamente para un negocio pequeño**, sin dependencias externas.
+
+El desarrollo abre una oportunidad de modernización para estos negocios, con un prototipo que podría evolucionar hacia una solución más robusta e incluso comercializable.
 
 ## Propósito
 
-> En que consiste mi proyecto? Cuál es el propósito u objetivo principal del software desarrollado?
-> Esto lo debes tener claro desde el principio y **no es muy susceptible a cambiar**.
+El propósito de este proyecto es **crear una aplicación web que facilite la gestión de pedidos en una panadería**, permitiendo a los clientes visualizar un catálogo online y realizar pedidos, y al admin gestionar dichos pedidos de forma sencilla.
+
+El objetivo principal es la **digitalización de la panader´ia**, con una solución ligera, práctica y de fácil implementación.
 
 ## Objetivos
 
-> A partir del objetivo principal o propósito qué debes lograr en forma de subobjetivos
-> Esto es un apartado "vivo" que debes estar reajustando constantemente en tu avance.
-> Conforme vayas proponiendo cosas y consiguiéndolas, márcalas como objetivos, ya sea porque has conseguido implementar una funcionalidad o porque hayas comprendido cómo iniciar un proyecto con react o vue.
-> Las tareas generalmente salen de la definición de estos objetivos. Para lograr un objetivo, habitualmente suele suponer la realización de una o varias tareas.
+- Desarrollar un **backend en Spring Boot** con una API REST que gestione productos y pedidos.
+- Implementar la **persistencia de datos en MySQL**.
+- Diseñar un **frontend sencillo con HTML, CSS y JavaScript**, que permita al cliente navegar por el catálogo y realizar pedidos.
+- Crear una interfaz básica para la **gestión de pedidos por parte del negocio**.
+- Documentar el proyecto en GitLab/GitHub con instrucciones claras de instalación y uso.
+- Desplegar un prototipo funcional que pueda ser probado en entorno local.
 
 ## Alcance
 
-> Delimitar lo que el proyecto incluye
-> Describir qué funcionalidades sí estarán implementadas.
->
-> Explicar hasta dónde llega el desarrollo (ej.: solo módulo autenticación básica sin implementar roles de usiario, sin personalización del estilo de la aplicación, etc. etc.).
->
-> Indicar qué usuarios o perfiles podrán usar la aplicación y cuáles no.
->
-> Señalar el contexto en el que se aplicará (ej.: entorno académico, startup o emprendimiento, prueba de concepto).
->
->Indicar lo que queda fuera (límites)
->
-> Explicar de forma explícita qué no se abordará aunque podría ser una mejora futura (esto evita expectativas poco realistas y muestra capacidad de acotar el trabajo).
-> Ser concreto y medible. Usar frases que definan claramente los límites: Por ejemplo:
->
-> - “El sistema permitirá registrar usuarios y gestionar roles básicos, pero no incluirá autenticación multifactor.”
->
-> - “Se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.”
->
-> Relacionar el alcance con el tiempo y recursos disponibles. Justificar por qué se fijan esos límites (ej.: “debido al tiempo de desarrollo limitado, se implementará solo la versión de escritorio”).
+### Funcionalidades incluidas:
 
-## TODO: A partir de este punto eres libre de organizar la documentación como estimes pero debes desarrollar el cuerpo de tu proyecto con apartados y subapartados que completen tu documentación
+- Visualización del catálogo de productos.
+- Carrito básico
+- Realización de pedidos.
+- Gestión interna de pedidos recibidos.
+- En principio la haré sin roles pero si me da tiempo a llegar al PFC haré admin / user, si no será futura implementación.
+- Persistencia en base de datos MySQL.
 
-> Hemos elaborado un [checklist](checklist.md) de puntos necesarios para tu PFC, para que revises estas recomendaciones/especificaciones.
-> Apóyate en tu tutor/a si tienes duda de cómo organizar tu proyecto y estos apartados/subapartado. Cada proyecto y su contexto determinará la mejor forma de estructurarlo. Piensa bien cómo lo vas a hacer.
+### Límites: debido al tiempo que tengo para realizar el PFC
+
+- No incluirá pasarela de pago en esta primera versión.
+- La autenticación será básica.
+- El carrito sera básico.
+- El frontend será simple (HTML/CSS/JS).
+- Se desarrollará como un **prototipo funcional** para entorno local, con futura implementacion de por ejemplo un docker.
+
+### Contexto de uso:
+
+- Proyecto académico de fin de ciclo (DAW).
+- Aplicación de ejemplo para un negocio local.
+- Base para futuras ampliaciones (ej.: despliegue en la nube, integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React, añadir distintas funcionalidades que pueda pedir el negocio,se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
+    
 
 ## Conclusiones
 
-> Deja esta apartado para el final. Realiza un resumen de todo lo que ha supuesto la realización de tu proyecto. Debe ser una redacción breve. Un resumen de los hitos conseguidos más importantes y de lo aprendido durante el proceso.
-> Puede ser un buen punto de partida para organizar tu presentación y ajustarla al tiempo que tienes.
+Este anteproyecto propone una solución concreta a la falta de digitalización en pequeños comercios, ofreciendo una aplicación sencilla pero funcional que puede servir como prototipo y base para futuras mejoras.
+
+A través de este desarrollo se pondrán en práctica conocimientos de **backend con Java Spring Boot, bases de datos MySQL, y desarrollo frontend básico**, además de aplicar buenas prácticas en documentación y control de versiones con Git.
+
+El proyecto permitirá afianzar competencias clave en desarrollo web y servirá como muestra de aplicación práctica de lo aprendido en el ciclo formativo.
 
 ## Referencias, Fuentes consultadas y Recursos externos: Webgrafía
 
-> *TODO*: Enlaces externos y descipciones de estos enlaces que creas conveniente indicar aquí. Generalmente ya van a estar integrados con tu documentación, pero si requieres realizar un listado de ellos, este es el lugar.
+- [Spring Boot Reference Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [MySQL Documentation](https://dev.mysql.com/doc/)
+- [MDN Web Docs – HTML, CSS y JavaScript](https://developer.mozilla.org/)
+- [GitLab Documentation](https://docs.gitlab.com/)
+- [StackOverflow](https://stackoverflow.com/)

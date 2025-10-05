@@ -1,38 +1,85 @@
-# Tu título del Proyecto fin de ciclo
-
-> *TODO*: Este documento será la "*página de aterrizaje*" de tu proyecto. Será lo primero que vean los que se interesen por él. Cúida su redacción con todo tu mimo. Elimina posteriormente todas las lineas "*TODO*" cuando creas finalizada su redacción.
-> Puedes acompañar a la redacción de este fichero con imágenes o gifs, pero no abuses de ellos.
+# Plataforma web de pedidos para panadería
 
 ## Descripción
 
-> *TODO*: Realiza una breve descripción del proyecto. No menos de 100 palabras y no más de 300. Resalta lo fundamental **con tus propias palabras**. Utiliza un lenguaje correcto, **pero natural**, que lo entienda todo el mundo, incluso y en especial, las personas que no tengan un conocimiento técnico avanzado. Puede ser un estracto o resumen de apartados que ya contemples en otros ficheros.
+Este proyecto consiste en el desarrollo de una **aplicación web para la gestión de pedidos en una panadería**.  
+
+La idea principal es ofrecer a los clientes la posibilidad de consultar el catálogo de productos disponibles (panes, bollería y repostería), realizar pedidos online  y permitir a la panadería gestionar dichos pedidos.
+
+
+El objetivo es digitalizarle la panaderia a mi prima, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago),también me gustaría migrar el front a React cuando controle un poco mas de la librería
 
 ## Instalación / Puesta en marcha
 
-> *TODO*: En este apartado describe con toda precisión y a poder ser con la mayor simplicidad/facilidad posible, cómo poner en marcha tu aplicación para probarla (en un ambiente local). Se valorará muy positivamente que este proceso sea lo más fácil posible, con una simple instrucción (p. e. un script de instalación). Docker es ideal para esto.
+1. Clonar el repositorio: Aquí tengo pensado con el repo que nos dais en el GitLab poner enlace al repo del Spring initalizer en github o en el gitlab mismo para que lo podais clonar 
 
+2. Acceder al directorio del proyecto y levantar el backend: abrirlo en vscode y darle al run en el main de springBoot o cd pfcdaw
+
+    ```bash
+
+    ./mvnw spring-boot:run
+
+    ```
+
+3. Instalar xamp, en phpMyAdmin creamos bbdd panaderia y configurar el application.properties con usuario root y una contraseña vacia
+	```js
+spring.datasource.url=jdbc:mysql://localhost:3306/panaderia
+spring.datasource.username=root
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+	```
+
+4. Frontend:
+
+    - VSCode + LiveServer
 ## Uso
 
-> *TODO*: Es este apartado describe brevemente cómo se usará este software. Plantea un uso básico (como un *quickstart*) Si tiene una interfaz de terminal, puedes describir aquí su sintaxis. Si tiene una interfaz gráfica de usuario, describe aquí **sólo el uso** (a modo de sumario) **de los aspectos más relevantes de su funcionamiento** (máxima brevedad, como si fuese un anuncio reclamo o comercial).
-> Podrías incluso hacer una pequeña demo en *gif* o un pantallazo de la misma muy descriptivo. Recueda que esto es un reclamo para que la prueben o lean tu documentación más extensa.
+- Los clientes podrán:
+
+    - Navegar por el catálogo de productos.
+
+    - Añadir productos al carrito.
+
+    - Realizar un pedido.
+
+- La panadería podrá:
+
+    - Gestionar pedidos recibidos.
+
+    - Actualizar disponibilidad de productos.
 
 ## Sobre el autor
 
-> *TODO*: Realiza una breve descripción de quien eres (perfil profesional), tus puntos fuertes, o tecnologías que más dominas... y porqué te has decantado por este proyecto. **No más de 200 palabras**. Indica la forma fiable de contactar contigo en el presente y en el futuro.
 
-## Licencia
+Soy Adrián Fábregas, estudiante de DAW, además de tener un FP superior de Ed. Infantil pero la mayoría de mi vida laboral está relacionada con el mar. En la parte de promagación la conocí en 2022 y me causó mucho interés java y luego mas adelante empecé a aprender Spring Boot el verano antes de la FCT y el PFC, me gustaría desarrollar mi carrera de programador en ese ámbito aunque estoy abierto a todo, por ejemplo estoy aprendiendo React para la parte del front end además de seguir aprendiendo Spring Boot que aún no llevo mucho tiempo con el.  
 
-> *TODO*: Brevísimamente. Indica qué licencia usarás y crea un link a ella. Hay miles de ejemplos en Github.
-> *TODO*: Es requisito INDISPENSABLE el licenciar explícitamente el proyecto software. Se recomienda licenciar con *MIT License* (como viene en la plantilla) o *GNU Free Documentation License Version 1.3*. Presencia de un fichero `LICENSE` en la raiz del repo, con tu fichero de licencia. Recuerda que si empleas una licencia de software libre estás autorizando la derivación de tu obra bajo la misma licencia que elijas, pudiendo dar continuidad, p. e. otro alumno, para continuar tu proyecto en otro curso.
-> Si tu proyecto tiene además otro tipo contenido documental, recomendamos los términos de *GNU Free Documentation License Version 1.3*, crea igualmente el fichero `LICENSE`. Será especialmente valorado en este caso, la claridad de la especificación para que el proyecto pueda ser ejecutado partiendo de lo proyectado.
-> Ten en cuenta que estás cediendo el uso de este software y sus subproductos generados a la comunidad.
+Me decanté por este proyecto porque permite aplicar de forma práctica los conocimientos adquiridos en el ciclo, y además responde a una necesidad real de modernización en los pequeños negocios.
 
+Contacto: adriannoia104@gmail.com  
+
+## Licencia 
+
+Este proyecto está licenciado bajo la [MIT License](LICENSE).
 ## Documentación
 
-> *TODO*: Emplaza a quien se haya interesado en tu proyecto a leer una guía o documentación extendida del mismo. Haz un link a ella en este punto.
-
-Este proyecto dispone de [una documentación más extensa](doc/doc.md) del proyecto que recomiendo revisar.
-
+Este proyecto dispone de [documentación extendida](doc/doc.md) con detalles técnicos y de diseño.
 ## Guía de contribución
 
-> *TODO*: Tratándose de un proyecto de software libre, es muy importante que expongas cómo se puede contribuir con tu proyecto. Algunos ejemplos de esto son realizar nuevas funcionalidades, corrección y/u optimización del código, realización de tests automatizados, nuevas interfaces de integración, desarrollo de plugins, etc. etc. Sé lo más conciso que puedas.
+Las contribuciones son bienvenidas en forma de:
+
+- Nuevas funcionalidades (ej.: notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React...).
+
+- Corrección de errores.
+
+- Mejora del código o de la documentación. 
+
+Para colaborar:
+
+1. Haz un fork del repositorio.
+
+2. Crea una rama con tu mejora.
+
+3. Envía un pull request.
