@@ -1,6 +1,8 @@
 # Plataforma web de pedidos para panadería
+# TODO abaixo de todo
 
 - [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
+- [TODO abaixo de todo](#todo-abaixo-de-todo)
   - [Introducción](#introducción)
   - [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
   - [Propósito](#propósito)
@@ -11,6 +13,11 @@
     - [Contexto de uso:](#contexto-de-uso)
   - [Conclusiones](#conclusiones)
   - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
+        - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
+- [TODO](#todo)
+  - [Análisis](#análisis)
+      - [Diagrama de caso de uso](#diagrama-de-caso-de-uso)
+        - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
 
 ## Introducción
 
@@ -87,3 +94,31 @@ El proyecto permitirá afianzar competencias clave en desarrollo web y servirá 
 - [MDN Web Docs – HTML, CSS y JavaScript](https://developer.mozilla.org/)
 - [GitLab Documentation](https://docs.gitlab.com/)
 - [StackOverflow](https://stackoverflow.com/)
+
+##### fin 1ª entrega(PFC)
+
+# TODO
+## Análisis
+
+Para el desarrollo de este proyecto se ha optado por una **metodología Kanban Mermaid**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
+
+El enfoque consiste en dividir el trabajo en pequeñas tareas o fases visibles en un tablero (por ejemplo, “Por hacer”, “En progreso”, “Hecho”), lo que ayuda a mantener un control del avance del proyecto de forma sencilla.
+
+A nivel práctico, se ha usado un tablero (por ejemplo, en GitLab o Trello) donde se registran las tareas principales del proyecto:
+
+* Configuración del entorno de desarrollo (Spring Boot, MySQL, VSCode).
+* Creación de la base de datos y conexión desde el backend.
+* Implementación de la API REST.
+* Desarrollo del frontend con HTML, CSS y JavaScript.
+* Pruebas locales y documentación.
+
+#### Diagrama de caso de uso
+
+El siguiente diagrama muestra de forma general las interacciones principales en la aplicación web de pedidos para panadería:
+
+enlace a diagrama mermaid [appMermaid](/PFC/a22adrianfh/mermaid.md)
+
+Este diagrama refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con springBoot Java.
+
+
+##### fin 2º entrega(PFC)
