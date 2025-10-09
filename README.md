@@ -72,16 +72,12 @@ Se trata de una aplicación sencilla para cumplir los tiempos de entrega, enfati
 **La panadería podrá:**
 - Gestionar pedidos recibidos
 - Actualizar disponibilidad de productos
-<pre class="mermaid">
----
-title: Sistema de Panadería
----
+```mermaid
 sequenceDiagram
     Cliente->>Sistema: Consultar catálogo
     Cliente->>Sistema: Realizar pedido
     Panaderia->>Sistema: Gestionar pedidos
-</pre>
-
+```
 ## Sobre el autor
 
 Soy Adrián Fábregas, estudiante de DAW, tengo un FP superior de Ed. Infantil pero la mayoría de mi vida laboral está relacionada con ir al mar y vivir gracias a él y sus recursos, siempre respetándolo. En la parte de programación la conocí en 2022 cuando un amigo cercano vio la situación que atravesamos en las rías gallegas sobre todo en la de Noia que es donde yo trabajo y que cada año está más débil en todos los sentidos, me aconsejó meterme en este mundo y de 2022 compaginándolo con mi trabajo comencé a aprender y a entender este mundillo. Me causó mucho interés java y luego más adelante empecé a aprender Spring Boot el verano antes de la FCT y el PFC, me gustaría desarrollar mi carrera de programador en ese ámbito aunque estoy abierto a todo, por ejemplo estoy aprendiendo React para la parte del front además de seguir aprendiendo Spring Boot que aún no llevo mucho tiempo con él.

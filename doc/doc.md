@@ -21,8 +21,6 @@
 - [TODO](#todo)
   - [1.Análisis](#1análisis)
       - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
-  - [](#)
-  - [title: Sistema de Panadería](#title-sistema-de-panadería)
   - [2. Diseño](#2-diseño)
     - [Arquitectura general](#arquitectura-general)
     - [Estructura básica del backend](#estructura-básica-del-backend)
@@ -135,7 +133,7 @@ El siguiente diagrama muestra de forma general las interacciones principales en 
 
 Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con springBoot Java.
 
-<pre class="mermaid">
+```mermaid
 ---
 title: Sistema de Panadería
 ---
@@ -143,7 +141,7 @@ sequenceDiagram
     Cliente->>Sistema: Consultar catálogo
     Cliente->>Sistema: Realizar pedido
     Panadero->>Sistema: Gestionar pedidos
-</pre>
+```
 
 
 ## 2. Diseño
@@ -215,16 +213,16 @@ gantt
     Configuración entorno y BBDD :2024-10-01, 4d
     
     section Fase 2
-    Desarrollo Backend (API REST) :crit, 2024-10-03, 35d
+    Desarrollo Backend (API REST) :crit, 2024-10-05, 34d
     
     section Fase 3
-    Desarrollo Frontend básico :crit, 2024-10-24, 28d
+    Desarrollo Frontend básico :crit, 2024-11-5, 28d
     
     section Fase 4
-    Integración y pruebas :2024-12-02, 3d
+    Integración y pruebas :2024-12-01, 3d
     
     section Fase 5
-    Documentación y entrega :2024-12-04, 3d
+    Documentación y entrega :2024-12-03, 3d
 ```
 
 ### Estimación de recursos y costes
