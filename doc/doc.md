@@ -1,8 +1,12 @@
 # Plataforma web de pedidos para panadería
-# TODO abaixo de todo
+### [RepoGitHub](https://github.com/CacholoDev/PFC)
+### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
+### TODO abaixo de todo
 
 - [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
-- [TODO abaixo de todo](#todo-abaixo-de-todo)
+    - [RepoGitHub](#repogithub)
+    - [RepoGitLab](#repogitlab)
+    - [TODO abaixo de todo](#todo-abaixo-de-todo)
   - [Introducción](#introducción)
   - [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
   - [Propósito](#propósito)
@@ -15,8 +19,19 @@
   - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
         - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
 - [TODO](#todo)
-  - [Análisis](#análisis)
-      - [Diagrama de caso de uso](#diagrama-de-caso-de-uso)
+  - [1.Análisis](#1análisis)
+      - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
+  - [](#)
+  - [title: Sistema de Panadería](#title-sistema-de-panadería)
+  - [2. Diseño](#2-diseño)
+    - [Arquitectura general](#arquitectura-general)
+    - [Estructura básica del backend](#estructura-básica-del-backend)
+      - [Decisiones de diseño](#decisiones-de-diseño)
+  - [3.Planificación](#3planificación)
+    - [Fases del proyecto](#fases-del-proyecto)
+    - [Diagrama de Gantt](#diagrama-de-gantt)
+    - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
+    - [Conclusión](#conclusión)
         - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
 
 ## Introducción
@@ -98,13 +113,13 @@ El proyecto permitirá afianzar competencias clave en desarrollo web y servirá 
 ##### fin 1ª entrega(PFC)
 
 # TODO
-## Análisis
+## 1.Análisis
 
-Para el desarrollo de este proyecto se ha optado por una **metodología Kanban Mermaid**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
+Para el desarrollo de este proyecto se ha optado por una **metodología Kanban**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
 
 El enfoque consiste en dividir el trabajo en pequeñas tareas o fases visibles en un tablero (por ejemplo, “Por hacer”, “En progreso”, “Hecho”), lo que ayuda a mantener un control del avance del proyecto de forma sencilla.
 
-A nivel práctico, se ha usado un tablero (por ejemplo, en GitLab o Trello) donde se registran las tareas principales del proyecto:
+Se usa un tablero Trello donde se registran las tareas principales del proyecto:
 
 * Configuración del entorno de desarrollo (Spring Boot, MySQL, VSCode).
 * Creación de la base de datos y conexión desde el backend.
@@ -112,13 +127,116 @@ A nivel práctico, se ha usado un tablero (por ejemplo, en GitLab o Trello) dond
 * Desarrollo del frontend con HTML, CSS y JavaScript.
 * Pruebas locales y documentación.
 
-#### Diagrama de caso de uso
+Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t/client-workflow-management) - visibilidad publica.
+
+#### -Diagrama de caso de uso
 
 El siguiente diagrama muestra de forma general las interacciones principales en la aplicación web de pedidos para panadería:
 
-enlace a diagrama mermaid [appMermaid](/PFC/a22adrianfh/mermaid.md)
+Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con springBoot Java.
 
-Este diagrama refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con springBoot Java.
+<pre class="mermaid">
+---
+title: Sistema de Panadería
+---
+sequenceDiagram
+    Cliente->>Sistema: Consultar catálogo
+    Cliente->>Sistema: Realizar pedido
+    Panadero->>Sistema: Gestionar pedidos
+</pre>
+
+
+## 2. Diseño
+
+El proyecto está dividido en dos partes principales:
+
+**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos y pedidos, almacenando los datos en MySQL mediante JPA.
+
+**Frontend**: Página web sencilla hecha con HTML, CSS y JavaScript, que permite listar productos y realizar pedidos.
+
+### Arquitectura general
+[Cliente (HTML/JS)] --> [Spring Boot API REST] --> [Base de datos MySQL]
+
+
+### Estructura básica del backend
+
+com.panaderia
+ ├─ model          (clases Product, Pedido)
+ ├─ repository     (interfaces JPA)
+ ├─ controller     (endpoints REST)
+ └─ PanaderiaApplication.java
+
+```mermaid
+classDiagram
+    class Product {
+      +Long id
+      +String nombre
+      +String descripcion
+      +Double precio
+      +Integer stock
+    }
+    class Pedido {
+      +Long id
+      +String clienteNombre
+      +String telefono
+      +Double total
+    }
+```
+#### Decisiones de diseño
+- No se implementan roles ni autenticación en esta versión (MVP)
+
+- Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)
+
+- El frontend se comunica con el backend mediante fetch() con peticiones REST
+
+- Es un prototipo funcional para ejecución local
+
+
+## 3.Planificación
+
+Para la planificación del desarrollo se empleará una **metodología Kanban**, ya que permite una organización visual y flexible del trabajo sin una estructura rígida para gestionar las tareas del proyecto (por ejemplo: desarrollo backend, frontend, pruebas y documentación)..
+
+### Fases del proyecto
+
+1. **Configuración del entorno y base de datos** – 1/2 semana
+2. **Desarrollo del backend (API REST y persistencia)** – 4 semanas
+3. **Desarrollo del frontend básico (HTML, CSS, JS)** – 4 semanas
+4. **Integración y pruebas locales** – 1/2 semana
+5. **Documentación y entrega final** – 1/2 semana
+
+### Diagrama de Gantt
+
+```mermaid
+gantt
+    title Diagrama de Gantt - Desarrollo Plataforma Panadería
+    dateFormat  YYYY-MM-DD
+    axisFormat %d/%m
+    section Fase 1
+    Configuración entorno y BBDD :2024-10-01, 4d
+    
+    section Fase 2
+    Desarrollo Backend (API REST) :crit, 2024-10-03, 35d
+    
+    section Fase 3
+    Desarrollo Frontend básico :crit, 2024-10-24, 28d
+    
+    section Fase 4
+    Integración y pruebas :2024-12-02, 3d
+    
+    section Fase 5
+    Documentación y entrega :2024-12-04, 3d
+```
+
+### Estimación de recursos y costes
+
+* **Duración total estimada:** 9 semanas
+* **Horas de trabajo:** aprox. 75-85 horas
+* **Coste estimado (simulado,ficticio):** 20 €/h * 80h → 1600€ aprox. (non podo ir o mar mentres fago a FCT + PFC como facía mentras taba en DAW a distancia)
+* **Recursos utilizados:** ordenador personal, VSCode, MySQL, Spring Boot, navegador web, conexión a internet.
+
+### Conclusión
+
+El desarrollo se centra en un único desarrollador, con tiempos ajustados y muy limitados con objetivos realistas. Se prioriza tener un **prototipo funcional** frente a un producto con todas las funcionalidades avanzadas que lo acabaré consiguiendo pero no llego para el PFC.
 
 
 ##### fin 2º entrega(PFC)
