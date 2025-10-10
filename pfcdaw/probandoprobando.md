@@ -84,4 +84,4 @@ Cambiar tu_password_aqui en el .env por tu contraseña real
 Crear la base de datos: CREATE DATABASE panaderia_db;
 Completed (1/6) Configurar archivos de propiedades
 
-¿Tienes MySQL instalado y funcionando? Si no, ¿quieres que te ayude a configurarlo? Una vez que esté listo, continuamos con la estructura de directorios y las primeras clases. 🚀
+¿Tienes MySQL instalado y funcionando? Si no, ¿quieres que te ayude a configurarlo? Una vez que esté listo, continuamos con la estructura de directorios y las primeras clases. 🚀 ad
