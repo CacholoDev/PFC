@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-
+### .env deberiamos ocultar tamen o .env pero para o PFC no facemos
