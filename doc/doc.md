@@ -25,6 +25,7 @@
     - [Arquitectura general](#arquitectura-general)
     - [Estructura básica del backend](#estructura-básica-del-backend)
       - [Decisiones de diseño](#decisiones-de-diseño)
+      - [Uso EndPoints](#uso-endpoints)
   - [3.Planificación](#3planificación)
     - [Fases del proyecto](#fases-del-proyecto)
     - [Diagrama de Gantt](#diagrama-de-gantt)
@@ -89,7 +90,8 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
-- Base para futuras ampliaciones (ej.: despliegue en la nube, integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React, añadir distintas funcionalidades que pueda pedir el negocio,se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
+- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,Roles de loggin, añadir distintas funcionalidades que pueda pedir el negocio.
+- Se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
     
 
 ## Conclusiones
@@ -115,7 +117,7 @@ El proyecto permitirá afianzar competencias clave en desarrollo web y servirá 
 
 Para el desarrollo de este proyecto se ha optado por una **metodología Kanban**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
 
-El enfoque consiste en dividir el trabajo en pequeñas tareas o fases visibles en un tablero (por ejemplo, “Por hacer”, “En progreso”, “Hecho”), lo que ayuda a mantener un control del avance del proyecto de forma sencilla.
+El enfoque consiste en dividir el trabajo en pequeñas tareas o fases visibles en un tablero (por ejemplo, “Do”, “Doing”, “Done”), lo que ayuda a mantener un control del avance del proyecto de forma sencilla.
 
 Se usa un tablero Trello donde se registran las tareas principales del proyecto:
 
@@ -131,7 +133,7 @@ Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t/client-w
 
 El siguiente diagrama muestra de forma general las interacciones principales en la aplicación web de pedidos para panadería:
 
-Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con springBoot Java.
+Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con SpringBoot Java.
 
 ```mermaid
 ---
@@ -162,7 +164,7 @@ com.panaderia
  ├─ model          (clases Product, Pedido)
  ├─ repository     (interfaces JPA)
  ├─ controller     (endpoints REST)
- └─ PanaderiaApplication.java
+ └─ PanaderiaApplication.java (Main)
 
 ```mermaid
 classDiagram
@@ -183,11 +185,23 @@ classDiagram
 #### Decisiones de diseño
 - No se implementan roles ni autenticación en esta versión (MVP)
 
-- Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)
+- Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)(en este caso los subiremos al github, no pondremos gitignore para mostrar el 100% en el PFC y cuando lo termine poner el .gitignore con el .env cambiando los datos del user/pass).
 
 - El frontend se comunica con el backend mediante fetch() con peticiones REST
 
 - Es un prototipo funcional para ejecución local
+
+#### Uso EndPoints
+*completandoos a medida que os vou facendo no back con SpringBoot:
+- **Productos**:
+
+| Método | Endpoint         | Descripción           |
+|--------|------------------|-----------------------|
+| GET    | /productos       | Listar todos          |
+| GET    | /productos/{id}  | Obtener por ID        |
+| POST   | /productos       | Crear nuevo producto  |
+| PUT    | /productos/{id}  | Actualizar producto   |
+| DELETE | /productos/{id}  | Eliminar producto     |
 
 
 ## 3.Planificación
@@ -198,9 +212,9 @@ Para la planificación del desarrollo se empleará una **metodología Kanban**, 
 
 1. **Configuración del entorno y base de datos** – 1/2 semana
 2. **Desarrollo del backend (API REST y persistencia)** – 4 semanas
-3. **Desarrollo del frontend básico (HTML, CSS, JS)** – 4 semanas
+3. **Desarrollo del frontend (HTML, CSS, JS)** – 4 semanas
 4. **Integración y pruebas locales** – 1/2 semana
-5. **Documentación y entrega final** – 1/2 semana
+5. **Documentación y entrega final** – 1 semana
 
 ### Diagrama de Gantt
 
@@ -216,13 +230,13 @@ gantt
     Desarrollo Backend (API REST) :crit, 2024-10-05, 34d
     
     section Fase 3
-    Desarrollo Frontend básico :crit, 2024-11-5, 28d
+    Desarrollo Frontend :crit, 2024-11-5, 28d
     
     section Fase 4
-    Integración y pruebas :2024-12-01, 3d
+    Integración y pruebas :2024-12-03, 3d
     
     section Fase 5
-    Documentación y entrega :2024-12-03, 3d
+    Documentación y entrega :2024-12-06, 3d
 ```
 
 ### Estimación de recursos y costes
