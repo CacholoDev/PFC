@@ -244,6 +244,7 @@ gantt
 * **Duración total estimada:** 9 semanas
 * **Horas de trabajo:** aprox. 75-85 horas
 * **Coste estimado (simulado,ficticio):** 20 €/h * 80h → 1600€ aprox. (non podo ir o mar mentres fago a FCT + PFC como facía mentras taba en DAW a distancia)
+* **Retorno estimado (simulado,ficticio)**: x2 do que invertimos → 3200€
 * **Recursos utilizados:** ordenador personal, VSCode, MySQL, Spring Boot, navegador web, conexión a internet.
 
 ### Conclusión
