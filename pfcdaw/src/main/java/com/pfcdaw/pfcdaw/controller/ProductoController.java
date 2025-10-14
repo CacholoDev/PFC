@@ -3,6 +3,9 @@ package com.pfcdaw.pfcdaw.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +29,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/productos")
 public class ProductoController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductoController.class);
     private final ProductoRepository productoRepository;
 
     public ProductoController(ProductoRepository productoRepository) {
@@ -35,19 +39,28 @@ public class ProductoController {
 //listar productos nn poñemos path porque colle o requestmapping do controlador
     @GetMapping
     public ResponseEntity<List<ProductoEntity>> getAllProductos() {
+        log.info("Listando todos los productos"); // usase info para mensaxes informativas / accions normales
         List<ProductoEntity> productos = productoRepository.findAll();
+        log.debug("Productos encontrados: {}", productos.size()); // usase debug para mensaxes de depuración / detalles tecnicos
         return ResponseEntity.ok(productos);
     }
     
 //listar por id
     @GetMapping("/{id}")
     public ResponseEntity<ProductoEntity> getProductoById(@PathVariable Long id) {
+        log.info("Buscando producto con ID: {}", id);
         return productoRepository.findById(id)
-        .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-    
-    }   
-    
+        .map( producto -> {
+            log.info("Producto encontrado: {}", producto.getNombre());
+            return ResponseEntity.ok(producto);
+        })
+        .orElseGet(() -> {
+            log.warn("Producto con ID {} no encontrado", id); // usase warn para mensaxes de advertencia / posibles problemas
+            return ResponseEntity.notFound().build();
+        });
+
+    }
+
  //crear producto
     @PostMapping
     public ResponseEntity<ProductoEntity> createProducto(@Valid @RequestBody ProductoEntity producto) {
