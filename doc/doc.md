@@ -150,7 +150,7 @@ sequenceDiagram
 
 El proyecto está dividido en dos partes principales:
 
-**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos y pedidos, almacenando los datos en MySQL mediante JPA.
+**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos y pedidos, almacenando los datos en MySQL mediante JPA, se podrán ver logs en consola mediante el uso del Logger de SpringBoot.
 
 **Frontend**: Página web sencilla hecha con HTML, CSS y JavaScript, que permite listar productos y realizar pedidos.
 
@@ -163,7 +163,7 @@ El proyecto está dividido en dos partes principales:
 com.panaderia
  ├─ model          (clases Product, Pedido)
  ├─ repository     (interfaces JPA)
- ├─ controller     (endpoints REST)
+ ├─ controller     (endpoints REST, Logger:info de lo que esta pasando por consola)
  └─ PanaderiaApplication.java (Main)
 
 ```mermaid
@@ -183,9 +183,11 @@ classDiagram
     }
 ```
 #### Decisiones de diseño
+-Uso de de Logger para ver la info de lo que está pasando en la app por consola
+
 - No se implementan roles ni autenticación en esta versión (MVP)
 
-- Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)(en este caso los subiremos al github, no pondremos gitignore para mostrar el 100% en el PFC y cuando lo termine poner el .gitignore con el .env cambiando los datos del user/pass).
+- Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)(en este caso los subiremos al github, no pondremos gitignore para mostrar el 100% en el PFC y cuando lo termine, poner el .gitignore con el .env cambiando los datos del user/pass).
 
 - El frontend se comunica con el backend mediante fetch() con peticiones REST
 

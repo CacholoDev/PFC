@@ -41,6 +41,7 @@ graph TB
     B <--> D[Local XAMPP + Apache Tomcat embebbed con SpringBoot]
     E[Cliente Web] <--> A
     F[Panadería] <--> B
+    G[Logger por consola] <--> B
 ```
 
 1. **Clonar el repositorio**: Aquí tengo pensado con el repo que nos dais en el GitLab poner enlace al repo del Spring initializer en github o en el gitlab mismo para que lo podáis clonar
