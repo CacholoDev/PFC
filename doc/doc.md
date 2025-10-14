@@ -1,12 +1,10 @@
 # Plataforma web de pedidos para panadería
 ### [RepoGitHub](https://github.com/CacholoDev/PFC)
 ### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
-### TODO abaixo de todo
 
 - [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
     - [RepoGitHub](#repogithub)
     - [RepoGitLab](#repogitlab)
-    - [TODO abaixo de todo](#todo-abaixo-de-todo)
   - [Introducción](#introducción)
   - [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
   - [Propósito](#propósito)
