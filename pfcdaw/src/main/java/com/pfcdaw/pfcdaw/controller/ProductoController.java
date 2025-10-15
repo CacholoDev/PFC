@@ -73,6 +73,7 @@ public class ProductoController {
   //delete producto
     @DeleteMapping("/{id}")  
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+        log.info("Eliminando producto con ID: {}, y nombre: {}",id, productoRepository.findById(id).map(ProductoEntity::getNombre).orElse("No encontrado"));
         if (!productoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
