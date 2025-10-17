@@ -78,6 +78,7 @@ public class ProductoController {
             log.warn("Producto con ID {} no encontrado", id);
             return ResponseEntity.notFound().build();
         }
+        log.info("Producto con ID {} eliminado", id);
         productoRepository.deleteById(id);
         return ResponseEntity.noContent().build(); //204 No Content
     }
