@@ -73,7 +73,7 @@ public class ProductoController {
   //delete producto
     @DeleteMapping("/{id}")  
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
-        log.info("Eliminando producto con ID: {}, y nombre: {}",id, productoRepository.findById(id).map(ProductoEntity::getNombre).orElse("No encontrado"));
+    log.info("Eliminando producto con ID: {}, y nombre: {}",id, productoRepository.findById(id).map(ProductoEntity::getNombre).orElseGet(() -> "No encontrado"));
         if (!productoRepository.existsById(id)) {
             log.warn("Producto con ID {} no encontrado", id);
             return ResponseEntity.notFound().build();
@@ -85,16 +85,28 @@ public class ProductoController {
 
  //actualizar producto
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable Long id,@Valid @RequestBody ProductoEntity productoDetalles) {
+    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable Long id,@Valid @RequestBody ProductoEntity p) {
+        log.info("Solicitud PUT recibida para producto ID={}", id);
+        log.debug("Datos recibidos para actualización: {}", p);
         return productoRepository.findById(id)
             .map(producto -> {
-                producto.setNombre(productoDetalles.getNombre());
-                producto.setDescripcion(productoDetalles.getDescripcion());
-                producto.setPrecio(productoDetalles.getPrecio());
+                log.debug("Producto antes de actualizar: id={}, nombre={}, descripcion={}, precio={}",
+                    producto.getId(), producto.getNombre(), producto.getDescripcion(), producto.getPrecio());
+
+                producto.setNombre(p.getNombre());
+                producto.setDescripcion(p.getDescripcion());
+                producto.setPrecio(p.getPrecio());
+
                 ProductoEntity productoActualizado = productoRepository.save(producto);
+
+                log.info("Producto actualizado correctamente: id={}", productoActualizado.getId());
+                log.debug("Producto después de actualizar: {}", productoActualizado);
                 return ResponseEntity.ok(productoActualizado);
             })
-            .orElse(ResponseEntity.notFound().build());
+            .orElseGet(() -> {
+                log.warn("No se puede actualizar: producto con ID {} no encontrado", id);
+                return ResponseEntity.notFound().build();
+            });
     }
 
 
