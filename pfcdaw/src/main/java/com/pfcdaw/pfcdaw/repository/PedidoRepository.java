@@ -1,5 +1,9 @@
 package com.pfcdaw.pfcdaw.repository;
 
-public class PedidoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.pfcdaw.pfcdaw.model.PedidoEntity;
+
+public interface PedidoRepository extends JpaRepository<PedidoEntity, Long> {
 
 }

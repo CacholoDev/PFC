@@ -4,12 +4,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,12 +32,24 @@ public class PedidoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
-    private LocalDateTime fechaPedido;
-    @NotBlank
+
+    @Builder.Default // Para que funcione con Lombok Builder
+    private LocalDateTime fechaPedido = LocalDateTime.now();
+
+    @NotNull
+    @Size(min = 1, message = "El pedido debe tener al menos un producto")
+    @ManyToMany //un pedido podede ter varios productos e un producto pode tar en varios pedidos
+    @JoinTable(name = "pedido_productos",
+               joinColumns = @JoinColumn(name = "pedido_id"),
+               inverseJoinColumns = @JoinColumn(name = "producto_id"))
     private List<ProductoEntity> productos;
+
     @PositiveOrZero
     private double total;
-    private String estado;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)  // Garda o Enum como texto na BDD
+    @Builder.Default // Pendiente por default
+    private EstadoPedidoEnum estado = EstadoPedidoEnum.PENDIENTE;
     
 }

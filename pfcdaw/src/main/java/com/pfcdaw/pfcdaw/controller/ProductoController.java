@@ -1,6 +1,5 @@
 package com.pfcdaw.pfcdaw.controller;
 
-
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,8 +19,6 @@ import com.pfcdaw.pfcdaw.model.ProductoEntity;
 import com.pfcdaw.pfcdaw.repository.ProductoRepository;
 
 import jakarta.validation.Valid;
-
-
 
 
 @RestController
