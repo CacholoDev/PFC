@@ -4,16 +4,21 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pfcdaw.pfcdaw.model.PedidoEntity;
 import com.pfcdaw.pfcdaw.repository.PedidoRepository;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -43,15 +48,52 @@ public class PedidoController {
                 return ResponseEntity.ok(pedido);
             })
             .orElseGet(() -> {
-                log.warn("Pedido no encontrado");
+                log.warn("Pedido con ID {} no encontrado", id);
                 return ResponseEntity.notFound().build();
             });
-        }
+    }
 
     @PostMapping
-    public ResponseEntity<PedidoEntity> createPedido(@RequestBody PedidoEntity nuevoPedido) {
+    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoEntity nuevoPedido) {
         log.info("Creando nuevo pedido...");
         PedidoEntity pedidoGuardado = pedidoRepository.save(nuevoPedido);
         log.info("Pedido creado con ID: {}", pedidoGuardado.getId());
-        return ResponseEntity.ok(pedidoGuardado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoGuardado);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
+          if (!pedidoRepository.existsById(id)) {
+            log.warn("Pedido con ID {} no encontrado", id);
+            return ResponseEntity.notFound().build();
+        }
+        log.info("Pedido con ID {} eliminado", id);
+        pedidoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PedidoEntity> updatePedido(@PathVariable Long id, @Valid @RequestBody PedidoEntity pedidoActualizado) {
+        log.info("Actualizando pedido con ID: {}", id);
+        log.debug("Datos recibidos para actualización: {}", pedidoActualizado);
+        return pedidoRepository.findById(id)
+            .map(pedido -> {
+                log.debug("Pedido antes de actualizar: id={}, total={}, estado={}", pedido.getId(), pedido.getTotal(), pedido.getEstado());
+
+                pedido.setProductos(pedidoActualizado.getProductos());
+                pedido.setTotal(pedidoActualizado.getTotal());
+                pedido.setEstado(pedidoActualizado.getEstado());
+
+                PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
+
+                log.info("Pedido con ID {} actualizado", id);
+                log.debug("Pedido después de actualizar: {}", pedidoGuardado);
+                return ResponseEntity.ok(pedidoGuardado);
+            })
+            .orElseGet(() -> {
+                log.warn("Pedido con ID {} no encontrado", id);
+                return ResponseEntity.notFound().build();
+            });
+    }
+
+}
