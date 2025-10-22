@@ -24,11 +24,11 @@ public class ProductoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+    @NotBlank(message = "El nombre del producto es obligatorio")
     private String nombre;
-    @PositiveOrZero
+    @PositiveOrZero(message = "El precio debe ser un valor positivo o cero")
     private Double precio;
     private String descripcion;
-    @Min(0)
+    @Min(value = 0, message = "El stock debe ser un valor positivo o cero")
     private int stock;
 }

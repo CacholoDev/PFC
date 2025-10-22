@@ -3,6 +3,8 @@ package com.pfcdaw.pfcdaw.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,7 +35,8 @@ public class PedidoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Builder.Default // Para que funcione con Lombok Builder
+    @CreationTimestamp  // Hibernate garda na BD cando facemos un .save
+    @Builder.Default    // o crear o objeto garda un valor por defecto que sera localdate.now
     private LocalDateTime fechaPedido = LocalDateTime.now();
 
     @NotNull
@@ -44,7 +47,7 @@ public class PedidoEntity {
                inverseJoinColumns = @JoinColumn(name = "producto_id"))
     private List<ProductoEntity> productos;
 
-    @PositiveOrZero
+    @PositiveOrZero(message = "El total debe ser un valor positivo o cero")
     private double total;
 
     @NotNull
