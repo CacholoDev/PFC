@@ -43,14 +43,14 @@ public class PedidoController {
     public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable Long id) {
         log.info("Buscando pedido con ID: {}", id);
         return pedidoRepository.findById(id)
-            .map(pedido -> {
-                log.info("Pedido encontrado: {}", pedido.getId());
-                return ResponseEntity.ok(pedido);
-            })
-            .orElseGet(() -> {
-                log.warn("Pedido con ID {} no encontrado", id);
-                return ResponseEntity.notFound().build();
-            });
+                .map(pedido -> {
+                    log.info("Pedido encontrado: {}", pedido.getId());
+                    return ResponseEntity.ok(pedido);
+                })
+                .orElseGet(() -> {
+                    log.warn("Pedido con ID {} no encontrado", id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     @PostMapping
@@ -63,7 +63,7 @@ public class PedidoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
-          if (!pedidoRepository.existsById(id)) {
+        if (!pedidoRepository.existsById(id)) {
             log.warn("Pedido con ID {} no encontrado", id);
             return ResponseEntity.notFound().build();
         }
@@ -73,27 +73,29 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PedidoEntity> updatePedido(@PathVariable Long id, @Valid @RequestBody PedidoEntity pedidoActualizado) {
+    public ResponseEntity<PedidoEntity> updatePedido(@PathVariable Long id,
+            @Valid @RequestBody PedidoEntity pedidoActualizado) {
         log.info("Actualizando pedido con ID: {}", id);
         log.debug("Datos recibidos para actualización: {}", pedidoActualizado);
         return pedidoRepository.findById(id)
-            .map(pedido -> {
-                log.debug("Pedido antes de actualizar: id={}, total={}, estado={}", pedido.getId(), pedido.getTotal(), pedido.getEstado());
+                .map(pedido -> {
+                    log.debug("Pedido antes de actualizar: id={}, total={}, estado={}", pedido.getId(),
+                            pedido.getTotal(), pedido.getEstado());
 
-                pedido.setProductos(pedidoActualizado.getProductos());
-                pedido.setTotal(pedidoActualizado.getTotal());
-                pedido.setEstado(pedidoActualizado.getEstado());
+                    pedido.setProductos(pedidoActualizado.getProductos());
+                    pedido.setTotal(pedidoActualizado.getTotal());
+                    pedido.setEstado(pedidoActualizado.getEstado());
 
-                PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
+                    PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
 
-                log.info("Pedido con ID {} actualizado", id);
-                log.debug("Pedido después de actualizar: {}", pedidoGuardado);
-                return ResponseEntity.ok(pedidoGuardado);
-            })
-            .orElseGet(() -> {
-                log.warn("Pedido con ID {} no encontrado", id);
-                return ResponseEntity.notFound().build();
-            });
+                    log.info("Pedido con ID {} actualizado", id);
+                    log.debug("Pedido después de actualizar: {}", pedidoGuardado);
+                    return ResponseEntity.ok(pedidoGuardado);
+                })
+                .orElseGet(() -> {
+                    log.warn("Pedido con ID {} no encontrado", id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -54,5 +55,28 @@ public class PedidoEntity {
     @Enumerated(EnumType.STRING)  // Garda o Enum como texto na BDD
     @Builder.Default // Pendiente por default
     private EstadoPedidoEnum estado = EstadoPedidoEnum.PENDIENTE;
+
+    @ManyToOne // moitos pedidos poden pertencer a un cliente
+    @JoinColumn(name = "cliente_id")
+    private ClienteEntity cliente;
     
+    /*
+     ¿Qué hace mappedBy = "cliente"?
+
+Le dice a JPA: "No crees otra columna, la relación YA está definida en PedidoEntity en el campo cliente"
+Es como decirle: "Mira, la FK ya está en la tabla pedidos, no hagas nada en esta tabla"
+Importante:
+
+mappedBy siempre va en el lado @OneToMany
+Debe apuntar exactamente al nombre del campo en la otra clase (en PedidoEntity es private ClienteEntity cliente;)
+#####################################
+🚨 IMPORTANTE - Problema de recursión infinita:
+Con Lombok @Data, cuando serialices a JSON puede haber un loop infinito:
+
+Solución RÁPIDA (sin cambiar mucho):
+Añade @JsonIgnore en el lado que menos te importe:
+Mi recomendación: Pon @JsonIgnore en ClienteEntity.pedidos, así cuando devuelvas un pedido, SÍ ves los datos del cliente, pero cuando devuelvas un cliente no ves todos sus pedidos (lo consultas aparte).
+     */
+
+
 }
