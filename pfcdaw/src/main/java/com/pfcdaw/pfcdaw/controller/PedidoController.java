@@ -53,6 +53,15 @@ public class PedidoController {
                 });
     }
 
+    // Obtener todos los pedidos de un cliente específico
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<PedidoEntity>> getPedidosByCliente(@PathVariable Long clienteId) {
+        log.info("Buscando pedidos del cliente con ID: {}", clienteId);
+        List<PedidoEntity> pedidos = pedidoRepository.findByClienteId(clienteId);
+        log.debug("Pedidos encontrados para el cliente {}: {}", clienteId, pedidos.size());
+        return ResponseEntity.ok(pedidos);
+    }
+
     @PostMapping
     public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoEntity nuevoPedido) {
         log.info("Creando nuevo pedido...");
