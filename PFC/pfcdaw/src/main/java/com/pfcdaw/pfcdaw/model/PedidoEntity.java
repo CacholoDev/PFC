@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,11 +56,9 @@ public class PedidoEntity {
     @Builder.Default // Pendiente por default
     private EstadoPedidoEnum estado = EstadoPedidoEnum.PENDIENTE;
 
-    @ManyToOne(fetch = FetchType.EAGER)  // Carga o cliente facendo un join, doutra forma carga lazy, mais rapido pero si logo pedimoscliente q o imos facer supon mais recursos
+    @ManyToOne() 
     @JoinColumn(name = "cliente_id")
     private ClienteEntity cliente;
     
 }
-/*
- * ¿Por qué? Porque la FK (cliente_id) está en la tabla pedidos, entonces PedidoEntity SIEMPRE necesita el @ManyToOne.
- */
+

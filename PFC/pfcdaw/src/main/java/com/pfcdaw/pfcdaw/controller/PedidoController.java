@@ -39,6 +39,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/{id}")
     public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable Long id) {
         log.info("Buscando pedido con ID: {}", id);
@@ -65,11 +66,13 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoEntity nuevoPedido) {
         log.info("Creando nuevo pedido...");
+        @SuppressWarnings("null")
         PedidoEntity pedidoGuardado = pedidoRepository.save(nuevoPedido);
         log.info("Pedido creado con ID: {}", pedidoGuardado.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoGuardado);
     }
 
+    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
         if (!pedidoRepository.existsById(id)) {
@@ -81,6 +84,7 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 
+    @SuppressWarnings("null")
     @PutMapping("/{id}")
     public ResponseEntity<PedidoEntity> updatePedido(@PathVariable Long id,
             @Valid @RequestBody PedidoEntity pedidoActualizado) {

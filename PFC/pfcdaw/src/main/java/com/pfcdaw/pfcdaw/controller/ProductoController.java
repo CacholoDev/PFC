@@ -42,6 +42,7 @@ public class ProductoController {
     }
 
     // listar por id
+    @SuppressWarnings("null")
     @GetMapping("/{id}")
     public ResponseEntity<ProductoEntity> getProductoById(@PathVariable Long id) {
         log.info("Buscando producto con ID: {}", id);
@@ -68,6 +69,7 @@ public class ProductoController {
     }
 
     // delete producto
+    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
         log.info("Eliminando producto con ID: {}, y nombre: {}", id,
@@ -82,6 +84,7 @@ public class ProductoController {
     }
 
     // actualizar producto
+    @SuppressWarnings("null")
     @PutMapping("/{id}")
     public ResponseEntity<ProductoEntity> updateProducto(@PathVariable Long id, @Valid @RequestBody ProductoEntity p) {
         log.info("Solicitud PUT recibida para producto ID={}", id);

@@ -39,6 +39,7 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteEntity> getClienteById(@PathVariable Long id) {
         log.info("Buscando cliente con ID: {}", id);
@@ -56,11 +57,13 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
         log.info("Creando nuevo cliente...");
+        @SuppressWarnings("null")
         ClienteEntity clienteGuardado = clienteRepository.save(nuevoCliente);
         log.info("Cliente creado con ID: {}", clienteGuardado.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
     }
 
+    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
         log.info("Eliminando cliente con ID: {}, y nombre: {}", id, clienteRepository.findById(id).map(ClienteEntity::getNombre).orElse("Desconocido"));
@@ -74,6 +77,7 @@ public class ClienteController {
         }
     }
 
+    @SuppressWarnings("null")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteEntity> updateCliente(@PathVariable Long id,
             @Valid @RequestBody ClienteEntity clienteActualizado) {
