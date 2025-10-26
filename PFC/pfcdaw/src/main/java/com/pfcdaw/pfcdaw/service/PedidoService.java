@@ -37,7 +37,7 @@ public class PedidoService {
     }
 
     public PedidoEntity createPedido(PedidoCreateDto dto) {
-
+        // comprobamos nulls e listas vacias
         if (dto == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payload del pedido es obligatorio");
         }
