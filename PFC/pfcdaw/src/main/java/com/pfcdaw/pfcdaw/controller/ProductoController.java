@@ -2,6 +2,7 @@ package com.pfcdaw.pfcdaw.controller;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,9 +43,8 @@ public class ProductoController {
     }
 
     // listar por id
-    @SuppressWarnings("null")
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoEntity> getProductoById(@PathVariable Long id) {
+    public ResponseEntity<ProductoEntity> getProductoById(@PathVariable @NonNull Long id) {
         log.info("Buscando producto con ID: {}", id);
         return productoRepository.findById(id)
                 .map(producto -> {
@@ -69,9 +69,8 @@ public class ProductoController {
     }
 
     // delete producto
-    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProducto(@PathVariable @NonNull Long id) {
         log.info("Eliminando producto con ID: {}, y nombre: {}", id,
                 productoRepository.findById(id).map(ProductoEntity::getNombre).orElseGet(() -> "No encontrado"));
         if (!productoRepository.existsById(id)) {
@@ -84,9 +83,8 @@ public class ProductoController {
     }
 
     // actualizar producto
-    @SuppressWarnings("null")
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable Long id, @Valid @RequestBody ProductoEntity p) {
+    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable @NonNull Long id, @Valid @RequestBody @NonNull ProductoEntity p) {
         log.info("Solicitud PUT recibida para producto ID={}", id);
         log.debug("Datos recibidos para actualización: {}", p);
         return productoRepository.findById(id)

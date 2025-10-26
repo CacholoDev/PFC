@@ -2,6 +2,7 @@ package com.pfcdaw.pfcdaw.controller;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,8 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-    @SuppressWarnings("null")
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteEntity> getClienteById(@PathVariable Long id) {
+    public ResponseEntity<ClienteEntity> getClienteById(@PathVariable @NonNull Long id) {
         log.info("Buscando cliente con ID: {}", id);
         return clienteRepository.findById(id)
                 .map(cliente -> {
@@ -55,17 +55,15 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
+    public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody @NonNull ClienteEntity nuevoCliente) {
         log.info("Creando nuevo cliente...");
-        @SuppressWarnings("null")
         ClienteEntity clienteGuardado = clienteRepository.save(nuevoCliente);
         log.info("Cliente creado con ID: {}", clienteGuardado.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
     }
 
-    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCliente(@PathVariable @NonNull Long id) {
         log.info("Eliminando cliente con ID: {}, y nombre: {}", id, clienteRepository.findById(id).map(ClienteEntity::getNombre).orElse("Desconocido"));
         if (clienteRepository.existsById(id)) {
             clienteRepository.deleteById(id);
@@ -77,10 +75,9 @@ public class ClienteController {
         }
     }
 
-    @SuppressWarnings("null")
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteEntity> updateCliente(@PathVariable Long id,
-            @Valid @RequestBody ClienteEntity clienteActualizado) {
+    public ResponseEntity<ClienteEntity> updateCliente(@PathVariable @NonNull Long id,
+        @Valid @RequestBody @NonNull ClienteEntity clienteActualizado) {
         log.info("Actualizando cliente con ID: {}", id);
         return clienteRepository.findById(id)
                 .map(cliente -> {

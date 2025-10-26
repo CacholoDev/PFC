@@ -2,9 +2,9 @@ package com.pfcdaw.pfcdaw.controller;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.pfcdaw.pfcdaw.dto.PedidoCreateDto;
 import com.pfcdaw.pfcdaw.model.PedidoEntity;
 import com.pfcdaw.pfcdaw.repository.PedidoRepository;
+import com.pfcdaw.pfcdaw.service.PedidoService;
 
 import jakarta.validation.Valid;
 
@@ -26,9 +29,11 @@ public class PedidoController {
 
     private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
     private final PedidoRepository pedidoRepository;
+    private final PedidoService pedidoService;
 
-    public PedidoController(PedidoRepository pedidoRepository) {
+    public PedidoController(PedidoRepository pedidoRepository, PedidoService pedidoService) {
         this.pedidoRepository = pedidoRepository;
+        this.pedidoService = pedidoService;
     }
 
     @GetMapping
@@ -39,9 +44,8 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
-    @SuppressWarnings("null")
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable Long id) {
+    public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable @NonNull Long id) {
         log.info("Buscando pedido con ID: {}", id);
         return pedidoRepository.findById(id)
                 .map(pedido -> {
@@ -54,7 +58,7 @@ public class PedidoController {
                 });
     }
 
-    // Obtener todos os pedidos dun cliente específico
+    // Obter todos os pedidos dun cliente específico
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<PedidoEntity>> getPedidosByCliente(@PathVariable Long clienteId) {
         log.info("Buscando pedidos del cliente con ID: {}", clienteId);
@@ -64,17 +68,19 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoEntity nuevoPedido) {
+    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody @NonNull PedidoCreateDto dto) {
         log.info("Creando nuevo pedido...");
-        @SuppressWarnings("null")
-        PedidoEntity pedidoGuardado = pedidoRepository.save(nuevoPedido);
+        PedidoEntity pedidoGuardado = pedidoService.createPedido(dto);
         log.info("Pedido creado con ID: {}", pedidoGuardado.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoGuardado);
+        // uri location para ver na resposta onde se atopa o recurso creado
+        var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(pedidoGuardado.getId()).toUri();
+
+        return ResponseEntity.created(location).body(pedidoGuardado);
     }
 
-    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePedido(@PathVariable @NonNull Long id) {
         if (!pedidoRepository.existsById(id)) {
             log.warn("Pedido con ID {} no encontrado", id);
             return ResponseEntity.notFound().build();
@@ -84,10 +90,9 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
 
-    @SuppressWarnings("null")
     @PutMapping("/{id}")
-    public ResponseEntity<PedidoEntity> updatePedido(@PathVariable Long id,
-            @Valid @RequestBody PedidoEntity pedidoActualizado) {
+    public ResponseEntity<PedidoEntity> updatePedido(@PathVariable @NonNull Long id,
+        @Valid @RequestBody @NonNull PedidoEntity pedidoActualizado) {
         log.info("Actualizando pedido con ID: {}", id);
         log.debug("Datos recibidos para actualización: {}", pedidoActualizado);
         return pedidoRepository.findById(id)
