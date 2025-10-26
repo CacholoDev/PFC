@@ -203,6 +203,27 @@ classDiagram
 | PUT    | /productos/{id}  | Actualizar producto   |
 | DELETE | /productos/{id}  | Eliminar producto     |
 
+- **Clientes**:
+
+| Método | Endpoint         | Descripción                       |
+|--------|------------------|-----------------------------------|
+| GET    | /clientes        | Listar todos los clientes         |
+| GET    | /clientes/{id}   | Obtener cliente por ID            |
+| POST   | /clientes        | Crear nuevo cliente               |
+| PUT    | /clientes/{id}   | Actualizar cliente                |
+| DELETE | /clientes/{id}   | Eliminar cliente                  |
+
+- **Pedidos**:
+
+| Método | Endpoint                   | Descripción                                       |
+|--------|----------------------------|---------------------------------------------------|
+| GET    | /pedidos                   | Listar todos los pedidos                          |
+| GET    | /pedidos/{id}              | Obtener pedido por ID                             |
+| GET    | /pedidos/cliente/{clienteId} | Listar pedidos de un cliente                      |
+| POST   | /pedidos                   | Crear un pedido (recibe PedidoCreateDto: clienteId, productoIds) |
+| PUT    | /pedidos/{id}              | Actualizar un pedido (productos, total, estado)   |
+| DELETE | /pedidos/{id}              | Eliminar un pedido                                |
+
 
 ## 3.Planificación
 
