@@ -1,0 +1,20 @@
+
+********************************************************
+IMPORTANTE!! 
+
+Pon todas las imágenes incluídas en el README o en 
+tu documentación en este directorio (doc/img).
+
+Reduce el tamaño de estas imágenes
+para que tu repositorio pese lo menos posible.
+
+No vamos a usar Git LFS (Large File Storage)
+porque no lo consideramos imprescindible para tu Proyecto
+*********************************************************
+
+
+Git no está diseñado para manejar archivos muy grandes ni grandes volúmenes de datos binarios (imágenes, vídeos, bases de datos, etc.), porque:
+
+1. Guarda todo el historial de cambios de cada archivo → ocupa mucho.
+2. Cada clon del repositorio descarga todo ese historial.
+3. Los binarios no se comprimen ni hacen diff bien → crecen rápido.
