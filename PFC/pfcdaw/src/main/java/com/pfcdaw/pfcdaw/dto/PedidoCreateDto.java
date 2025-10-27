@@ -1,6 +1,6 @@
 package com.pfcdaw.pfcdaw.dto;
 
-import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,6 +20,7 @@ public class PedidoCreateDto {
 
     @NotNull
     @Size(min = 1, message = "El pedido debe tener al menos un producto")
-    private List<Long> productoIds;
+    // Mapa de productoId e cantidad de cada producto
+    private Map<Long, Integer> productos;
 
 }

@@ -23,17 +23,18 @@ import jakarta.transaction.Transactional;
 @Transactional // si falla algo fai rollback na bd
 public class PedidoService {
 
-    // SLF4J logger - use the service class as the logger name
     private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
     private final PedidoRepository pedidoRepository;
     private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
+    private final ProductoService productoService;
 
     public PedidoService(PedidoRepository pedidoRepository, ClienteRepository clienteRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository, ProductoService productoService) {
         this.pedidoRepository = pedidoRepository;
         this.clienteRepository = clienteRepository;
         this.productoRepository = productoRepository;
+        this.productoService = productoService;
     }
 
     public PedidoEntity createPedido(PedidoCreateDto dto) {
@@ -46,7 +47,7 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "clienteId es obligatorio");
         }
 
-        if (dto.getProductoIds() == null || dto.getProductoIds().isEmpty()) {
+        if (dto.getProductos() == null || dto.getProductos().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lista de productos vacía");
         }
 
@@ -54,10 +55,11 @@ public class PedidoService {
         ClienteEntity cliente = clienteRepository.findById(dto.getClienteId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente no encontrado"));
 
-        log.debug("createPedido: clienteId={}, productoIds={}", dto.getClienteId(), dto.getProductoIds());
+        log.debug("createPedido: clienteId={}, productoIds={}", dto.getClienteId(), dto.getProductos());
 
-        // Comprobar que os produtos existen
-        List<ProductoEntity> productos = productoRepository.findAllById(dto.getProductoIds());
+        // Comprobar que os produtos existen, .keySet para buscar clave-valor do Map do
+        // PedidoDTO
+        List<ProductoEntity> productos = productoRepository.findAllById(dto.getProductos().keySet());
         if (productos.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Productos no encontrados");
         }
@@ -65,13 +67,15 @@ public class PedidoService {
         // calcular total, miramos primeiro si nn e null
         productos.stream()
                 .filter(p -> p.getPrecio() == null)
-                .findAny()
-                .ifPresent(p -> {
+                .findAny() // busca productos con precio nulo
+                .ifPresent(p -> { // si atopou algo tira o error
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "Precio inválido en producto id=" + p.getId());
                 });
 
-        double total = productos.stream().mapToDouble(p -> p.getPrecio()).sum();
+        double total = productos.stream()
+                .mapToDouble(p -> p.getPrecio() * dto.getProductos().get(p.getId()))
+                .sum();
 
         // Crear o pedido
         PedidoEntity pedido = PedidoEntity.builder()
@@ -81,7 +85,15 @@ public class PedidoService {
                 .estado(EstadoPedidoEnum.PENDIENTE)
                 .build();
 
-        return pedidoRepository.save(pedido);
+        PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);  
+        // Reducir stock dos produtos
+        for (ProductoEntity producto : productos) {
+            Integer cantidad = dto.getProductos().get(producto.getId());
+            productoService.reducirStock(producto.getId(), cantidad);
+            log.info("Stock reducido en {} unidades para producto '{}'", cantidad, producto.getNombre());
+        }
+
+        return pedidoGuardado;
     }
 
 }
