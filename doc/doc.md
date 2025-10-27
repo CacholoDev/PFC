@@ -125,7 +125,7 @@ Se usa un tablero Trello donde se registran las tareas principales del proyecto:
 * Desarrollo del frontend con HTML, CSS y JavaScript.
 * Pruebas locales y documentación.
 
-Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t/client-workflow-management) - visibilidad publica.
+Enlace a Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t/client-workflow-management) - visibilidad publica.
 
 #### -Diagrama de caso de uso
 
