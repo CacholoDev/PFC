@@ -2,34 +2,30 @@
 ### [RepoGitHub](https://github.com/CacholoDev/PFC)
 ### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
-- [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
-    - [RepoGitHub](#repogithub)
-    - [RepoGitLab](#repogitlab)
-  - [Introducción](#introducción)
-  - [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
-  - [Propósito](#propósito)
-  - [Objetivos](#objetivos)
-  - [Alcance](#alcance)
-    - [Funcionalidades incluidas:](#funcionalidades-incluidas)
-    - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
-    - [Contexto de uso:](#contexto-de-uso)
-  - [Conclusiones](#conclusiones)
-  - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
-        - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
-- [TODO](#todo)
-  - [1.Análisis](#1análisis)
-      - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
-  - [2. Diseño](#2-diseño)
-    - [Arquitectura general](#arquitectura-general)
-    - [Estructura básica del backend](#estructura-básica-del-backend)
-      - [Decisiones de diseño](#decisiones-de-diseño)
-      - [Uso EndPoints](#uso-endpoints)
-  - [3.Planificación](#3planificación)
-    - [Fases del proyecto](#fases-del-proyecto)
-    - [Diagrama de Gantt](#diagrama-de-gantt)
-    - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
-    - [Conclusión](#conclusión)
-        - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
+- [Introducción](#introducción)
+- [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
+- [Propósito](#propósito)
+- [Objetivos](#objetivos)
+- [Alcance](#alcance)
+  - [Funcionalidades incluidas:](#funcionalidades-incluidas)
+  - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
+  - [Contexto de uso:](#contexto-de-uso)
+- [Conclusiones](#conclusiones)
+- [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
+      - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
+- [1.Análisis](#1análisis)
+    - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
+- [2. Diseño](#2-diseño)
+  - [Arquitectura general](#arquitectura-general)
+  - [Estructura básica del backend](#estructura-básica-del-backend)
+    - [Decisiones de diseño](#decisiones-de-diseño)
+    - [Uso EndPoints](#uso-endpoints)
+- [3.Planificación](#3planificación)
+  - [Fases del proyecto](#fases-del-proyecto)
+  - [Diagrama de Gantt](#diagrama-de-gantt)
+  - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
+  - [Conclusión](#conclusión)
+      - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
 
 ## Introducción
 
@@ -192,7 +188,9 @@ classDiagram
 - Es un prototipo funcional para ejecución local
 
 #### Uso EndPoints
-*completandoos a medida que os vou facendo no back con SpringBoot:
+
+EndPoints: 
+
 - **Productos**:
 
 | Método | Endpoint         | Descripción           |
