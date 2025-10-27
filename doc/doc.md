@@ -192,7 +192,7 @@ classDiagram
 - Es un prototipo funcional para ejecución local
 
 #### Uso EndPoints
-*completandoos a medida que os vou facendo no back con SpringBoot:
+EndPoints de productos,clientes y pedidos:
 - **Productos**:
 
 | Método | Endpoint         | Descripción           |
