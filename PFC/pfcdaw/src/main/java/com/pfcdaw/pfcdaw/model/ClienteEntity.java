@@ -48,7 +48,7 @@ public class ClienteEntity {
     private String telefono;
 
     @OneToMany(mappedBy = "cliente")
-    @JsonIgnore  // evita loop, consulta pedidos por separado
+    @JsonIgnore  // evita loops infinitos, consulta pedidos por separado
     private List<PedidoEntity> pedidos;
 
 }

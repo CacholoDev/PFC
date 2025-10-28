@@ -12,9 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -41,12 +40,9 @@ public class PedidoEntity {
     private LocalDateTime fechaPedido = LocalDateTime.now();
 
     @NotNull
-    @Size(min = 1, message = "El pedido debe tener al menos un producto")
-    @ManyToMany //un pedido podede ter 1+ productos e un producto pode tar en varios pedidos
-    @JoinTable(name = "pedido_productos",
-               joinColumns = @JoinColumn(name = "pedido_id"),
-               inverseJoinColumns = @JoinColumn(name = "producto_id"))
-    private List<ProductoEntity> productos;
+    @Size(min = 1, message = "El pedido debe tener al menos una linea")
+    @OneToMany(mappedBy = "pedido", cascade=jakarta.persistence.CascadeType.ALL) // cascade para gardar lineas automaticamente cando se .save un pedido
+    private List<LineaPedido> lineasPedido;
 
     @PositiveOrZero(message = "El total debe ser un valor positivo o cero")
     private double total;

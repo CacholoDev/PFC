@@ -1,12 +1,18 @@
 package com.pfcdaw.pfcdaw.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,9 +32,17 @@ public class ProductoEntity {
     private Long id;
     @NotBlank(message = "El nombre del producto es obligatorio")
     private String nombre;
+    @NotNull(message = "El precio del producto es obligatorio")
     @PositiveOrZero(message = "El precio debe ser un valor positivo o cero")
     private Double precio;
+
     private String descripcion;
+
+    @NotNull(message = "El stock del producto es obligatorio")
     @Min(value = 0, message = "El stock debe ser un valor positivo o cero")
     private int stock;
+
+    @OneToMany(mappedBy = "producto", cascade = jakarta.persistence.CascadeType.ALL)
+    @JsonIgnore // evita loops infinitos, consulta lineas por separado
+    private List<LineaPedido> lineasPedido;
 }
