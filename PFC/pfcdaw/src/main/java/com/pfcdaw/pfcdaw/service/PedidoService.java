@@ -1,5 +1,6 @@
 package com.pfcdaw.pfcdaw.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.pfcdaw.pfcdaw.dto.PedidoCreateDto;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.model.EstadoPedidoEnum;
+import com.pfcdaw.pfcdaw.model.LineaPedido;
 import com.pfcdaw.pfcdaw.model.PedidoEntity;
 import com.pfcdaw.pfcdaw.model.ProductoEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
@@ -82,20 +84,36 @@ public class PedidoService {
                 .mapToDouble(p -> p.getPrecio() * dto.getProductos().get(p.getId()))
                 .sum();
 
-        // Crear o pedido
+        // Crear o pedido y sus líneas
         PedidoEntity pedido = PedidoEntity.builder()
                 .cliente(cliente)
-                .productos(productos)
                 .total(total)
                 .estado(EstadoPedidoEnum.PENDIENTE)
                 .build();
 
-        PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
-        // Reducir stock dos produtos
+        List<LineaPedido> lineas = new ArrayList<>();
         for (ProductoEntity producto : productos) {
             Integer cantidad = dto.getProductos().get(producto.getId());
-            productoService.reducirStock(producto.getId(), cantidad);
-            log.info("Stock reducido en {} unidades para producto '{}'", cantidad, producto.getNombre());
+            Double subtotal = producto.getPrecio() * cantidad;
+
+            LineaPedido linea = LineaPedido.builder()
+                    .pedido(pedido)
+                    .producto(producto)
+                    .cantidad(cantidad)
+                    .pTotal(subtotal)
+                    .build();
+            lineas.add(linea);
+        }
+
+        pedido.setLineasPedido(lineas);
+
+        // Guardar pedido (cascade ALL persiste las líneas)
+        PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
+
+        // Reducir stock dos produtos
+        for (LineaPedido linea : lineas) {
+            productoService.reducirStock(linea.getProducto().getId(), linea.getCantidad());
+            log.info("Stock reducido en {} unidades para producto '{}'", linea.getCantidad(), linea.getProducto().getNombre());
         }
 
         return pedidoGuardado;
