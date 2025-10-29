@@ -100,8 +100,8 @@ public class PedidoController {
                     log.debug("Pedido antes de actualizar: id={}, total={}, estado={}", pedido.getId(),
                             pedido.getTotal(), pedido.getEstado());
 
-                    // Nota: desde que el modelo usa LineaPedido, no actualizamos las líneas por PUT aquí.
-                    // Si necesitas actualizar líneas, implementa un endpoint específico y ajusta stock.
+                    // NOTE: desde que o modelo usa LineaPedido, non actualizamos as liñas por PUT aquí
+                    // Si necesito actualizar as lineas, fai falta un endpoint específico e axustar stock
                     pedido.setTotal(pedidoActualizado.getTotal());
                     pedido.setEstado(pedidoActualizado.getEstado());
 

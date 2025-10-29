@@ -47,7 +47,7 @@ public class ProductoService {
 
         if (cantidad < 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La cantidad debe ser positiva");
+                    "La cantidad debe ser mayor que 0 " + productoId);
 
         }
         producto.setStock(producto.getStock() + cantidad);

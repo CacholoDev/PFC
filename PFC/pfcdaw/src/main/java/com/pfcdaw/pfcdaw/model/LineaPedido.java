@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
@@ -27,14 +28,18 @@ public class LineaPedido {
     private Long id;
 
     @ManyToOne // moitas lineas poden tar nun pedido
+    @JoinColumn(name = "pedido_id", nullable = false) // NOT NULL na BD
+    @NotNull(message = "El pedido es obligatorio")
     private PedidoEntity pedido;
     @ManyToOne // moitas lineas poden ter un mismo producto
+    @JoinColumn(name = "producto_id", nullable = false) // NOT NULL na BD
+    @NotNull(message = "El producto es obligatorio")
     private ProductoEntity producto;
-    
-    @NotNull
+
+    @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad debe ser al menos 1")
     private Integer cantidad;
-    @NotNull
+    @NotNull(message = "El total es obligatorio")
     @PositiveOrZero(message="El total no puede ser negativo")
     private Double pTotal;
 }

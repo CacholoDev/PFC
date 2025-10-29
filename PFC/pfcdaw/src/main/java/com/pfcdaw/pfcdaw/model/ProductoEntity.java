@@ -42,7 +42,7 @@ public class ProductoEntity {
     @Min(value = 0, message = "El stock debe ser un valor positivo o cero")
     private int stock;
 
-    @OneToMany(mappedBy = "producto", cascade = jakarta.persistence.CascadeType.ALL)
-    @JsonIgnore // evita loops infinitos, consulta lineas por separado
+    @OneToMany(mappedBy = "producto", cascade = jakarta.persistence.CascadeType.ALL) 
+    @JsonIgnore // evita loops infinitos na serialización
     private List<LineaPedido> lineasPedido;
 }
