@@ -73,7 +73,15 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Productos no encontrados");
         }
 
-        // calcular total, miramos primeiro si nn e null
+        // Validar cantidades antes de calcular total
+        dto.getProductos().forEach((id, cantidad) -> {
+            if (cantidad == null || cantidad < 1) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "La cantidad del producto " + id + " debe ser mayor a 0");
+            }
+        });
+
+        // calcular total, miramos primeiro si o precio nn e null
         productos.stream()
                 .filter(p -> p.getPrecio() == null)
                 .findAny() // busca productos con precio nulo

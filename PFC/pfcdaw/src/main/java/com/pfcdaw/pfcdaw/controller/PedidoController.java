@@ -38,40 +38,37 @@ public class PedidoController {
 
     @GetMapping
     public ResponseEntity<List<PedidoEntity>> getAllPedidos() {
-        log.info("Listando todos los pedidos");
+        log.info("[GET /pedidos] Listando todos los pedidos");
         List<PedidoEntity> pedidos = pedidoRepository.findAll();
-        log.debug("Pedidos encontrados: {}", pedidos.size());
+        log.debug("[GET /pedidos] Encontrados: {}", pedidos.size());
         return ResponseEntity.ok(pedidos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable @NonNull Long id) {
-        log.info("Buscando pedido con ID: {}", id);
+        log.info("[GET /pedidos/{}] Buscando pedido", id);
         return pedidoRepository.findById(id)
-                .map(pedido -> {
-                    log.info("Pedido encontrado: {}", pedido.getId());
-                    return ResponseEntity.ok(pedido);
-                })
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> {
-                    log.warn("Pedido con ID {} no encontrado", id);
+                    log.warn("[GET /pedidos/{}] No encontrado", id);
                     return ResponseEntity.notFound().build();
                 });
     }
-
+    
     // Obter todos os pedidos dun cliente específico
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<PedidoEntity>> getPedidosByCliente(@PathVariable Long clienteId) {
-        log.info("Buscando pedidos del cliente con ID: {}", clienteId);
+        log.info("[GET /pedidos/cliente/{}] Buscando pedidos del cliente", clienteId);
         List<PedidoEntity> pedidos = pedidoRepository.findByClienteId(clienteId);
-        log.debug("Pedidos encontrados para el cliente {}: {}", clienteId, pedidos.size());
+        log.debug("[GET /pedidos/cliente/{}] Encontrados: {}", clienteId, pedidos.size());
         return ResponseEntity.ok(pedidos);
     }
 
     @PostMapping
     public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody @NonNull PedidoCreateDto dto) {
-        log.info("Creando nuevo pedido...");
+        log.info("[POST /pedidos] Creando pedido para cliente: {}", dto.getClienteId());
         PedidoEntity pedidoGuardado = pedidoService.createPedido(dto);
-        log.info("Pedido creado con ID: {}", pedidoGuardado.getId());
+        log.info("[POST /pedidos] Pedido creado con ID: {}", pedidoGuardado.getId());
         // uri location para ver na resposta onde se atopa o recurso creado
         var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(pedidoGuardado.getId()).toUri();
@@ -82,10 +79,10 @@ public class PedidoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePedido(@PathVariable @NonNull Long id) {
         if (!pedidoRepository.existsById(id)) {
-            log.warn("Pedido con ID {} no encontrado", id);
+            log.warn("[DELETE /pedidos/{}] No encontrado", id);
             return ResponseEntity.notFound().build();
         }
-        log.info("Pedido con ID {} eliminado", id);
+        log.info("[DELETE /pedidos/{}] Eliminando pedido", id);
         pedidoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -93,12 +90,10 @@ public class PedidoController {
     @PutMapping("/{id}")
     public ResponseEntity<PedidoEntity> updatePedido(@PathVariable @NonNull Long id,
         @Valid @RequestBody @NonNull PedidoEntity pedidoActualizado) {
-        log.info("Actualizando pedido con ID: {}", id);
-        log.debug("Datos recibidos para actualización: {}", pedidoActualizado);
+        log.info("[PUT /pedidos/{}] Actualizando pedido", id);
         return pedidoRepository.findById(id)
                 .map(pedido -> {
-                    log.debug("Pedido antes de actualizar: id={}, total={}, estado={}", pedido.getId(),
-                            pedido.getTotal(), pedido.getEstado());
+                    log.debug("[PUT /pedidos/{}] Antes: total={}, estado={}", id, pedido.getTotal(), pedido.getEstado());
 
                     // NOTE: desde que o modelo usa LineaPedido, non actualizamos as liñas por PUT aquí
                     // Si necesito actualizar as lineas, fai falta un endpoint específico e axustar stock
@@ -107,14 +102,20 @@ public class PedidoController {
 
                     PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
 
-                    log.info("Pedido con ID {} actualizado", id);
-                    log.debug("Pedido después de actualizar: {}", pedidoGuardado);
+                    log.info("[PUT /pedidos/{}] Actualizado correctamente", id);
                     return ResponseEntity.ok(pedidoGuardado);
                 })
                 .orElseGet(() -> {
-                    log.warn("Pedido con ID {} no encontrado", id);
+                    log.warn("[PUT /pedidos/{}] No encontrado", id);
                     return ResponseEntity.notFound().build();
                 });
     }
 
+
+
+
+
+
+
 }
+

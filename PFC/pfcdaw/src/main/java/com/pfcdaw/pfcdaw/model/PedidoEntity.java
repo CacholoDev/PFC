@@ -66,7 +66,9 @@ public class PedidoEntity {
             this.total = lineasPedido.stream()
                 .mapToDouble(LineaPedido::getPTotal)
                 .sum();
-        } 
+        } else {
+            this.total = 0.0;
+        }
     }
     
 }

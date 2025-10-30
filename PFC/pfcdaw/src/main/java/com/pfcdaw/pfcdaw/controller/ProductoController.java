@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pfcdaw.pfcdaw.dto.StockUpdateDto;
 import com.pfcdaw.pfcdaw.model.ProductoEntity;
 import com.pfcdaw.pfcdaw.repository.ProductoRepository;
+import com.pfcdaw.pfcdaw.service.ProductoService;
 
 import jakarta.validation.Valid;
 
@@ -27,33 +29,32 @@ public class ProductoController {
 
     private static final Logger log = LoggerFactory.getLogger(ProductoController.class);
     private final ProductoRepository productoRepository;
+    private final ProductoService productoService;
 
-    public ProductoController(ProductoRepository productoRepository) {
+    public ProductoController(ProductoRepository productoRepository, ProductoService productoService) {
         this.productoRepository = productoRepository;
+        this.productoService = productoService;
     }
 
     // listar productos nn poñemos path porque colle o requestmapping do controlador
     @GetMapping
     public ResponseEntity<List<ProductoEntity>> getAllProductos() {
-        log.info("Listando todos los productos"); // usase info para mensaxes informativas / accions normales
+        log.info("[GET /productos] Listando todos los productos");
         List<ProductoEntity> productos = productoRepository.findAll();
-        log.debug("Productos encontrados: {}", productos.size()); // usase debug para mensaxes de depuración / detalles
-                                                                  // tecnicos
+        log.debug("[GET /productos] Productos encontrados: {}", productos.size());
         return ResponseEntity.ok(productos);
     }
 
     // listar por id
     @GetMapping("/{id}")
     public ResponseEntity<ProductoEntity> getProductoById(@PathVariable @NonNull Long id) {
-        log.info("Buscando producto con ID: {}", id);
         return productoRepository.findById(id)
                 .map(producto -> {
-                    log.info("Producto encontrado: {}", producto.getNombre());
+                    log.info("[GET /productos/{}] Producto encontrado: {}", id, producto.getNombre());
                     return ResponseEntity.ok(producto);
                 })
                 .orElseGet(() -> {
-                    log.warn("Producto con ID {} no encontrado", id); // usase warn para mensaxes de advertencia /
-                                                                      // posibles problemas
+                    log.warn("[GET /productos/{}] Producto no encontrado", id);
                     return ResponseEntity.notFound().build();
                 });
 
@@ -62,35 +63,33 @@ public class ProductoController {
     // crear producto
     @PostMapping
     public ResponseEntity<ProductoEntity> createProducto(@Valid @RequestBody ProductoEntity producto) {
-        log.info("Creando nuevo producto: {}", producto.getNombre());
+        log.info("[POST /productos] Creando nuevo producto: {}", producto.getNombre());
         ProductoEntity nuevoProducto = productoRepository.save(producto);
-        log.info("Producto creado con ID: {}", nuevoProducto.getId());
+        log.info("[POST /productos] Producto creado con ID: {}", nuevoProducto.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProducto);
     }
 
     // delete producto
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable @NonNull Long id) {
-        log.info("Eliminando producto con ID: {}, y nombre: {}", id,
-                productoRepository.findById(id).map(ProductoEntity::getNombre).orElseGet(() -> "No encontrado"));
         if (!productoRepository.existsById(id)) {
-            log.warn("Producto con ID {} no encontrado", id);
+            log.warn("[DELETE /productos/{}] Producto no encontrado", id);
             return ResponseEntity.notFound().build();
         }
-        log.info("Producto con ID {} eliminado", id);
+        log.info("[DELETE /productos/{}] Eliminando producto", id);
         productoRepository.deleteById(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        log.info("[DELETE /productos/{}] Producto eliminado", id);
+        return ResponseEntity.noContent().build();
     }
 
     // actualizar producto
     @PutMapping("/{id}")
     public ResponseEntity<ProductoEntity> updateProducto(@PathVariable @NonNull Long id, @Valid @RequestBody @NonNull ProductoEntity p) {
-        log.info("Solicitud PUT recibida para producto ID={}", id);
-        log.debug("Datos recibidos para actualización: {}", p);
+        log.info("[PUT /productos/{}] Solicitud de actualización recibida", id);
+        log.debug("[PUT /productos/{}] Datos recibidos: {}", id, p);
         return productoRepository.findById(id)
                 .map(producto -> {
-                    log.debug("Producto antes de actualizar: id={}, nombre={}, descripcion={}, precio={}",
-                            producto.getId(), producto.getNombre(), producto.getDescripcion(), producto.getPrecio());
+                    log.debug("[PUT /productos/{}] Antes: nombre={}, precio={}", id, producto.getNombre(), producto.getPrecio());
 
                     producto.setNombre(p.getNombre());
                     producto.setDescripcion(p.getDescripcion());
@@ -98,14 +97,30 @@ public class ProductoController {
 
                     ProductoEntity productoActualizado = productoRepository.save(producto);
 
-                    log.info("Producto actualizado correctamente: id={}", productoActualizado.getId());
-                    log.debug("Producto después de actualizar: {}", productoActualizado);
+                    log.info("[PUT /productos/{}] Producto actualizado: {}", id, productoActualizado.getNombre());
+                    log.debug("[PUT /productos/{}] Después: {}", id, productoActualizado);
                     return ResponseEntity.ok(productoActualizado);
                 })
                 .orElseGet(() -> {
-                    log.warn("No se puede actualizar: producto con ID {} no encontrado", id);
+                    log.warn("[PUT /productos/{}] Producto no encontrado para actualizar", id);
                     return ResponseEntity.notFound().build();
                 });
+    }
+
+    // POST para aumentar stock
+    @PostMapping("/{id}/AumStock")
+    public ResponseEntity<ProductoEntity> aumentarStock(
+        @PathVariable Long id, 
+        @Valid @RequestBody StockUpdateDto dto) {
+        
+        log.info("[POST /productos/{}/AumStock] Aumentando {} unidades", id, dto.getCantidad());
+        productoService.aumentarStock(id, dto.getCantidad()); // usa o SERVICE (validaciones incluidas)
+        
+        ProductoEntity productoActualizado = productoRepository.findById(id)
+            .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Producto no encontrado"));
+        
+        return ResponseEntity.ok(productoActualizado);
     }
 
 }
