@@ -34,51 +34,46 @@ public class ClienteController {
 
     @GetMapping
     public ResponseEntity<List<ClienteEntity>> getAllClientes() {
-        log.info("Listando todos los clientes");
+        log.info("[GET /clientes] Listando todos los clientes");
         List<ClienteEntity> clientes = clienteRepository.findAll();
-        log.debug("Clientes encontrados: {}", clientes.size());
+        log.debug("[GET /clientes] Encontrados: {}", clientes.size());
         return ResponseEntity.ok(clientes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteEntity> getClienteById(@PathVariable @NonNull Long id) {
-        log.info("Buscando cliente con ID: {}", id);
+        log.info("[GET /clientes/{}] Buscando cliente", id);
         return clienteRepository.findById(id)
-                .map(cliente -> {
-                    log.info("Cliente encontrado: {}", cliente.getNombre());
-                    return ResponseEntity.ok(cliente);
-                })
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> {
-                    log.warn("Cliente con ID {} no encontrado", id);
+                    log.warn("[GET /clientes/{}] No encontrado", id);
                     return ResponseEntity.notFound().build();
                 });
     }
 
     @PostMapping
     public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody @NonNull ClienteEntity nuevoCliente) {
-        log.info("Creando nuevo cliente...");
+        log.info("[POST /clientes] Creando cliente: {}", nuevoCliente.getEmail());
         ClienteEntity clienteGuardado = clienteRepository.save(nuevoCliente);
-        log.info("Cliente creado con ID: {}", clienteGuardado.getId());
+        log.info("[POST /clientes] Cliente creado con ID: {}", clienteGuardado.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable @NonNull Long id) {
-        log.info("Eliminando cliente con ID: {}, y nombre: {}", id, clienteRepository.findById(id).map(ClienteEntity::getNombre).orElse("Desconocido"));
-        if (clienteRepository.existsById(id)) {
-            clienteRepository.deleteById(id);
-            log.info("Cliente con ID {} eliminado", id);
-            return ResponseEntity.noContent().build();
-        } else {
-            log.warn("Cliente con ID {} no encontrado para eliminar", id);
+        if (!clienteRepository.existsById(id)) {
+            log.warn("[DELETE /clientes/{}] No encontrado", id);
             return ResponseEntity.notFound().build();
         }
+        log.info("[DELETE /clientes/{}] Eliminando cliente", id);
+        clienteRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteEntity> updateCliente(@PathVariable @NonNull Long id,
         @Valid @RequestBody @NonNull ClienteEntity clienteActualizado) {
-        log.info("Actualizando cliente con ID: {}", id);
+        log.info("[PUT /clientes/{}] Actualizando cliente", id);
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     cliente.setNombre(clienteActualizado.getNombre());
@@ -87,11 +82,11 @@ public class ClienteController {
                     cliente.setDireccion(clienteActualizado.getDireccion());
                     cliente.setTelefono(clienteActualizado.getTelefono());
                     ClienteEntity clienteGuardado = clienteRepository.save(cliente);
-                    log.info("Cliente con ID {} actualizado", id);
+                    log.info("[PUT /clientes/{}] Actualizado correctamente", id);
                     return ResponseEntity.ok(clienteGuardado);
                 })
                 .orElseGet(() -> {
-                    log.warn("Cliente con ID {} no encontrado para actualizar", id);
+                    log.warn("[PUT /clientes/{}] No encontrado", id);
                     return ResponseEntity.notFound().build();
                 });
     }
