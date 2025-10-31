@@ -41,7 +41,6 @@ public class ProductoService {
     }
 
     public void aumentarStock(Long productoId, int cantidad) {
-        log.info("Aumentando stock del producto ID {} en {}", productoId, cantidad);
         ProductoEntity producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 

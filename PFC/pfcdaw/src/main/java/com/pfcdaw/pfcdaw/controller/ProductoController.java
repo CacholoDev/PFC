@@ -84,16 +84,20 @@ public class ProductoController {
 
     // actualizar producto
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable @NonNull Long id, @Valid @RequestBody @NonNull ProductoEntity p) {
+    public ResponseEntity<ProductoEntity> updateProducto(@PathVariable @NonNull Long id,
+            @Valid @RequestBody @NonNull ProductoEntity p) {
         log.info("[PUT /productos/{}] Solicitud de actualización recibida", id);
         log.debug("[PUT /productos/{}] Datos recibidos: {}", id, p);
         return productoRepository.findById(id)
                 .map(producto -> {
-                    log.debug("[PUT /productos/{}] Antes: nombre={}, precio={}", id, producto.getNombre(), producto.getPrecio());
-
+                    log.debug("[PUT /productos/{}] Antes: nombre={}, precio={}", id, producto.getNombre(),
+                            producto.getPrecio());
+                    // PUT: solo campos "informativos" (nombre, descripción, precio)
                     producto.setNombre(p.getNombre());
                     producto.setDescripcion(p.getDescripcion());
                     producto.setPrecio(p.getPrecio());
+                    // Stock SOLO por:
+                    // - POST /productos/{id}/AumStock ## - POST /productos/{id}/RedStock
 
                     ProductoEntity productoActualizado = productoRepository.save(producto);
 
@@ -110,16 +114,16 @@ public class ProductoController {
     // POST para aumentar stock
     @PostMapping("/{id}/AumStock")
     public ResponseEntity<ProductoEntity> aumentarStock(
-        @PathVariable Long id, 
-        @Valid @RequestBody StockUpdateDto dto) {
-        
+            @PathVariable Long id,
+            @Valid @RequestBody StockUpdateDto dto) {
+
         log.info("[POST /productos/{}/AumStock] Aumentando {} unidades", id, dto.getCantidad());
-        productoService.aumentarStock(id, dto.getCantidad()); // usa o SERVICE (validaciones incluidas)
-        
+        productoService.aumentarStock(id, dto.getCantidad()); // usa o SERVICE (validacions incluidas)
+
         ProductoEntity productoActualizado = productoRepository.findById(id)
-            .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Producto no encontrado"));
-        
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
         return ResponseEntity.ok(productoActualizado);
     }
 

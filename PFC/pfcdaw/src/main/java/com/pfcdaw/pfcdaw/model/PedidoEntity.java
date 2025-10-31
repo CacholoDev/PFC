@@ -1,5 +1,6 @@
 package com.pfcdaw.pfcdaw.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,8 +18,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,8 +44,8 @@ public class PedidoEntity {
     @OneToMany(mappedBy = "pedido", cascade=jakarta.persistence.CascadeType.ALL,orphanRemoval = true) // cascade para gardar lineas automaticamente cando se .save un pedido # orphanRemoval para eliminar liñas borradas na BD e que non queden colgadas para cando fagamos un editar pedido ou cancelarpedido
     private List<LineaPedido> lineasPedido;
 
-    @PositiveOrZero(message = "El total debe ser un valor positivo o cero")
-    private double total;
+    @DecimalMin(value = "0.0", message = "El total debe ser un valor positivo o cero")
+    private BigDecimal total;
 
     @Enumerated(EnumType.STRING)  // Garda o Enum como texto na BDD
     @Builder.Default // "Pendiente" do enum por default
@@ -64,10 +65,10 @@ public class PedidoEntity {
     public void recalcularTotal() {
         if (lineasPedido != null && !lineasPedido.isEmpty()) {
             this.total = lineasPedido.stream()
-                .mapToDouble(LineaPedido::getPTotal)
-                .sum();
+                .map(LineaPedido::getPTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-            this.total = 0.0;
+            this.total = BigDecimal.ZERO;
         }
     }
     

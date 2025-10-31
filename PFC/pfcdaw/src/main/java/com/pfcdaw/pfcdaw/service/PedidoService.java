@@ -1,5 +1,6 @@
 package com.pfcdaw.pfcdaw.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,9 +91,9 @@ public class PedidoService {
                             "Precio inválido en producto id=" + p.getId());
                 });
 
-        double total = productos.stream()
-                .mapToDouble(p -> p.getPrecio() * dto.getProductos().get(p.getId()))
-                .sum();
+        BigDecimal total = productos.stream()
+                .map(p -> p.getPrecio().multiply(BigDecimal.valueOf(dto.getProductos().get(p.getId()))))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Crear o pedido + líneas
         PedidoEntity pedido = PedidoEntity.builder()
@@ -104,7 +105,7 @@ public class PedidoService {
         List<LineaPedido> lineas = new ArrayList<>();
         for (ProductoEntity producto : productos) {
             Integer cantidad = dto.getProductos().get(producto.getId());
-            Double subtotal = producto.getPrecio() * cantidad;
+            BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(cantidad));
 
             LineaPedido linea = LineaPedido.builder()
                     .pedido(pedido)

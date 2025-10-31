@@ -69,7 +69,7 @@ public class PedidoController {
         log.info("[POST /pedidos] Creando pedido para cliente: {}", dto.getClienteId());
         PedidoEntity pedidoGuardado = pedidoService.createPedido(dto);
         log.info("[POST /pedidos] Pedido creado con ID: {}", pedidoGuardado.getId());
-        // uri location para ver na resposta onde se atopa o recurso creado
+        // uri location para ver na resposta onde se atopa o recurso creado, asi o frontEnd sabe donde facer o get
         var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(pedidoGuardado.getId()).toUri();
 
@@ -86,36 +86,30 @@ public class PedidoController {
         pedidoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
+    
     @PutMapping("/{id}")
     public ResponseEntity<PedidoEntity> updatePedido(@PathVariable @NonNull Long id,
-        @Valid @RequestBody @NonNull PedidoEntity pedidoActualizado) {
-        log.info("[PUT /pedidos/{}] Actualizando pedido", id);
-        return pedidoRepository.findById(id)
-                .map(pedido -> {
-                    log.debug("[PUT /pedidos/{}] Antes: total={}, estado={}", id, pedido.getTotal(), pedido.getEstado());
-
-                    // NOTE: desde que o modelo usa LineaPedido, non actualizamos as liñas por PUT aquí
-                    // Si necesito actualizar as lineas, fai falta un endpoint específico e axustar stock
-                    pedido.setTotal(pedidoActualizado.getTotal());
-                    pedido.setEstado(pedidoActualizado.getEstado());
-
-                    PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
-
-                    log.info("[PUT /pedidos/{}] Actualizado correctamente", id);
-                    return ResponseEntity.ok(pedidoGuardado);
-                })
-                .orElseGet(() -> {
-                    log.warn("[PUT /pedidos/{}] No encontrado", id);
-                    return ResponseEntity.notFound().build();
-                });
-    }
-
-
-
-
-
-
+    @Valid @RequestBody @NonNull PedidoEntity pedidoActualizado) {
+    log.info("[PUT /pedidos/{}] Actualizando estado", id);
+    return pedidoRepository.findById(id)
+    .map(pedido -> {
+        log.debug("[PUT /pedidos/{}] Antes: estado={}", id, pedido.getEstado());
+                // NOTE: desde que o modelo usa LineaPedido:
+                // Solo actualizar estado (PENDIENTE -> EN_PREPARACION -> COMPLETADO -> ENTREGADO)
+                pedido.setEstado(pedidoActualizado.getEstado());
+                // Non toca total, recalculase auto co @PreUpdate + @PrePersist
+                // Non toca cliente(si se quixera cambiar de cliente, mellor borrar e facer outro pedido)
+                // Non toca lineas, xestionase aparte + controla stock
+                PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
+                log.info("[PUT /pedidos/{}] Estado actualizado a: {}", id, pedidoGuardado.getEstado());
+                return ResponseEntity.ok(pedidoGuardado);
+            })
+            .orElseGet(() -> {
+                log.warn("[PUT /pedidos/{}] No encontrado", id);
+                return ResponseEntity.notFound().build();
+            });
+}
 
 }
 
+ 

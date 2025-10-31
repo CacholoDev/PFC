@@ -54,7 +54,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 ## Objetivos
 
-- Desarrollar un **backend en Spring Boot** con una API REST que gestione productos y pedidos.
+- Desarrollar un **backend en Spring Boot** con una API REST que gestione productos,pedidos e clientes.
 - Implementar la **persistencia de datos en MySQL**.
 - Diseñar un **frontend sencillo con HTML, CSS y JavaScript**, que permita al cliente navegar por el catálogo y realizar pedidos.
 - Crear una interfaz básica para la **gestión de pedidos por parte del negocio**.
@@ -144,7 +144,7 @@ sequenceDiagram
 
 El proyecto está dividido en dos partes principales:
 
-**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos y pedidos, almacenando los datos en MySQL mediante JPA, se podrán ver logs en consola mediante el uso del Logger de SpringBoot.
+**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos,pedidos y clientes, almacenando los datos en MySQL mediante JPA, se podrán ver logs en consola mediante el uso del Logger de SpringBoot.
 
 **Frontend**: Página web sencilla hecha con HTML, CSS y JavaScript, que permite listar productos y realizar pedidos.
 
