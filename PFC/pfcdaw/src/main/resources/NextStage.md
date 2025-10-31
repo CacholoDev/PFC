@@ -126,20 +126,37 @@ public ResponseEntity<TipoRetorno> nombreMetodo(
 - return ResponseEntity.internalServerError().build(); // 500
 
 
-# NEXTSTAGE
+# 🎯 SIGUIENTE FASE: FRONTEND
+
+## Flujo de Usuario
+
+**Diagrama de flujo del frontend**: Ilustra el recorrido del usuario desde que consulta el catálogo hasta que confirma el pedido, incluyendo la gestión del carrito temporal y el panel de administración.
+
+```mermaid
 graph TB
     A[Catálogo productos] --> B[Carrito básico]
     B --> C[Formulario pedido]
     C --> D[Enviar POST /pedidos]
     D --> E[Mostrar confirmación]
     F[Admin: listar pedidos] --> G[Cambiar estado PUT /pedidos]
-Páginas sugeridas:
-- index.html: Catálogo de productos (GET /productos)
-- carrito.html: Carrito con LocalStorage
-- pedido.html: Formulario cliente + resumen (POST /pedidos)
-- admin.html: Listar y gestionar pedidos (GET /pedidos, PUT /pedidos/{id})
+```
 
-### checklist backend 100% ready:
+## Páginas a Desarrollar
+- **index.html**: Catálogo de productos (GET /productos)
+- **carrito.html**: Carrito con LocalStorage
+- **pedido.html**: Formulario cliente + resumen (POST /pedidos)
+- **admin.html**: Listar y gestionar pedidos (GET /pedidos, PUT /pedidos/{id})
+
+## Stack Frontend
+- HTML5 + CSS3 (responsive)
+- JavaScript vanilla (fetch API)
+- LocalStorage para carrito temporal
+
+---
+
+# ✅ BACKEND COMPLETADO (31/10/2025)
+
+### Checklist backend 100% ready:
 -Arquitectura backend sólida:
 ✅ Spring Boot 3.5.7 + Java 21
 ✅ MySQL con JPA/Hibernate
@@ -174,5 +191,18 @@ Endpoint	Método	Estado	Verificado
 /pedidos/cliente/{id}	GET	✅ OK	Pedidos de un cliente
 
 
-## oferta tele que me pasa a jefa : https://www.adslzone.net/ofertas/mix/carrefour-smart-tv-samsung-tu55du7175u-1025/
-## como saber si a tele e boa: https://www.adslzone.net/listas/smart-tv/mejores-smart-tv-55-pulgadas/
+---
+
+# 📊 RESUMEN DE PROGRESO
+
+| Fase | Estado | Tiempo invertido |
+|------|--------|------------------|
+| Backend API REST | ✅ 100% | ~2-3 semanas |
+| Testing manual | ✅ 100% | ~2 días |
+| Documentación técnica | ✅ 100% | ~1 día |
+| Frontend HTML/CSS/JS | ⏳ Pendiente | ~3-5 días |
+| Despliegue | ⏳ Pendiente | ~1 día |
+
+**Líneas de código Java**: ~1500+  
+**Endpoints funcionales**: 15+  
+**Bugs críticos resueltos**: 2 (recursión JSON, precisión decimal)

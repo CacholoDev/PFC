@@ -1,5 +1,4 @@
 ##### Enlace a documentación: [doc](doc/doc.md)
-##### Enlace repo GitHub: [RepoGitHub](https://github.com/CacholoDev/PFC)
 ##### Enlace repo GitLab: [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 # Plataforma web de pedidos para panadería
 
@@ -10,6 +9,8 @@ Este proyecto consiste en el desarrollo de una **aplicación web para la gestió
 La idea principal es ofrecer a los clientes la posibilidad de consultar el catálogo de productos disponibles (panes, bollería y repostería), realizar pedidos online y permitir a la panadería gestionar dichos pedidos.
 
 El objetivo es digitalizar empresas pequeñas en este caso en el sector panadero, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago). También me gustaría migrar el front a React cuando controle un poco más de la librería y tenga algo más de tiempo ya que con la FCT en Santiago y lo poco que dura la FCT + PFC no dispongo de mucho espacio de tiempo para hacer un proyecto como el que me gustaría desarrollar y el cual seguiré trabajándolo cuando finalice el ciclo.
+
+**Diagrama de arquitectura general**: Muestra los actores principales (Clientes y Panadería), las funcionalidades disponibles para cada uno, y las mejoras futuras planificadas.
 
 ```mermaid
 graph TD
@@ -31,9 +32,23 @@ graph TD
     A --> D
 ```
 
+## Estado del Proyecto
+
+✅ **BACKEND COMPLETADO**
+- API REST funcional con 15+ endpoints
+- Gestión completa de Clientes, Productos y Pedidos
+- Sistema de stock automático con transacciones
+- Validaciones en múltiples capas
+- Precisión decimal exacta con BigDecimal
+
+⏳ **FRONTEND EN DESARROLLO**
+- Pendiente: Catálogo de productos, carrito y formulario de pedido
+
 ## Instalación / Puesta en marcha
 
 En la versión definitiva en producción se utilizaría un servidor (Por ejemplo Apache, al tener SpringBoot un propio apache dentro de cada proyecto funcionaría muy bien), en esta primera versión usaré XAMPP + phpmyadmin para el MySQL con el objetivo de llegar a tiempo a presentación del PFC.
+
+**Diagrama de componentes técnicos**: Representa la arquitectura técnica del sistema con las tecnologías utilizadas (Spring Boot, MySQL, XAMPP) y la comunicación entre capas.
 
 ```mermaid
 graph TB
@@ -45,22 +60,47 @@ graph TB
     G[Logger por consola] <--> B
 ```
 
-1. **Clonar el repositorio**: Aquí tengo pensado con el repo que nos dais en el GitLab poner enlace al repo del Spring initializer en github o en el gitlab mismo para que lo podáis clonar
+1. **Clonar el repositorio**: clonar desde gitlab
 
 2. **Acceder al directorio del proyecto y levantar el backend**: abrirlo en vscode y darle al run en el main de springBoot o `./mvnw spring-boot:run`
 
-3. **Instalar xamp**, en phpMyAdmin creamos bbdd panaderia y configurar el application.properties(aquí por seguridad y a la hora de subir a git usaremos un .env con sus variables para usar en el properties y lo ocultaremos en el .gitignore) con usuario root y una contraseña vacia
-```
-spring.datasource.url=jdbc:mysql://localhost:3306/panaderia
+3. **Instalar XAMPP**, en phpMyAdmin crear base de datos `panaderiaPFC`:
+   - Abrir XAMPP Control Panel → Start MySQL
+   - Ir a `http://localhost/phpmyadmin`
+   - Nueva base de datos: `panaderiaPFC` (cotejamiento: `utf8mb4_unicode_ci`)
+
+4. **Configurar application.properties** (ya configurado con valores por defecto):
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC
 spring.datasource.username=root
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 ```
 
+5. **Levantar el backend**:
+```bash
+cd PFC/pfcdaw
+./mvnw spring-boot:run
+```
+O desde VSCode: Run → Start Debugging (F5) en `PfcdawApplication.java`
 
-4. **Frontend**: VSCode + LiveServer
+El backend arrancará en `http://localhost:8080`
+
+6. **Cargar datos de prueba** (opcional):
+   - Abrir phpMyAdmin → Base de datos `panaderiaPFC` → pestaña SQL
+   - Copiar y pegar contenido de `src/main/resources/data-sample.sql`
+   - Click **Continuar**
+   - Esto creará 3 clientes y 4 productos de ejemplo
+
+7. **Probar la API** con Thunder Client (VSCode) o Postman:
+```http
+GET http://localhost:8080/productos
+GET http://localhost:8080/clientes
+POST http://localhost:8080/pedidos
+```
+
+8. **Frontend**: VSCode + LiveServer (próximamente)
 
 ## Uso
 
@@ -74,6 +114,9 @@ Se trata de una aplicación sencilla para cumplir los tiempos de entrega, enfati
 **La panadería podrá:**
 - Gestionar pedidos recibidos
 - Actualizar disponibilidad de productos
+
+**Diagrama de interacciones básicas**: Representa los casos de uso principales del sistema desde la perspectiva de los actores.
+
 ```mermaid
 sequenceDiagram
     Cliente->>Sistema: Consultar catálogo

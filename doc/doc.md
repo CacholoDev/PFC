@@ -1,5 +1,4 @@
 # Plataforma web de pedidos para panadería
-### [RepoGitHub](https://github.com/CacholoDev/PFC)
 ### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
 - [Introducción](#introducción)
@@ -18,14 +17,36 @@
 - [2. Diseño](#2-diseño)
   - [Arquitectura general](#arquitectura-general)
   - [Estructura básica del backend](#estructura-básica-del-backend)
+  - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
+  - [Diagrama de secuencia: Crear Pedido](#diagrama-de-secuencia-crear-pedido)
     - [Decisiones de diseño](#decisiones-de-diseño)
-    - [Uso EndPoints](#uso-endpoints)
+    - [Uso de Endpoints (API REST)](#uso-de-endpoints-api-rest)
+      - [Endpoints de Clientes](#endpoints-de-clientes)
+      - [Endpoints de Productos](#endpoints-de-productos)
+      - [Endpoints de Pedidos](#endpoints-de-pedidos)
 - [3.Planificación](#3planificación)
   - [Fases del proyecto](#fases-del-proyecto)
   - [Diagrama de Gantt](#diagrama-de-gantt)
   - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
   - [Conclusión](#conclusión)
       - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
+- [4. Implementación Técnica del Backend](#4-implementación-técnica-del-backend)
+  - [4.1. Tecnologías Utilizadas](#41-tecnologías-utilizadas)
+  - [4.2. Decisiones de Arquitectura](#42-decisiones-de-arquitectura)
+    - [**Uso de BigDecimal en vez de Double**](#uso-de-bigdecimal-en-vez-de-double)
+    - [**LineaPedido como entidad separada**](#lineapedido-como-entidad-separada)
+    - [**Lifecycle Hooks para recalcular totales**](#lifecycle-hooks-para-recalcular-totales)
+    - [**Prevención de recursión infinita en JSON**](#prevención-de-recursión-infinita-en-json)
+    - [**Gestión de stock transaccional**](#gestión-de-stock-transaccional)
+  - [4.3. Validaciones Implementadas](#43-validaciones-implementadas)
+    - [**Nivel DTO** (entrada de datos)](#nivel-dto-entrada-de-datos)
+    - [**Nivel Entity** (persistencia)](#nivel-entity-persistencia)
+    - [**Nivel Service** (lógica de negocio)](#nivel-service-lógica-de-negocio)
+  - [4.4. Logs Implementados](#44-logs-implementados)
+  - [4.5. Testing Realizado](#45-testing-realizado)
+    - [**Tests manuales con Postman/Thunder Client**](#tests-manuales-con-postmanthunder-client)
+  - [4.6. Problemas Resueltos Durante Desarrollo](#46-problemas-resueltos-durante-desarrollo)
+      - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
 
 ## Introducción
 
@@ -125,9 +146,11 @@ Enlace a Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t
 
 #### -Diagrama de caso de uso
 
-El siguiente diagrama muestra de forma general las interacciones principales en la aplicación web de pedidos para panadería:
+El siguiente diagrama muestra de forma general las **interacciones principales** en la aplicación web de pedidos para panadería.
 
-Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que hare si me da tiempo antes del fin de fecha del PFC, si no lo continuare después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la APIREST con SpringBoot Java.
+Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que haré si me da tiempo antes del fin de fecha del PFC, si no lo continuaré después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la API REST con Spring Boot Java.
+
+**Diagrama de secuencia simplificado**: Muestra las tres operaciones principales que realizan los actores en el sistema (consultar catálogo, realizar pedido, gestionar pedidos).
 
 ```mermaid
 ---
@@ -154,27 +177,127 @@ El proyecto está dividido en dos partes principales:
 
 ### Estructura básica del backend
 
-com.panaderia
- ├─ model          (clases Product, Pedido)
- ├─ repository     (interfaces JPA)
- ├─ controller     (endpoints REST, Logger:info de lo que esta pasando por consola)
- └─ PanaderiaApplication.java (Main)
+```
+com.pfcdaw.pfcdaw
+ ├─ model/
+ │   ├─ ClienteEntity.java
+ │   ├─ ProductoEntity.java
+ │   ├─ PedidoEntity.java
+ │   ├─ LineaPedido.java
+ │   └─ EstadoPedidoEnum.java
+ ├─ dto/
+ │   ├─ PedidoCreateDto.java
+ │   └─ StockUpdateDto.java
+ ├─ repository/
+ │   ├─ ClienteRepository.java
+ │   ├─ ProductoRepository.java
+ │   └─ PedidoRepository.java
+ ├─ service/
+ │   ├─ ProductoService.java
+ │   └─ PedidoService.java
+ ├─ controller/
+ │   ├─ ClienteController.java
+ │   ├─ ProductoController.java
+ │   └─ PedidoController.java
+ ├─ config/
+ │   └─ WebConfig.java (CORS)
+ └─ PfcdawApplication.java (Main)
+```
+
+### Diagrama de clases (Modelo de datos)
+
+Este diagrama muestra las **entidades principales** del sistema y sus **relaciones**. Cada cliente puede tener múltiples pedidos, cada pedido contiene varias líneas (LineaPedido), y cada línea referencia un producto específico con su cantidad y subtotal.
 
 ```mermaid
 classDiagram
-    class Product {
+    class ClienteEntity {
+      +Long id
+      +String nombre
+      +String apellido
+      +String email (unique)
+      +String direccion
+      +String telefono
+      +List~PedidoEntity~ pedidos
+    }
+    
+    class ProductoEntity {
       +Long id
       +String nombre
       +String descripcion
-      +Double precio
+      +BigDecimal precio
       +Integer stock
+      +List~LineaPedido~ lineasPedido
+      +aumentarStock(cantidad)
+      +reducirStock(cantidad)
     }
-    class Pedido {
+    
+    class PedidoEntity {
       +Long id
-      +String clienteNombre
-      +String telefono
-      +Double total
+      +LocalDateTime fechaPedido
+      +BigDecimal total
+      +EstadoPedidoEnum estado
+      +ClienteEntity cliente
+      +List~LineaPedido~ lineasPedido
+      +recalcularTotal()
     }
+    
+    class LineaPedido {
+      +Long id
+      +PedidoEntity pedido
+      +ProductoEntity producto
+      +Integer cantidad
+      +BigDecimal pTotal
+    }
+    
+    class EstadoPedidoEnum {
+      <<enumeration>>
+      PENDIENTE
+      EN_PREPARACION
+      COMPLETADO
+      ENTREGADO
+      CANCELADO
+    }
+    
+    ClienteEntity "1" --> "*" PedidoEntity : tiene
+    PedidoEntity "1" --> "*" LineaPedido : contiene
+    ProductoEntity "1" --> "*" LineaPedido : aparece en
+    PedidoEntity --> EstadoPedidoEnum : estado
+```
+
+### Diagrama de secuencia: Crear Pedido
+
+Este diagrama ilustra el **flujo completo** de creación de un pedido, desde que el cliente envía la petición HTTP hasta que se persiste en la base de datos. Muestra las **validaciones**, el **cálculo de totales** con BigDecimal, la **creación de líneas de pedido** y la **reducción automática de stock** de forma transaccional.
+
+```mermaid
+sequenceDiagram
+    actor Cliente
+    participant Controller as PedidoController
+    participant Service as PedidoService
+    participant ProdService as ProductoService
+    participant Repository as PedidoRepository
+    participant DB as MySQL
+    
+    Cliente->>Controller: POST /pedidos<br/>{clienteId, productos}
+    Controller->>Service: createPedido(dto)
+    
+    Service->>DB: Validar cliente existe
+    Service->>DB: Validar productos existen
+    Service->>Service: Validar cantidades > 0
+    Service->>Service: Calcular subtotales (BigDecimal)
+    Service->>Service: Crear PedidoEntity + LineaPedido
+    
+    Service->>Repository: save(pedido)
+    Repository->>DB: INSERT pedidos, lineas_pedido
+    DB-->>Repository: OK (cascade)
+    
+    loop Por cada línea
+        Service->>ProdService: reducirStock(productoId, cantidad)
+        ProdService->>DB: UPDATE productos SET stock = stock - cantidad
+        DB-->>ProdService: OK
+    end
+    
+    Service-->>Controller: PedidoEntity guardado
+    Controller-->>Cliente: 201 Created<br/>{pedido con líneas}
 ```
 #### Decisiones de diseño
 -Uso de de Logger para ver la info de lo que está pasando en la app por consola
@@ -187,38 +310,68 @@ classDiagram
 
 - Es un prototipo funcional para ejecución local
 
-#### Uso EndPoints
-EndPoints de productos,clientes y pedidos:
-- **Productos**:
+#### Uso de Endpoints (API REST)
 
-| Método | Endpoint         | Descripción           |
-|--------|------------------|-----------------------|
-| GET    | /productos       | Listar todos          |
-| GET    | /productos/{id}  | Obtener por ID        |
-| POST   | /productos       | Crear nuevo producto  |
-| PUT    | /productos/{id}  | Actualizar producto   |
-| DELETE | /productos/{id}  | Eliminar producto     |
+**Base URL**: `http://localhost:8080`
 
-- **Clientes**:
+##### Endpoints de Clientes
 
-| Método | Endpoint         | Descripción                       |
-|--------|------------------|-----------------------------------|
-| GET    | /clientes        | Listar todos los clientes         |
-| GET    | /clientes/{id}   | Obtener cliente por ID            |
-| POST   | /clientes        | Crear nuevo cliente               |
-| PUT    | /clientes/{id}   | Actualizar cliente                |
-| DELETE | /clientes/{id}   | Eliminar cliente                  |
+| Método | Endpoint         | Body (JSON) | Descripción |
+|--------|------------------|-------------|-------------|
+| GET    | `/clientes`      | - | Listar todos los clientes |
+| GET    | `/clientes/{id}` | - | Obtener cliente por ID |
+| POST   | `/clientes`      | `{nombre, apellido, email, direccion, telefono}` | Crear nuevo cliente |
+| PUT    | `/clientes/{id}` | `{nombre, apellido, email, direccion, telefono}` | Actualizar cliente |
+| DELETE | `/clientes/{id}` | - | Eliminar cliente |
 
-- **Pedidos**:
+##### Endpoints de Productos
 
-| Método | Endpoint                   | Descripción                                       |
-|--------|----------------------------|---------------------------------------------------|
-| GET    | /pedidos                   | Listar todos los pedidos                          |
-| GET    | /pedidos/{id}              | Obtener pedido por ID                             |
-| GET    | /pedidos/cliente/{clienteId} | Listar pedidos de un cliente                      |
-| POST   | /pedidos                   | Crear un pedido (recibe PedidoCreateDto: clienteId, productoIds) |
-| PUT    | /pedidos/{id}              | Actualizar un pedido (productos, total, estado)   |
-| DELETE | /pedidos/{id}              | Eliminar un pedido                                |
+| Método | Endpoint         | Body (JSON) | Descripción |
+|--------|------------------|-------------|-------------|
+| GET    | `/productos`     | - | Listar todos los productos |
+| GET    | `/productos/{id}` | - | Obtener producto por ID |
+| POST   | `/productos`     | `{nombre, descripcion, precio, stock}` | Crear nuevo producto |
+| PUT    | `/productos/{id}` | `{nombre, descripcion, precio}` | Actualizar datos del producto (NO stock) |
+| DELETE | `/productos/{id}` | - | Eliminar producto |
+| POST   | `/productos/{id}/AumStock` | `{cantidad}` | **Aumentar stock** del producto |
+
+**Nota**: El stock solo se modifica mediante:
+- `POST /productos/{id}/AumStock` (aumentar manualmente)
+- `POST /pedidos` (reduce automáticamente al crear pedido)
+
+##### Endpoints de Pedidos
+
+| Método | Endpoint                   | Body (JSON) | Descripción |
+|--------|----------------------------|-------------|-------------|
+| GET    | `/pedidos`                 | - | Listar todos los pedidos con líneas |
+| GET    | `/pedidos/{id}`            | - | Obtener pedido por ID con detalles |
+| GET    | `/pedidos/cliente/{clienteId}` | - | Listar pedidos de un cliente específico |
+| POST   | `/pedidos`                 | `{clienteId, productos: {productoId: cantidad}}` | **Crear pedido** (reduce stock automáticamente) |
+| PUT    | `/pedidos/{id}`            | `{total, estado}` | Actualizar pedido (cambiar estado) |
+| DELETE | `/pedidos/{id}`            | - | Eliminar pedido |
+
+**Ejemplo de creación de pedido**:
+```json
+POST /pedidos
+{
+  "clienteId": 1,
+  "productos": {
+    "1": 2,
+    "3": 1
+  }
+}
+```
+Esto crea un pedido para el cliente 1 con:
+- 2 unidades del producto 1
+- 1 unidad del producto 3
+
+El sistema automáticamente:
+1. Valida que cliente y productos existan
+2. Valida que haya stock suficiente
+3. Crea el pedido con estado PENDIENTE
+4. Crea 2 líneas de pedido (LineaPedido)
+5. Reduce el stock de cada producto
+6. Calcula el total con precisión decimal (BigDecimal)
 
 
 ## 3.Planificación
@@ -234,6 +387,8 @@ Para la planificación del desarrollo se empleará una **metodología Kanban**, 
 5. **Documentación y entrega final** – 1 semana
 
 ### Diagrama de Gantt
+
+**Cronograma de desarrollo**: Representa la distribución temporal de las fases del proyecto, marcando las etapas críticas (backend y frontend) y las dependencias entre tareas.
 
 ```mermaid
 gantt
@@ -270,3 +425,143 @@ El desarrollo se centra en un único desarrollador, con tiempos ajustados y muy 
 
 
 ##### fin 2º entrega(PFC)
+
+---
+
+## 4. Implementación Técnica del Backend
+
+### 4.1. Tecnologías Utilizadas
+
+| Tecnología | Versión | Uso |
+|------------|---------|-----|
+| Java | 21 | Lenguaje base |
+| Spring Boot | 3.5.7 | Framework backend |
+| Spring Data JPA | 3.5.7 | Persistencia ORM |
+| MySQL | 8.x | Base de datos |
+| Lombok | Latest | Reducción boilerplate |
+| Jakarta Validation | Latest | Validaciones |
+| SLF4J | Latest | Logging |
+
+### 4.2. Decisiones de Arquitectura
+
+#### **Uso de BigDecimal en vez de Double**
+**Problema detectado**: Al usar `Double` para precios, operaciones como `1.80 * 3` daban `3.5999999999...` por la representación binaria.
+
+**Solución implementada**: Migración a `BigDecimal` en todos los campos monetarios:
+- `ProductoEntity.precio`: `BigDecimal`
+- `LineaPedido.pTotal`: `BigDecimal`
+- `PedidoEntity.total`: `BigDecimal`
+- Base de datos: `DECIMAL(19,2)`
+
+**Resultado**: Precisión exacta en cálculos monetarios.
+
+#### **LineaPedido como entidad separada**
+En vez de guardar solo IDs de productos en un pedido, se creó una entidad `LineaPedido` que actúa como tabla intermedia entre `PedidoEntity` y `ProductoEntity`.
+
+**Ventajas**:
+- Permite cantidad variable por producto
+- Guarda precio histórico (si el precio cambia después, el pedido mantiene el precio original)
+- Permite calcular subtotales por línea
+
+#### **Lifecycle Hooks para recalcular totales**
+Se implementaron los métodos `@PrePersist` y `@PreUpdate` en `PedidoEntity` para recalcular automáticamente el total sumando las líneas:
+
+```java
+@PrePersist
+@PreUpdate
+public void recalcularTotal() {
+    if (lineasPedido != null && !lineasPedido.isEmpty()) {
+        this.total = lineasPedido.stream()
+            .map(LineaPedido::getPTotal)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    } else {
+        this.total = BigDecimal.ZERO;
+    }
+}
+```
+
+**Ventaja**: Aunque se eliminen productos (cascade) o se modifiquen líneas, el total siempre está sincronizado.
+
+#### **Prevención de recursión infinita en JSON**
+**Problema**: Al serializar `PedidoEntity` con Jackson, se generaba:
+```
+Pedido → lineasPedido → LineaPedido → pedido → lineasPedido → ... (∞)
+```
+
+**Solución**: Añadir `@JsonIgnore` en la referencia inversa:
+```java
+@ManyToOne
+@JsonIgnore  // Corta la recursión
+private PedidoEntity pedido;
+```
+
+#### **Gestión de stock transaccional**
+El servicio `PedidoService` está anotado con `@Transactional`, lo que garantiza:
+- Si falla la reducción de stock de algún producto → rollback completo
+- Si falla guardar el pedido → no se reduce stock
+- Atomicidad: o se completa todo o nada
+
+### 4.3. Validaciones Implementadas
+
+#### **Nivel DTO** (entrada de datos)
+```java
+@NotNull
+@Size(min = 1, message = "El pedido debe tener al menos un producto")
+private Map<Long, Integer> productos;
+```
+
+#### **Nivel Entity** (persistencia)
+```java
+@NotBlank(message = "El nombre del producto es obligatorio")
+private String nombre;
+
+@DecimalMin(value = "0.0", message = "El precio debe ser positivo")
+private BigDecimal precio;
+```
+
+#### **Nivel Service** (lógica de negocio)
+- Validación de cliente existente
+- Validación de productos existentes
+- Validación de stock suficiente
+- Validación de cantidades > 0
+
+### 4.4. Logs Implementados
+
+Todos los controllers y services tienen logging estructurado:
+
+**Ejemplo en ProductoController**:
+```java
+log.info("[POST /productos/{}] Creando nuevo producto: {}", producto.getNombre());
+log.debug("[PUT /productos/{}] Antes: nombre={}, precio={}", id, producto.getNombre(), producto.getPrecio());
+log.warn("[DELETE /productos/{}] Producto no encontrado", id);
+```
+
+**Nivel configurado**: `DEBUG` en desarrollo, permite ver:
+- Peticiones HTTP entrantes
+- Queries SQL ejecutadas
+- Operaciones de negocio (creación pedido, reducción stock)
+
+### 4.5. Testing Realizado
+
+#### **Tests manuales con Postman/Thunder Client**
+
+| Test | Resultado |
+|------|-----------|
+| Crear cliente | ✅ OK |
+| Crear producto | ✅ OK |
+| Crear pedido con 2 productos | ✅ OK (stock reduce correctamente) |
+| Crear pedido con stock insuficiente | ✅ OK (rechaza con error) |
+| Aumentar stock manualmente | ✅ OK |
+| Eliminar producto usado en pedidos | ✅ OK (cascade elimina líneas, recalcula total) |
+| Obtener pedidos de un cliente | ✅ OK |
+| JSON sin recursión infinita | ✅ OK |
+| Decimales exactos en totales | ✅ OK (BigDecimal funciona) |
+
+### 4.6. Problemas Resueltos Durante Desarrollo
+
+1. **Recursión infinita en JSON** → Solucionado con `@JsonIgnore`
+2. **Decimales imprecisos** → Migrado de `Double` a `BigDecimal`
+3. **Totales desincronizados** → Añadidos lifecycle hooks
+4. **Import sin usar** → Limpiado en `PedidoController`
+
+##### fin 3ª entrega (Implementación Backend)
