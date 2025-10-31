@@ -26,7 +26,7 @@ graph TD
     D[Futuras Mejoras] --> D1[Migración a React]
     D --> D2[Pasarela de Pago]
     D --> D3[Sistema Notificaciones]
-    D --> D4[@Version en ProductosEntity: Optimistic locking]
+    D --> D4[".@Version" en ProductosEntity: Optimistic locking]
     
     A --> D
 ```
