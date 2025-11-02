@@ -53,7 +53,7 @@ pnpm-debug.log*
 Thumbs.db
 
 ### Archivos de entorno ###
-# NOTA: .env NO está ignorado para facilitar pruebas del PFC a los profesores
+# NOTA: .env NO está ignorado para facilitar pruebas
 # .env.local y similares SÍ se ignoran por seguridad
 .env.local
 .env.development.local
