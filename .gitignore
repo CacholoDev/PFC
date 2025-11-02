@@ -1,56 +1,72 @@
-# Dependencias
-/node_modules
+##### GITIGNORE CONSOLIDADO - PFC PANADERÍA #####
 
-# Builds de producción
-/build
-/dist
+### Java / Spring Boot ###
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Archivos de logs
+### Spring Tool Suite ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/*
+# Excepción: permitir extensiones recomendadas y settings específicos
+!.vscode/extensions.json
+!.vscode/settings.json
+
+### Node.js (si llegas a migrar frontend a React) ###
+node_modules/
+
+### Archivos de logs ###
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
-# Archivos de entorno (¡no los subas si contienen credenciales!)
-.env
+### Sistema operativo ###
+.DS_Store
+Thumbs.db
+
+### Archivos de entorno ###
+# NOTA: .env NO está ignorado para facilitar pruebas del PFC a los profesores
+# .env.local y similares SÍ se ignoran por seguridad
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Editor y sistema
-.DS_Store
-Thumbs.db
-
-# IDEs
-.idea/
-*.swp
-# Ignoro el contenido (salvo excepciones pero no el dir completo)
-.vscode/*
-
-# Coverage (tests)
+### Coverage (tests) ###
 coverage
 
-# Cache
+### Cache ###
 .cache
 
-
-## Custom
-
-# Visual Code
-.vscode/**
-
-# Excluímos cualquier fichero .pdf (este repo no es lugar para ellos)
+### PDFs (no incluir en repo) ###
 *.pdf
 
-# Quiero meter explícitamente en el repo este fichero:
-!.vscode/extensions.json
-
-# No es frecuente meter las settings de complementos de vscode en un repo
-# Se introduce para configurar markdown.extension.toc.levels
-# para que no incluya el nivel 1 en los índices
-!.vscode/settings.json
-
-##### FIN DE TEMPLATE #####
-
-# Incluye los ignores que consideres a partir de aquí
+##### FIN GITIGNORE #####
