@@ -1,0 +1,58 @@
+/* === ESTILOS PO LOGIN === */
+
+/* Fondo degradado cos colores da panadería */
+body {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card bordes redondeados + sombra suave */
+.card {
+    border: none;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+/* Hover no button de login */
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+    background-color: #ffb300;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+/* Inputs co focus personalizado */
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Icono do logo + grande + animacion */
+.bi-shop {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Alert de error personalizado */
+#alertError {
+    border-left: 4px solid #dc3545;
+}
+
+/* Texto dos datos de proba */
+.bg-light {
+    border-left: 3px solid #ffc107;
+}

@@ -1,60 +1,56 @@
 package com.pfcdaw.pfcdaw.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.dto.LoginDto;
-import com.pfcdaw.pfcdaw.repository.LoginRepository;
+import com.pfcdaw.pfcdaw.model.ClienteEntity;
+import com.pfcdaw.pfcdaw.repository.ClienteRepository;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/auth")
 public class LoginUsuarioC {
 
     private static final Logger log = LoggerFactory.getLogger(LoginUsuarioC.class);
-    private final LoginRepository loginRepository;
+    private final ClienteRepository clienteRepository;
 
-    public LoginUsuarioC(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
+    public LoginUsuarioC(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
-        log.info("Intentando iniciar sesión para el usuario: {}", loginDto.getEmail());
-        // Lógica de autenticación aquí
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDto loginDto) {
+        // Buscar el cliente por email
+        log.info("[POST /auth/login] Intentando login para: {}", loginDto.getEmail());
+        ClienteEntity cliente = clienteRepository.findByEmail(loginDto.getEmail())
+                .orElseThrow(() -> {
+                    log.warn("[POST /auth/login] Cliente no encontrado: {}", loginDto.getEmail());
+                    return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo inválido");
+                });
+        // Verificar la contraseña
+        if (!cliente.getPassword().equals(loginDto.getPassword())) {
+            log.warn("[POST /auth/login] Contraseña incorrecta para el cliente: {}", loginDto.getEmail());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña inválida");
+        }
+        // Login exitoso - devolver solo datos necesarios
+        log.info("[POST /auth/login] Login exitoso: {} (rol: {})", cliente.getEmail(), cliente.getRole());
+        return ResponseEntity.ok(Map.of(
+                "id", cliente.getId(),
+                "nombre", cliente.getNombre(),
+                "apellido", cliente.getApellido(),
+                "email", cliente.getEmail(),
+                "rol", cliente.getRole()));
     }
 
 }
-
-/*
-     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginDto request) {
-        log.info("[POST /auth/login] Intento de login: {}", request.getEmail());
-        
-        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> {
-                log.warn("[POST /auth/login] Usuario no encontrado: {}", request.getEmail());
-                return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
-            });
-        
-        if (!usuario.getPassword().equals(request.getPassword())) {
-            log.warn("[POST /auth/login] Password incorrecta para: {}", request.getEmail());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
-        }
-        
-        log.info("[POST /auth/login] Login exitoso: {} (rol: {})", usuario.getEmail(), usuario.getRol());
-        
-        // Retornar datos do user (o frontend  gardaraos no localStorage)
-        return ResponseEntity.ok(Map.of(
-            "id", usuario.getId(),
-            "email", usuario.getEmail(),
-            "rol", usuario.getRol()
-        ));
-    }
- */

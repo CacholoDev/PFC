@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,8 +51,18 @@ public class ClienteEntity {
     @Pattern(regexp = "^[0-9]{9}$", message = "El teléfono debe tener 9 dígitos")
     private String telefono;
 
-    @OneToMany(mappedBy = "cliente", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true) // cascade para gardar pedidos automaticamente cando se .save un cliente # orphanRemoval para eliminar pedidos do cliente na BD e que non queden colgados cando borramos un cliente ou se da de baixxa por exemplo
-    @JsonIgnore  // evita loops infinitos, consulta pedidos por separado
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Column(nullable = false)
+    @JsonIgnore  // Non devolve password en respostas JSON
+    private String password;
+
+    @Enumerated(EnumType.STRING) // Garda Enum como texto na BDD
+    @Builder.Default // "USER" por defecto
+    private LoginRoleEnum role = LoginRoleEnum.USER;
+
+    // Relación con pedidos: cascade ALL (garda/actualiza/elimina automáticamente) + orphanRemoval (borra pedidos huérfanos)
+    @OneToMany(mappedBy = "cliente", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Evita loops infinitos, consulta pedidos por separado
     private List<PedidoEntity> pedidos;
 
 }

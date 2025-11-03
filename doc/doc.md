@@ -105,7 +105,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
-- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,Roles de loggin, añadir distintas funcionalidades que pueda pedir el negocio.
+- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,mejora en vez de texto plano por password usar el spring security con encryptado(BCryptPasswordEncoder) hasheando las password al guardar y comparandolascon .matches al logearse, añadir distintas funcionalidades que pueda pedir el negocio.
 - Se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
     
 
