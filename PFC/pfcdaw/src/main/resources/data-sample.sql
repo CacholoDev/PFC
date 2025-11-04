@@ -9,6 +9,7 @@
 INSERT IGNORE INTO clientes (nombre, apellido, email, direccion, telefono, password, role)
 VALUES 
 ('Admin', 'Panadería', 'admin@panaderia.com', 'Rúa Principal 1, Noia', '666000000', 'admin123', 'ADMIN'),
+('UserAdmin', 'Panadero2', 'useradmin@panaderia.com', 'Rúa Secundaria 2, Noia', '666000001', 'admin123', 'ADMIN'),
 ('Juan', 'Pérez', 'juan.perez@example.com', 'Rúa de Noia 1', '666666666', 'user123', 'USER'),
 ('María', 'García', 'maria.garcia@example.com', 'Avenida Galicia 1, Santiago', '981820000', 'user123', 'USER'),
 ('Anxo', 'López', 'anxo.lopez@example.com', 'Praza da Coruña 1, Coruña', '606060606', 'user123', 'USER');
