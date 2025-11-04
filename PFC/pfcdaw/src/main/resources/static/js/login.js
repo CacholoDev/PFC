@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Listener formulario
     loginForm.addEventListener('submit', async function(e) {
-        e.preventDefault(); // Prevenir envío tradicional do form
+        e.preventDefault(); // Previr recarga
         
         // Obtener valores do form
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         
-        // Ocultar alerta de error si estaba visible
+        // Ocultar alerta do error si ta visible co d-none de bootstrap
         alertError.classList.add('d-none');
         
         // Cambiar o button a "cargando..."
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnLogin.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Iniciando sesión...';
         
         try {
-            // Peetición POST o backend
+            // Peeticion POST o backend
             const response = await fetch('http://localhost:8080/auth/login', {
                 method: 'POST',
                 headers: {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ email, password })
             });
             
-            // Si a respuesta non e OK (401, 500, etc.)
+            // Si a respuesta non e OK --> (401, 500, etc.)
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Credenciales inválidas');
@@ -42,11 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Obtener datos do usuario
             const data = await response.json();
             console.log('Login exitoso:', data);
-            
+                        
             // LocalStorage
             localStorage.setItem('usuario', JSON.stringify(data));
             
-            // Redirixir según rol
+            // Redirixir x rol
             if (data.rol === 'ADMIN') {
                 window.location.href = 'dashboard.html';
             } else {
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             errorMessage.textContent = error.message || 'Error al iniciar sesión. Intenta de nuevo.';
             alertError.classList.remove('d-none');
             
-            // Restaurar botón
+            // Restauro button
             btnLogin.disabled = false;
             btnLogin.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión';
         }

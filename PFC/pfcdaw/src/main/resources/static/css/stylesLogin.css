@@ -10,7 +10,7 @@ body {
 .card {
     border: none;
     border-radius: 15px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); /* Efecto vidro, desenfoqua o que hai detas do card */
 }
 
 /* Hover no button de login */
@@ -47,7 +47,7 @@ body {
     }
 }
 
-/* Alert de error personalizado */
+/* Alert error personalizado */
 #alertError {
     border-left: 4px solid #dc3545;
 }

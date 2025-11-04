@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Panadería PFC</title>
     
-    <!-- Bootstrap 5.3.8 CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
     <!-- CSS -->
     <link rel="stylesheet" href="css/stylesLogin.css">
+
 </head>
 <body>
     <!-- Contenedor principal centrado -->
@@ -31,14 +30,14 @@
                             <p class="text-muted">Inicia sesión para continuar</p>
                         </div>
                         
-                        <!-- Alerta de error (oculta por defecto) -->
+                        <!-- Alerta do erro (oculta por defecto) -->
                         <div id="alertError" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <span id="errorMessage"></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         
-                        <!-- Formulario de login -->
+                        <!-- Formulario login -->
                         <form id="loginForm">
                             
                             <!-- Email -->
@@ -52,7 +51,7 @@
                                     class="form-control" 
                                     id="email" 
                                     name="email" 
-                                    placeholder="ejemplo@email.com"
+                                    placeholder="ejemplo@gmail.com"
                                     required>
                             </div>
                             

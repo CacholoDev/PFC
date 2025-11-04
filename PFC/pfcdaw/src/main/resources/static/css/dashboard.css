@@ -1,0 +1,186 @@
+/* === ESTILOS DASHBOARD === */
+
+/* Fondo degradado cos colores da panadería */
+body {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* Título principal con sombra */
+h1 {
+    color: #0f0f0f;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+}
+
+.lead {
+    color: #0f0f0f;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* === NAVBAR === */
+
+/* Navbar fondo blanco + sombra + bordes redondeados */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    padding: 1rem 1.5rem;
+}
+
+/* Marca (logo + texto) con hover */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #333 !important;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+/* Icono de la tienda con animación pulse */
+.bi-shop {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Nome usuario na navbar */
+#nombreUsuario {
+    font-weight: 600;
+    color: #41241c;
+    font-size: 1rem;
+}
+
+/* buutton pechar sesion */
+#btnLogout {
+    border-color: #ffc107;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#btnLogout:hover {
+    background-color: #ffc107;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+/* === RESPONSIVE === */
+
+/* móvil: navbar compacto */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    #btnLogout {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* === ANIMACIONS === */
+
+/* Animación navbar */
+#naviBar {
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animación titulo */
+.row.mt-5:first-child {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* === PESTAÑAS (TABS) === */
+
+/* Card tabs */
+.card {
+    border: none;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+/* tabs personalizadas */
+.nav-tabs {
+    border-bottom: 2px solid #ffc107;
+}
+
+.nav-tabs .nav-link {
+    color: #555;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #ffc107;
+    transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link.active {
+    color: #ffc107;
+    background-color: transparent;
+    border-bottom: 3px solid #ffc107;
+    font-weight: 700;
+}
+
+/* Contenido tabs animación */
+.tab-pane {
+    animation: fadeInTab 0.4s ease-out;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

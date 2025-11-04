@@ -60,7 +60,7 @@ public class ClienteEntity {
     @Builder.Default // "USER" por defecto
     private LoginRoleEnum role = LoginRoleEnum.USER;
 
-    // Relación con pedidos: cascade ALL (garda/actualiza/elimina automáticamente) + orphanRemoval (borra pedidos huérfanos)
+    // Relación con pedidos: cascade ALL (garda/actualiza/elimina automáticamente) + orphanRemoval (borra pedidos vacios)
     @OneToMany(mappedBy = "cliente", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // Evita loops infinitos, consulta pedidos por separado
     private List<PedidoEntity> pedidos;

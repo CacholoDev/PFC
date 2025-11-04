@@ -31,19 +31,19 @@ public class LoginUsuarioC {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDto loginDto) {
-        // Buscar el cliente por email
+        // Buscar cliente por email
         log.info("[POST /auth/login] Intentando login para: {}", loginDto.getEmail());
         ClienteEntity cliente = clienteRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> {
                     log.warn("[POST /auth/login] Cliente no encontrado: {}", loginDto.getEmail());
                     return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo inválido");
                 });
-        // Verificar la contraseña
+        // Verificar contraseña
         if (!cliente.getPassword().equals(loginDto.getPassword())) {
             log.warn("[POST /auth/login] Contraseña incorrecta para el cliente: {}", loginDto.getEmail());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña inválida");
         }
-        // Login exitoso - devolver solo datos necesarios
+        // Login exitoso - devolver so datos necesarios
         log.info("[POST /auth/login] Login exitoso: {} (rol: {})", cliente.getEmail(), cliente.getRole());
         return ResponseEntity.ok(Map.of(
                 "id", cliente.getId(),
