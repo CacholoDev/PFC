@@ -7,8 +7,7 @@
     <title>Panel Admin</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <!-- CSS -->
@@ -19,9 +18,9 @@
     <div class="container">
         <div class="row mt-5">
             <div class="col text-center">
-                <h1>Bienvenid@ al Panel de Administración</h1>
+                <h1><i class="bi bi-person-fill-gear me-2"></i>Panel de Administración</h1>
                 <p class="lead">
-                    Aquí puedes gestionar los productos, pedidos y usuarios.
+                    Gestión de productos, pedidos y usuarios.
                 </p>
             </div>
         </div>
@@ -42,7 +41,8 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <span class="nav-link" id="nombreUsuario">Cargando...</span>
+                                <i class="bi bi-person-circle me-1"></i>
+                                <span id="nombreUsuario">Cargando...</span>
                             </li>
                         </ul>
                         <div class="d-flex">
@@ -57,7 +57,7 @@
         </div>
 
         <!-- === PESTAÑAS (TABS) === -->
-        <div class="row mt-4">
+        <div class="row mt-4 mb-5">
             <div class="col">
                 <!-- Card das tabs -->
                 <div class="card shadow-lg">
@@ -66,28 +66,25 @@
                         <!-- Navegación -->
                         <ul class="nav nav-tabs mb-4 nav-fill" id="myTab" role="tablist">
                             <!-- tab Clientes -->
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="clientes-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#clientes" type="button" role="tab">
-                                    <i class="bi bi-people-fill me-2"></i>
-                                    Clientes
-                                </button>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="clientes-tab" data-bs-toggle="tab" href="#clientes" role="tab" aria-controls="clientes" aria-selected="true">
+                                        <i class="bi bi-people-fill me-2"></i>
+                                        Clientes
+                                    </a>
                             </li>
                             <!-- tab Productos -->
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="productos-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#productos" type="button" role="tab">
-                                    <i class="bi bi-box-seam me-2"></i>
-                                    Productos
-                                </button>
+                                    <a class="nav-link" id="productos-tab" data-bs-toggle="tab" href="#productos" role="tab" aria-controls="productos" aria-selected="false">
+                                        <i class="bi bi-box-seam-fill me-2"></i>
+                                        Productos
+                                    </a>
                             </li>
                             <!-- tab Pedidos -->
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pedidos-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#pedidos" type="button" role="tab">
-                                    <i class="bi bi-cart-fill me-2"></i>
-                                    Pedidos
-                                </button>
+                                    <a class="nav-link" id="pedidos-tab" data-bs-toggle="tab" href="#pedidos" role="tab" aria-controls="pedidos" aria-selected="false">
+                                        <i class="bi bi-cart-fill me-2"></i>
+                                        Pedidos
+                                    </a>
                             </li>
                         </ul>
 
@@ -95,33 +92,42 @@
                         <div class="tab-content" id="myTabContent">
                             
                             <!-- Contenido: Clientes -->
-                            <div class="tab-pane fade show active" id="clientes" role="tabpanel">
+                            <div class="tab-pane fade show active" id="clientes" role="tabpanel" aria-labelledby="clientes-tab" tabindex="0">
                                 <h4 class="mb-3">
-                                    <i class="bi bi-people-fill text-primary me-2"></i>
+                                    <i class="bi bi-people-fill text-warning me-2"></i>
                                     Gestión de Clientes
                                 </h4>
-                                <p class="text-muted">Aquí se mostrará la tabla de clientes (próximamente)</p>
-                                <!-- tabla de clientes -->
+                                <p class="text-muted">Mostrando tabla clientes</p>
+                                <!-- tabla clientes -->
+                                <div id="tablaClientes" class="table-responsive">
+                                    <!-- Tabla cargase x JS -->
+                                </div>
                             </div>
 
                             <!-- Contenido: Productos -->
-                            <div class="tab-pane fade" id="productos" role="tabpanel">
+                            <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="productos-tab" tabindex="0">
                                 <h4 class="mb-3">
-                                    <i class="bi bi-box-seam text-success me-2"></i>
+                                    <i class="bi bi-box-seam-fill text-warning me-2"></i>
                                     Gestión de Productos
                                 </h4>
-                                <p class="text-muted">Aquí se mostrará la tabla de productos (próximamente)</p>
-                                <!-- tabla de productos -->
+                                <p class="text-muted">Mostrando tabla productos</p>
+                                <!-- tabla productos -->
+                                  <div id="tablaProductos" class="table-responsive">
+                                    <!-- Tabla cargase x JS -->
+                                </div>
                             </div>
 
                             <!-- Contenido: Pedidos -->
-                            <div class="tab-pane fade" id="pedidos" role="tabpanel">
+                            <div class="tab-pane fade" id="pedidos" role="tabpanel" aria-labelledby="pedidos-tab" tabindex="0">
                                 <h4 class="mb-3">
                                     <i class="bi bi-cart-fill text-warning me-2"></i>
                                     Gestión de Pedidos
                                 </h4>
-                                <p class="text-muted">Aquí se mostrará la tabla de pedidos (próximamente)</p>
-                                <!-- tabla de pedidos -->
+                                <p class="text-muted">Mostrando tabla pedidos</p>
+                                <!-- tabla pedidos -->
+                                  <div id="tablaPedidos" class="table-responsive">
+                                    <!-- Tabla cargase x JS -->
+                                </div>
                             </div>
 
                         </div>
@@ -131,12 +137,14 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5.3.8 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz4YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+    <!-- Bootstrap 5.3.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
     <!-- JS -->
     <script src="js/dashboard.js"></script>
+    <script src="js/clientes.js"></script>
+    <script src="js/productos.js"></script>
+    <script src="js/pedidos.js"></script>
 </body>
 
 </html>

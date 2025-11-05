@@ -52,7 +52,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody @NonNull ClienteEntity nuevoCliente) {
+    public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
         log.info("[POST /clientes] Creando cliente: {}", nuevoCliente.getEmail());
         ClienteEntity clienteGuardado = clienteRepository.save(nuevoCliente);
         log.info("[POST /clientes] Cliente creado con ID: {}", clienteGuardado.getId());

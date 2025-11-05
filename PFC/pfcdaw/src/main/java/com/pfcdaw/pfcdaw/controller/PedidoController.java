@@ -65,7 +65,7 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody @NonNull PedidoCreateDto dto) {
+    public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoCreateDto dto) {
         log.info("[POST /pedidos] Creando pedido para cliente: {}", dto.getClienteId());
         PedidoEntity pedidoGuardado = pedidoService.createPedido(dto);
         log.info("[POST /pedidos] Pedido creado con ID: {}", pedidoGuardado.getId());
