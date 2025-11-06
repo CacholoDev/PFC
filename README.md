@@ -35,6 +35,7 @@ graph TD
 ## Estado del Proyecto
 
 ✅ **BACKEND COMPLETADO**
+**(Spring Boot)**
 - API REST funcional con 15+ endpoints
 - Gestión completa de Clientes, Productos y Pedidos
 - Sistema de stock automático con transacciones
@@ -42,6 +43,7 @@ graph TD
 - Precisión decimal exacta con BigDecimal
 
 ⏳ **FRONTEND EN DESARROLLO**
+**(js+html+css+Bootstrap)**
 - Pendiente: Catálogo de productos, carrito y formulario de pedido
 
 ## Instalación / Puesta en marcha
@@ -93,14 +95,14 @@ El backend arrancará en `http://localhost:8080`
    - Click **Continuar**
    - Esto creará 3 clientes y 4 productos de ejemplo
 
-7. **Probar la API** con Thunder Client (VSCode) o Postman:
+7. **Probar la API** con Postman:
 ```http
 GET http://localhost:8080/productos
 GET http://localhost:8080/clientes
 POST http://localhost:8080/pedidos
 ```
 
-8. **Frontend**: VSCode + LiveServer (próximamente)
+1. **Frontend**: VSCode + LiveServer / endpoints para funcionalidad completa con la app arrancada
 
 ## Uso
 

@@ -44,7 +44,7 @@
     - [**Nivel Service** (lógica de negocio)](#nivel-service-lógica-de-negocio)
   - [4.4. Logs Implementados](#44-logs-implementados)
   - [4.5. Testing Realizado](#45-testing-realizado)
-    - [**Tests manuales con Postman/Thunder Client**](#tests-manuales-con-postmanthunder-client)
+    - [**Tests manuales con Postman**](#tests-manuales-con-postman)
   - [4.6. Problemas Resueltos Durante Desarrollo](#46-problemas-resueltos-durante-desarrollo)
       - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
 
@@ -543,7 +543,7 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 
 ### 4.5. Testing Realizado
 
-#### **Tests manuales con Postman/Thunder Client**
+#### **Tests manuales con Postman**
 
 | Test | Resultado |
 |------|-----------|

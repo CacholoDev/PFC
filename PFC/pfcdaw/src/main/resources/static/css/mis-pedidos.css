@@ -54,12 +54,9 @@ h1 {
     color: #fff;
 }
 
+/* convertindo os nombres das columnas a mayuscula */
 .table thead th {
-    border: none;
-    font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    padding: 1rem;
 }
 
 .table tbody tr {

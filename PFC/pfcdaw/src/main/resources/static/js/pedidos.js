@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Total</th>
-                                <th>EstadoPedido</th>
+                                <th>Estado-Pedido</th>
                                 <th>NºLineas(NºProductos)</th>
                             </tr>
                         </thead>
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <td>${new Date(pedido.fechaPedido).toLocaleString()}</td>
                                     <td>${pedido.total.toFixed(2)} €</td>
                                     <td>${pedido.estado}</td>
-                                    <td>${pedido.lineasPedido.length}</td>
+                                    <td>${pedido.lineasPedido?.length || 0}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
