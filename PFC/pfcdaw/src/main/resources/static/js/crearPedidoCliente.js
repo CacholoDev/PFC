@@ -5,43 +5,57 @@ document.addEventListener("DOMContentLoaded", function () {
         // Abrir modal con Bootstrap
         const modal = new bootstrap.Modal(document.getElementById('modalCrearPedido'));
         modal.show();
+
+        // Cargar productos disponibles
+        cargarProductosDisponibles();
+
+
+
+
+
+
     });
     }, 500);
+
+    // Cargar productos disponibles
+    function cargarProductosDisponibles() {
+        const listaProductosDiv = document.getElementById('listaProductos');
+        listaProductosDiv.innerHTML = 'Cargando productos...';
+        fetch('/productos')
+            .then(response => response.json())
+            .then(data => {
+                listaProductosDiv.innerHTML = '';
+                data.forEach(producto => {
+                    const productoDiv = document.createElement('div');
+                    productoDiv.classList.add('producto');
+                    productoDiv.innerHTML = `
+                        <h6 class="text-black"><b>${producto.nombre}</b></h6>
+                        <p>Precio: ${producto.precio} €</p>
+                        <p>Stock: ${producto.stock}</p>
+                        <input type="number" min="1" max="${producto.stock}" value="1" class="form-control">
+                        <button class="btn btn-warning mt-2 mb-2">Añadir al pedido</button>
+                    `;
+                    listaProductosDiv.appendChild(productoDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar productos:', error);
+                listaProductosDiv.innerHTML = 'Error al cargar productos.';
+            });
+    }
+
 });
 
 
 /*
-    // Cargar productos al abrir el modal
-    cargarProductosDisponibles();
+¿Cómo gestionar el array de selección y actualizar el resumen?
+¿Cómo construir el objeto DTO correcto para el POST?
+¿Cómo manejar errores (stock insuficiente, producto no disponible)?
 */
 
-
-
-
-
-
 /*
-📋 Paso 2: Estructura del Modal
-
---Body del modal:
-Lista de productos disponibles (se cargará con fetch desde /productos)
-Por cada producto:
-Nombre del producto
-Precio
-Stock disponible
-Input para seleccionar cantidad (número)
-Botón "Añadir al pedido"
-Resumen del pedido:
-Lista de productos seleccionados
-Total calculado
-
---Footer del modal:
-Botón "Cancelar" (cierra el modal)
-Botón "Confirmar Pedido" (envía el POST)
 
 📋 Paso 3: Lógica JavaScript (en crearPedidoCliente.js)
-3.1. Cargar productos al abrir el modal
-Cuando se abra el modal, haz un fetch a /productos para obtener todos los productos disponibles y renderízalos en una tabla o lista.
 
 3.2. Gestionar selección de productos
 Necesitas un array temporal en JavaScript para guardar los productos seleccionados: let productosSeleccionados = [];

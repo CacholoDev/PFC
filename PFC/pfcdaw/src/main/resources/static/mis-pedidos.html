@@ -94,7 +94,7 @@
     </div>
 
     <!-- === MODAL CREAR PEDIDO === -->
-    <!-- Vertically centered scrollable modal -->
+    <!-- mocal centrado scrolleable -->
     <div class="modal fade" tabindex="-1" id="modalCrearPedido">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -106,22 +106,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Sección 1: Lista de productos disponibles (se carga con JS) -->
+                    <!-- Seccion 1: productos disponibles (JS) -->
                     <h6>Productos Disponibles:</h6>
                     <div id="listaProductos">
-                        <!-- Aquí el JS meterá la lista/tabla de productos -->
                         <p class="text-muted">Cargando productos...</p>
                     </div>
 
                     <hr>
 
-                    <!-- Sección 2: Resumen del pedido (se actualiza con JS) -->
+                    <!-- Seccion 2: pedido (JS) -->
                     <h6>Resumen del Pedido:</h6>
                     <div id="resumenPedido">
                         <p class="text-muted">No hay productos seleccionados</p>
                     </div>
 
-                    <!-- Total (se calcula con JS) -->
+                    <!-- Total (JS) -->
                     <h5 class="text-end">Total: <span id="totalPedido">0.00</span> €</h5>
                 </div>
                 <div class="modal-footer">
