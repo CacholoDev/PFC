@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+
   let productosSeleccionados = [];
-  let totalPedido = 0;
+
   setTimeout(() => {
     document.getElementById("btnPedido").addEventListener("click", function () {
       // Abrir modal con Bootstrap
@@ -11,9 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Cargar productos disponibles
       cargarProductosDisponibles();
-      // button enviar pedido
-      document.getElementById("btnConfirmarPedido").addEventListener("click", enviarPedido);
     });
+    
+    // confirmPedido
+    document.getElementById("btnConfirmarPedido").addEventListener("click", enviarPedido);
   }, 500);
 
   // Cargar productos disponibles
@@ -102,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<p class="text-muted">No hay productos seleccionados</p>';
       return;
     }
-
+    // construir lista HTML
     let html = '<ul class="list-group">';
     productosSeleccionados.forEach((p) => {
       const subtotal = p.precio * p.cantidad;
@@ -131,27 +133,25 @@ document.addEventListener("DOMContentLoaded", function () {
       return acumulador + p.precio * p.cantidad;
     }, 0);
 
-    document.getElementById("totalPedido").textContent =
-      total.toFixed(2);
+    document.getElementById("totalPedido").textContent = total.toFixed(2);
   }
 
   // post
   function enviarPedido() {
-
-     // 1. Validar que haya productos
+    // 1. Validar que haya productos
     if (productosSeleccionados.length === 0) {
-        alert("No hay productos en el pedido");
-        return;
+      alert("No hay productos en el pedido");
+      return;
     }
 
     // 1.5. Obter usuario do localstorage
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (!usuario || !usuario.id) {
-        alert("No hay usuario logueado");
-        return;
+      alert("No hay usuario logueado");
+      return;
     }
 
-    // 2. Construir obxeto producto
+    // 2. transformar array a obxeto {productoId: cantidad}
     const productos = {};
     productosSeleccionados.forEach((p) => {
       productos[p.id] = p.cantidad;
@@ -159,8 +159,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 3. DTO pedido
     const pedidoDTO = {
-      usuarioId: usuario.id,
-      productos: productos
+      clienteId: usuario.id,
+      productos: productos,
     };
     console.log("Enviando pedido:", pedidoDTO);
 
@@ -170,10 +170,11 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(pedidoDTO)})
+      body: JSON.stringify(pedidoDTO),
+    })
       .then((response) => {
         if (!response.ok) {
-            throw new Error("Error al crear el pedido");
+          throw new Error("Error al crear el pedido");
         }
         return response.json();
       })
@@ -192,15 +193,15 @@ document.addEventListener("DOMContentLoaded", function () {
           modal.hide();
         }, 400);
 
-        // recargar pedidos
-        cargarPedidos();
+        // recargar pedidos (usando el clienteId del usuario)
+        cargarPedidosUsuario(usuario.id);
       })
       .catch((error) => {
         console.error("Error:", error);
         alert("Error al crear el pedido: " + error.message);
-      });   
+      });
   }
-    
+
   // function eliminarProducto
   function eliminarProducto(productoId) {
     productosSeleccionados = productosSeleccionados.filter(
@@ -208,5 +209,4 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     pintarCarrito();
   }
-  
 });
