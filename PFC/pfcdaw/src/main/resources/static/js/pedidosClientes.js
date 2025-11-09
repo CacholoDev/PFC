@@ -1,4 +1,4 @@
-// === MIS PEDIDOS (Vista de Usuario) ===
+// === MIS PEDIDOS (Usuario) ===
 
 document.addEventListener("DOMContentLoaded", function () {
     
@@ -96,10 +96,10 @@ function cargarPedidosUsuario(clienteId) {
                 // colorear segun estado pendiente, listo , entregado...
                 let badgeClass = 'bg-secondary';
                 if (pedido.estado === 'PENDIENTE') badgeClass = 'bg-warning text-dark';
-                if (pedido.estado === 'EN_PREPARACION') badgeClass = 'bg-info';
-                if (pedido.estado === 'LISTO') badgeClass = 'bg-primary';
-                if (pedido.estado === 'ENTREGADO') badgeClass = 'bg-success';
-                if (pedido.estado === 'CANCELADO') badgeClass = 'bg-danger';
+                if (pedido.estado === 'EN_PREPARACION') badgeClass = 'bg-info text-dark';
+                if (pedido.estado === 'LISTO') badgeClass = 'bg-primary text-dark';
+                if (pedido.estado === 'ENTREGADO') badgeClass = 'bg-success text-dark';
+                if (pedido.estado === 'CANCELADO') badgeClass = 'bg-danger text-dark';
 
                 tablaHTML += `
                     <tr>
