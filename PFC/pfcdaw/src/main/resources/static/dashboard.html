@@ -158,6 +158,22 @@
                 <div class="modal-body">
                     <!-- Info pedido -->
                     <div id="infoPedidoModal" class="mb-3"></div>
+                    
+                    <!-- Cambiar estado -->
+                    <div class="mb-3">
+                        <label for="selectEstadoPedido" class="form-label"><strong>Cambiar Estado:</strong></label>
+                        <select id="selectEstadoPedido" class="form-select">
+                            <option value="PENDIENTE">PENDIENTE</option>
+                            <option value="EN_PREPARACION">EN PREPARACIÓN</option>
+                            <option value="LISTO">LISTO</option>
+                            <option value="ENTREGADO">ENTREGADO</option>
+                            <option value="CANCELADO">CANCELADO</option>
+                        </select>
+                        <button id="btnCambiarEstado" class="btn btn-primary mt-2 w-100">
+                            <i class="bi bi-arrow-repeat me-1"></i>
+                            Actualizar Estado
+                        </button>
+                    </div>
                     <hr>
                     <!-- Tabla lineasPedido -->
                     <h6>Productos del pedido:</h6>
