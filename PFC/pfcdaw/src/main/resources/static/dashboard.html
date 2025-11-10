@@ -7,7 +7,8 @@
     <title>Panel Admin</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <!-- CSS -->
@@ -62,37 +63,41 @@
                 <!-- Card das tabs -->
                 <div class="card shadow-lg">
                     <div class="card-body p-4">
-                        
+
                         <!-- Navegación -->
                         <ul class="nav nav-tabs mb-4 nav-fill" id="myTab" role="tablist">
                             <!-- tab Clientes -->
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="clientes-tab" data-bs-toggle="tab" href="#clientes" role="tab" aria-controls="clientes" aria-selected="true">
-                                        <i class="bi bi-people-fill me-2"></i>
-                                        Clientes
-                                    </a>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="clientes-tab" data-bs-toggle="tab" href="#clientes"
+                                    role="tab" aria-controls="clientes" aria-selected="true">
+                                    <i class="bi bi-people-fill me-2"></i>
+                                    Clientes
+                                </a>
                             </li>
                             <!-- tab Productos -->
                             <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="productos-tab" data-bs-toggle="tab" href="#productos" role="tab" aria-controls="productos" aria-selected="false">
-                                        <i class="bi bi-box-seam-fill me-2"></i>
-                                        Productos
-                                    </a>
+                                <a class="nav-link" id="productos-tab" data-bs-toggle="tab" href="#productos" role="tab"
+                                    aria-controls="productos" aria-selected="false">
+                                    <i class="bi bi-box-seam-fill me-2"></i>
+                                    Productos
+                                </a>
                             </li>
                             <!-- tab Pedidos -->
                             <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="pedidos-tab" data-bs-toggle="tab" href="#pedidos" role="tab" aria-controls="pedidos" aria-selected="false">
-                                        <i class="bi bi-cart-fill me-2"></i>
-                                        Pedidos
-                                    </a>
+                                <a class="nav-link" id="pedidos-tab" data-bs-toggle="tab" href="#pedidos" role="tab"
+                                    aria-controls="pedidos" aria-selected="false">
+                                    <i class="bi bi-cart-fill me-2"></i>
+                                    Pedidos
+                                </a>
                             </li>
                         </ul>
 
                         <!-- Content das tabs -->
                         <div class="tab-content" id="myTabContent">
-                            
+
                             <!-- Contenido: Clientes -->
-                            <div class="tab-pane fade show active" id="clientes" role="tabpanel" aria-labelledby="clientes-tab" tabindex="0">
+                            <div class="tab-pane fade show active" id="clientes" role="tabpanel"
+                                aria-labelledby="clientes-tab" tabindex="0">
                                 <h4 class="mb-3">
                                     <i class="bi bi-people-fill text-warning me-2"></i>
                                     Gestión de Clientes
@@ -105,27 +110,29 @@
                             </div>
 
                             <!-- Contenido: Productos -->
-                            <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="productos-tab" tabindex="0">
+                            <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="productos-tab"
+                                tabindex="0">
                                 <h4 class="mb-3">
                                     <i class="bi bi-box-seam-fill text-warning me-2"></i>
                                     Gestión de Productos
                                 </h4>
                                 <p class="text-muted">Mostrando tabla productos</p>
                                 <!-- tabla productos -->
-                                  <div id="tablaProductos" class="table-responsive">
+                                <div id="tablaProductos" class="table-responsive">
                                     <!-- Tabla cargase x JS -->
                                 </div>
                             </div>
 
                             <!-- Contenido: Pedidos -->
-                            <div class="tab-pane fade" id="pedidos" role="tabpanel" aria-labelledby="pedidos-tab" tabindex="0">
+                            <div class="tab-pane fade" id="pedidos" role="tabpanel" aria-labelledby="pedidos-tab"
+                                tabindex="0">
                                 <h4 class="mb-3">
                                     <i class="bi bi-cart-fill text-warning me-2"></i>
                                     Gestión de Pedidos
                                 </h4>
                                 <p class="text-muted">Mostrando tabla pedidos</p>
                                 <!-- tabla pedidos -->
-                                  <div id="tablaPedidos" class="table-responsive">
+                                <div id="tablaPedidos" class="table-responsive">
                                     <!-- Tabla cargase x JS -->
                                 </div>
                             </div>
@@ -137,8 +144,50 @@
         </div>
     </div>
 
+    <!-- MODAL detalles pedido -->
+    <div class="modal fade" id="modalDetallesPedido" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-receipt text-warning me-2"></i>
+                        Detalles del Pedido #<span id="pedidoIdModal"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Info pedido -->
+                    <div id="infoPedidoModal" class="mb-3"></div>
+                    <hr>
+                    <!-- Tabla lineasPedido -->
+                    <h6>Productos del pedido:</h6>
+                    <table class="table table-striped table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lineasPedidoBody">
+                            <!-- rellenase con JS -->
+                        </tbody>
+                    </table>
+
+                    <h5 class="text-end">Total: <span id="totalPedidoModal"></span> €</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 
     <!-- JS -->
     <script src="js/dashboard.js"></script>

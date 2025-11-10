@@ -100,8 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function pintarCarrito() {
     const carritoDiv = document.getElementById("resumenPedido");
     if (productosSeleccionados.length === 0) {
-      carritoDiv.innerHTML =
-        '<p class="text-muted">No hay productos seleccionados</p>';
+      carritoDiv.innerHTML = '<p class="text-muted">No hay productos seleccionados</p>';
+      document.getElementById("totalPedido").textContent = "0.00";
       return;
     }
     // construir lista HTML
@@ -114,14 +114,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     <strong>${p.nombre}</strong><br>
                     <small>${p.cantidad} x ${p.precio.toFixed(2)}€</small>
                 </div>
-                <span class="badge bg-warning text-dark rounded-pill">${subtotal.toFixed(
-                  2
-                )}€</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-warning text-dark rounded-pill">${subtotal.toFixed(
+                   2
+                  )}€</span>
+                  <button class="btn btn-sm btn-danger" data-producto-id="${p.id}">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
             </li>
         `;
     });
     html += "</ul>";
     carritoDiv.innerHTML = html;
+
+    // Añadir event listeners a los botones de eliminar
+    const botonesEliminar = carritoDiv.querySelectorAll('button[data-producto-id]');
+    botonesEliminar.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const productoId = Number(btn.getAttribute('data-producto-id'));
+        eliminarProducto(productoId);
+      });
+    });
 
     // Calcular total
     calcularTotal();
