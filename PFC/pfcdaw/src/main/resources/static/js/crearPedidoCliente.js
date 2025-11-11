@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // confirmPedido
     document.getElementById("btnConfirmarPedido").addEventListener("click", enviarPedido);
-  }, 500);
+  }, 400);
 
   // Cargar productos disponibles
   function cargarProductosDisponibles() {

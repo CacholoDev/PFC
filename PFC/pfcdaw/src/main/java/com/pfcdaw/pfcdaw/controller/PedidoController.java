@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.pfcdaw.pfcdaw.dto.CambiarEstadoDto;
 import com.pfcdaw.pfcdaw.dto.PedidoCreateDto;
 import com.pfcdaw.pfcdaw.model.PedidoEntity;
 import com.pfcdaw.pfcdaw.repository.PedidoRepository;
@@ -110,6 +111,27 @@ public class PedidoController {
             });
 }
 
-}
+    // Endpoint para cambiar solo  estado do pedido(ENUM) usando DTO
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<PedidoEntity> cambiarEstado(
+        @PathVariable @NonNull Long id,
+        @Valid @RequestBody CambiarEstadoDto cambiarEstadoDto
+    ) {
+        log.info("[PUT /pedidos/{}/estado] Cambiando estado", id);
+        
+        return pedidoRepository.findById(id)
+            .map(pedido -> {
+                log.debug("[PUT /pedidos/{}/estado] Antes: estado={}", id, pedido.getEstado(),  cambiarEstadoDto.getEstado());
+                // Actualizar solo o estado
+                pedido.setEstado(cambiarEstadoDto.getEstado());
+                PedidoEntity pedidoGuardado = pedidoRepository.save(pedido); //genera un update en concreto: UPDATE pedidos SET estado = 'EN_PREPARACION' WHERE id = 5;
+                log.info("[PUT /pedidos/{}/estado] Estado actualizado a: {}", id, pedidoGuardado.getEstado());
+                return ResponseEntity.ok(pedidoGuardado);
+            })
+            .orElseGet(() -> {
+                log.warn("[PUT /pedidos/{}/estado] No encontrado", id);
+                return ResponseEntity.notFound().build();
+            });
+    }
 
- 
+}
