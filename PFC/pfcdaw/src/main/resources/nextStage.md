@@ -14,10 +14,12 @@ En el dashboard, añadir botones en la tabla de productos para:
 Crear nuevo producto (modal con formulario).
 Editar producto existente (modal con datos pre-cargados).
 Eliminar producto (confirmación antes de borrar).
+## DONE ## 
 3. Cambiar estado de pedidos (Admin):
 En la tabla de pedidos del dashboard, añadir:
 Dropdown o botones para cambiar el estado (PENDIENTE → EN_PREPARACION → LISTO → ENTREGADO).
 Modal de detalles para ver las líneas del pedido (productos, cantidades, subtotales).
+## DONE ## 
 4. CRUD de clientes (Admin):
 Similar a productos: crear, editar, eliminar clientes desde el dashboard.
 
