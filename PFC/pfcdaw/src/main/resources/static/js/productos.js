@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
     cargarTablaProductos();
+
+    //coller o button crear producto ca function modalCreateProducto para que abra o modal
+    document.getElementById('btnCrearProducto').onclick = function () {
+        modalCreateProducto();
+    };
 });
 
 function cargarTablaProductos() {
@@ -56,25 +61,30 @@ function cargarTablaProductos() {
         });
 }
 
+////////////////////////////DELETE//////////////////////////////////////////////////////////
 
 // Delete Producto co modal de confirmacion
 // variable global para almacenar ID do producto a eliminar
-let productoIdAEliminar = null; 
+let productoIdAEliminar = null;
 
 // function deleteProducto(id)
 function deleteProducto(id) {
     // 1. gardar ID do producto a eliminar
     productoIdAEliminar = id;
-    
+
     // 2. fetch GET /productos/{id} para obter o nome #nombreProductoEliminar
     fetch(`/productos/${id}`)
         .then(response => response.json())
         .then(producto => {
-            // Rellenar contido do modal co nome do produto
+            // Rellenar modal co nome do produto
             document.getElementById('nombreProductoEliminar').textContent = producto.nombre;
         });
-        
-    
+
+    // 2.5. button onclick delete
+    document.getElementById('btnConfirmarDelete').onclick = function () {
+        confirmarEliminacion();
+    };
+
     // 3. Abrir modal de confirmacion con settimeout
     setTimeout(() => {
         const modal = new bootstrap.Modal(document.getElementById('modalConfirmarDelete'));
@@ -82,27 +92,106 @@ function deleteProducto(id) {
     }, 300);
 
 
-}.
-
-/* ou duas 2 functions function confirmarEliminacion() {
-    // Fetch DELETE usando productoIdAEliminar
 }
-// Quitar listeners anteriores (para evitar duplicados)
-    const btnConfirmar = document.getElementById('btnConfirmarDelete');
-    const nuevoBtn = btnConfirmar.cloneNode(true);
-    btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
-    
-    // Añadir listener NUEVO
-    nuevoBtn.addEventListener('click', function() {
-        fetch(`/productos/${productoIdAEliminar}`, {
-            method: 'DELETE'
-        })
+
+// confirmarEliminacion function
+function confirmarEliminacion() {
+    fetch(`/productos/${productoIdAEliminar}`, {
+        method: 'DELETE'
+    })
         .then(response => {
             if (response.ok) {
+                // Cerrar modal
+                const modalElement = document.getElementById('modalConfirmarDelete');
+                const modal = bootstrap.Modal.getInstance(modalElement);
                 modal.hide();
+                // Recargar tabla
                 cargarTablaProductos();
                 alert('Producto eliminado');
+            } else {
+                alert('Error al eliminar el producto');
             }
+        }).catch(error => {
+            console.error('Error al eliminar el producto:', error);
+            alert('Error al eliminar el producto');
         });
-    });
-*/
+}
+
+///////////////////////////////////CREATE///////////////////////////////////////////////////
+// variable global para modo crear + edit
+let modoEdicion = false; 
+let productoIdActual = null;
+
+// function modalCreateProducto
+function modalCreateProducto() {
+
+    // limpar form
+    document.getElementById('formCrearEditarProducto').reset();
+
+    // cambiar titulo do modal
+    document.getElementById('modalProductoTitle').textContent = 'Crear Nuevo Producto';
+
+    // abrir modal con setTimeout
+    setTimeout(() => {
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearEditarProducto'));
+        modal.show();
+    }, 300);
+
+    // button gardar producto
+    document.getElementById('btnGuardarProducto').onclick = function () {
+        crearProducto();
+    };
+}
+
+//function crearProducto
+function crearProducto() {
+
+    // admin rellena o form e clica en gardar
+    const nombre = document.getElementById('nombreProducto').value.trim();
+    const descripcion = document.getElementById('descripcionProducto').value.trim();
+    const precio = parseFloat(document.getElementById('precioProducto').value);
+    if(precio < 0 || isNaN(precio)) {
+        alert('El precio debe ser un número positivo');
+        return;
+    }
+    const stock = parseInt(document.getElementById('stockProducto').value, 10);
+
+    // crear json producto
+    const nuevoProducto = {
+        nombre: nombre,
+        descripcion: descripcion,
+        precio: precio,
+        stock: stock
+    };
+
+    // enviar POST o backend
+    fetch('/productos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuevoProducto)
+    })
+        .then(response => {
+            if (response.ok) {
+                // cerrar modal con timeout polos bugs oscuros esos
+                setTimeout(() => {
+                    const modalElement = document.getElementById('modalCrearEditarProducto');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }, 300);
+
+                // Recargar tabla
+                cargarTablaProductos();
+                alert('Producto creado');
+            } else {
+                alert('Error al crear el producto');
+            }
+        }).catch(error => {
+            console.error('Error al crear el producto:', error);
+            alert('Error al crear el producto');
+        });
+}
+
+
+///////////////////////////////////EDIT///////////////////////////////////////////////////
