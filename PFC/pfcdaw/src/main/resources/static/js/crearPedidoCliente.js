@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // confirmPedido
     document.getElementById("btnConfirmarPedido").addEventListener("click", enviarPedido);
-  }, 400);
+  }, 300);
 
   // Cargar productos disponibles
   function cargarProductosDisponibles() {
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const modalElement = document.getElementById("modalCrearPedido");
           const modal = bootstrap.Modal.getInstance(modalElement);
           modal.hide();
-        }, 400);
+        }, 300);
 
         // recargar pedidos (usando el clienteId del usuario)
         cargarPedidosUsuario(usuario.id);
