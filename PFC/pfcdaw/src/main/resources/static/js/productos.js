@@ -5,6 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('btnCrearProducto').onclick = function () {
         modalCreateProducto();
     };
+
+        // button gardar producto
+    document.getElementById('btnGuardarProducto').onclick = function () {
+       if (modoEdicion === false) {
+        // crear
+        crearProducto();
+    } else {
+        // editar
+    }
+    };
 });
 
 function cargarTablaProductos() {
@@ -137,17 +147,19 @@ function modalCreateProducto() {
         modal.show();
     }, 300);
 
-    // button gardar producto
-    document.getElementById('btnGuardarProducto').onclick = function () {
-        crearProducto();
-    };
+    modoEdicion = false;
+
 }
 
 //function crearProducto
 function crearProducto() {
 
-    // admin rellena o form e clica en gardar
+    // admin rellena o form e clica en gardar (con validacions)
     const nombre = document.getElementById('nombreProducto').value.trim();
+    if (nombre === '' || nombre.length === 0) {
+        alert('El nombre del producto es obligatorio');
+        return;
+    }
     const descripcion = document.getElementById('descripcionProducto').value.trim();
     const precio = parseFloat(document.getElementById('precioProducto').value);
     if(precio < 0 || isNaN(precio)) {
@@ -155,6 +167,10 @@ function crearProducto() {
         return;
     }
     const stock = parseInt(document.getElementById('stockProducto').value, 10);
+    if(stock < 0 || isNaN(stock)) {
+        alert('El stock debe ser un número entero positivo');
+        return;
+    }
 
     // crear json producto
     const nuevoProducto = {
