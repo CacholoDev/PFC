@@ -127,4 +127,20 @@ public class ProductoController {
         return ResponseEntity.ok(productoActualizado);
     }
 
+    // POST para reducir stock
+    @PostMapping("/{id}/RedStock")
+    public ResponseEntity<ProductoEntity> reducirStock(
+            @PathVariable Long id,
+            @Valid @RequestBody StockUpdateDto dto) {
+
+        log.info("[POST /productos/{}/RedStock] Reduciendo {} unidades", id, dto.getCantidad());
+        productoService.reducirStock(id, dto.getCantidad()); // usa o SERVICE (validacions incluidas)
+
+        ProductoEntity productoActualizado = productoRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        return ResponseEntity.ok(productoActualizado);
+    }
+
 }

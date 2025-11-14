@@ -88,7 +88,7 @@ function verDetallesPedido(pedidoId) {
                 cambiarEstadoPedido(pedido.id);
             };
 
-            // 6. rellenar tabla das lineas
+            // 5. rellenar tabla das lineas
             const tbody = document.getElementById('lineasPedidoBody');
             tbody.innerHTML = ''; // Limpar 
             pedido.lineasPedido.forEach(linea => {
@@ -103,10 +103,10 @@ function verDetallesPedido(pedidoId) {
                 `;
             });
 
-            // 7. Rellenar total
+            // 6. Rellenar total
             document.getElementById('totalPedidoModal').textContent = pedido.total.toFixed(2);
-
-            // 8. Mostrar modal con setTimeout pa evitar conflitos do boostrap 
+            
+            // 7. Mostrar modal con setTimeout pa evitar conflitos do boostrap 
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('modalDetallesPedido'));
                 modal.show();

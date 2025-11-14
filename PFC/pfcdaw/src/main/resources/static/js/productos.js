@@ -1,3 +1,7 @@
+// variable global para modo crear + edit
+let modoEdicion = false;
+let productoIdActual = null;
+
 document.addEventListener("DOMContentLoaded", function () {
     cargarTablaProductos();
 
@@ -6,15 +10,27 @@ document.addEventListener("DOMContentLoaded", function () {
         modalCreateProducto();
     };
 
-        // button gardar producto
+    // button gardar producto
     document.getElementById('btnGuardarProducto').onclick = function () {
-       if (modoEdicion === false) {
-        // crear
-        crearProducto();
-    } else {
-        // editar
-    }
+        if (modoEdicion === false) {
+            // crear
+            crearProducto();
+        } else {
+            // editar
+            editarProducto();
+        }
     };
+
+    // button añadir stock
+    document.getElementById('btnAñadirStock').onclick = function () {
+        aumentarStock();
+    };
+
+    // button reducir stock
+    document.getElementById('btnReducirStock').onclick = function () {
+        reducirStock();
+    };
+
 });
 
 function cargarTablaProductos() {
@@ -47,8 +63,11 @@ function cargarTablaProductos() {
                             <td>${producto.precio}</td>
                             <td>${producto.stock}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning" onclick="editarProducto(${producto.id})">
+                                <button class="btn btn-sm btn-warning" onclick="modalEditarProducto(${producto.id})">
                                     <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="modalEditarStock(${producto.id})">
+                                    <i class="bi bi-boxes"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteProducto(${producto.id})">
                                     <i class="bi bi-trash-fill"></i>
@@ -128,9 +147,6 @@ function confirmarEliminacion() {
 }
 
 ///////////////////////////////////CREATE///////////////////////////////////////////////////
-// variable global para modo crear + edit
-let modoEdicion = false; 
-let productoIdActual = null;
 
 // function modalCreateProducto
 function modalCreateProducto() {
@@ -162,12 +178,12 @@ function crearProducto() {
     }
     const descripcion = document.getElementById('descripcionProducto').value.trim();
     const precio = parseFloat(document.getElementById('precioProducto').value);
-    if(precio < 0 || isNaN(precio)) {
+    if (precio < 0 || isNaN(precio)) {
         alert('El precio debe ser un número positivo');
         return;
     }
     const stock = parseInt(document.getElementById('stockProducto').value, 10);
-    if(stock < 0 || isNaN(stock)) {
+    if (stock < 0 || isNaN(stock)) {
         alert('El stock debe ser un número entero positivo');
         return;
     }
@@ -211,3 +227,204 @@ function crearProducto() {
 
 
 ///////////////////////////////////EDIT///////////////////////////////////////////////////
+// function editProducto(id)
+function modalEditarProducto(id) {
+    modoEdicion = true;
+    productoIdActual = id;
+
+    fetch(`/productos/${id}`)
+        .then(response => response.json())
+        .then(producto => {
+            // 1. Rellenar form coos datos do producto
+            document.getElementById('nombreProducto').value = producto.nombre;
+            document.getElementById('descripcionProducto').value = producto.descripcion;
+            document.getElementById('precioProducto').value = producto.precio;
+            document.getElementById('stockProducto').value = producto.stock;
+
+            // 2. cambiando titulo do modal
+            document.getElementById('modalProductoTitle').textContent = 'Editar Producto';
+            //poñer o button do stock mentras editamos producto en disabled
+            document.getElementById('stockProducto').disabled = true;
+            //escribir que para editar vaia o boton de edicion de stock
+            document.getElementById('tituloStockModal').innerHTML = '<small class="text-muted"><strong>Para editar el stock, utiliza el botón de gestión de stock <i class="bi bi-boxes"></i></strong></small>';
+
+            // 3. abrir modal con setTimeout
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('modalCrearEditarProducto'));
+                modal.show();
+            }, 300);
+
+        }).catch(error => {
+            console.error('Error al obtener el producto:', error);
+            alert('Error al obtener el producto');
+        });
+}
+//function confirmar PutProducto
+function editarProducto() {
+
+    // 4. obter novos valores do input
+    let name = document.getElementById('nombreProducto').value.trim();
+    if (name === '' || name.length === 0) {
+        alert('El nombre del producto es obligatorio');
+        return;
+    }
+    let descripcion = document.getElementById('descripcionProducto').value;
+    let precio = parseFloat(document.getElementById('precioProducto').value);
+    if (precio < 0 || isNaN(precio)) {
+        alert('El precio debe ser un número positivo');
+        return;
+    }
+    let stock = parseInt(document.getElementById('stockProducto').value, 10);
+    if (stock < 0 || isNaN(stock)) {
+        alert('El stock debe ser un número entero positivo');
+        return;
+    }
+
+    // 5. crear json producto editado
+    const productoEditado = {
+        nombre: name,
+        descripcion: descripcion,
+        precio: precio,
+        stock: stock
+    };
+    console.log('Producto editado:', productoEditado);
+
+    // 6. Enviar PUT o backend
+    fetch(`/productos/${productoIdActual}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productoEditado)
+    })
+        .then(response => {
+            if (response.ok) {
+                // pechar modal con timeout polos bugs oscuros esos
+                setTimeout(() => {
+                    const modalElement = document.getElementById('modalCrearEditarProducto');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }, 300);
+                // Recargar tabla
+                cargarTablaProductos();
+                alert('Producto editado con éxito');
+            } else {
+                alert('Error al editar el producto');
+            }
+        }).catch(error => {
+            console.error('Error al editar el producto:', error);
+            alert('Error al editar el producto');
+        });
+
+}
+
+
+///////////////////////////////////////MANEXAR_STOCK////////////////////////////////////
+// function modalEditarStock(id)
+function modalEditarStock(id) {
+    productoIdActual = id;
+
+    fetch(`/productos/${id}`)
+        .then(response => response.json())
+        .then(producto => {
+            // 1. Rellenar form coos datos do producto
+            document.getElementById('nombreProductoStock').value = producto.nombre;
+            document.getElementById('stockActualProducto').value = producto.stock;
+
+            // 2. cambiando titulo do modal
+            document.getElementById('modalStockTitle').textContent = 'Gestionar Stock Producto';
+
+            // 3. abrir modal con setTimeout
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('modalEditarStock'));
+                modal.show();
+            }, 300);
+
+            // limpar input cantidad
+            document.getElementById('cantidadAnadirStock').value = 0;
+
+        }).catch(error => {
+            console.error('Error al obtener el producto:', error);
+            alert('Error al obtener el producto');
+        });
+
+}
+
+//function aumentarStock
+function aumentarStock() {
+    // 4. obter novo valor do input
+    let cantidadAumentar = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
+    if (isNaN(cantidadAumentar) || cantidadAumentar <= 0) {
+        alert('La cantidad a aumentar debe ser un número entero positivo');
+        return;
+    }
+    // 5. enviar POST o backend
+    fetch(`/productos/${productoIdActual}/AumStock`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cantidad: cantidadAumentar })
+    })
+        .then(response => {
+            if (response.ok) {
+                // pechar modal con timeout polos bugs oscuros esos
+                setTimeout(() => {
+                    const modalElement = document.getElementById('modalEditarStock');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }, 300);
+                // Recargar tabla
+                cargarTablaProductos();
+                alert('Stock aumentado con éxito');
+            } else {
+                alert('Error al aumentar el stock');
+            }
+        }).catch(error => {
+            console.error('Error al aumentar el stock:', error);
+            alert('Error al aumentar el stock');
+        });
+}
+
+//function reducirStock
+function reducirStock() {
+    let stockActual = parseInt(document.getElementById('stockActualProducto').value, 10);
+
+    // 4. obter novo valor do input e validalo
+    let cantidadReducir = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
+    if (isNaN(cantidadReducir) || cantidadReducir <= 0) {
+        alert('La cantidad a reducir debe ser un número entero positivo');
+        return;
+    }
+    if (cantidadReducir > stockActual) {
+        alert('No puedes reducir más stock del disponible');
+        return;
+    }
+    // 5. enviar POST o backend
+    fetch(`/productos/${productoIdActual}/RedStock`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cantidad: cantidadReducir })
+    })
+        .then(response => {
+            if (response.ok) {
+                // pechar modal con timeout polos bugs oscuros esos
+                setTimeout(() => {
+                    const modalElement = document.getElementById('modalEditarStock');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }, 300);
+                // Recargar tabla
+                cargarTablaProductos();
+                alert('Stock reducido con éxito');
+            }
+            else {
+                alert('Error al reducir el stock');
+            }
+        }).catch(error => {
+            console.error('Error al reducir el stock:', error);
+            alert('Error al reducir el stock');
+        });
+}
