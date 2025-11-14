@@ -176,7 +176,7 @@
                                 name="precioProducto" required>
                         </div>
                         <div class="mb-3">
-                            <label for="stockProducto" class="form-label">Stock</label>
+                            <label for="stockProducto" class="form-label" id="tituloStockModal">Stock:</label>
                             <input type="number" class="form-control" id="stockProducto" name="stockProducto" min="0"
                                 value="0" required>
                         </div>
@@ -190,27 +190,65 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación DELETE -->
-<div class="modal fade" id="modalConfirmarDelete" ...>
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5>⚠️ Confirmar Eliminación</h5>
-            </div>
-            <div class="modal-body">
-                <p>¿Estás seguro de eliminar el producto:</p>
-                <p><strong id="nombreProductoEliminar"></strong></p>
-                <p class="text-muted">Esta acción no se puede deshacer.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" 
-                        data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" 
-                        id="btnConfirmarDelete">Eliminar</button>
+    <!-- Modal po manejo do stock -->
+    <div class="modal fade" id="modalEditarStock" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalStockTitle">
+                        <i class="bi bi-boxes text-warning me-2"></i>
+                        Gestionar Stock
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarStock">
+                        <div class="mb-3">
+                            <label for="nombreProductoStock" class="form-label">Producto:</label>
+                            <input type="text" class="form-control" id="nombreProductoStock" name="nombreProductoStock"
+                                disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stockActualProducto" class="form-label">Stock actual:</label>
+                            <input type="number" class="form-control" id="stockActualProducto"
+                                name="stockActualProducto" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cantidadAnadirStock" class="form-label">Cantidad a añadir/reducir:</label>
+                            <input type="number" class="form-control" id="cantidadAnadirStock"
+                                name="cantidadAnadirStock" min="1" value="1" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="btnReducirStock">Reducir Stock</button>
+                    <button type="button" class="btn btn-success" id="btnAñadirStock">Añadir Stock</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+
+    <!-- Modal de confirmación DELETE -->
+    <div class="modal fade" id="modalConfirmarDelete" ...>
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5>⚠️ Confirmar Eliminación</h5>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de eliminar el producto:</p>
+                    <p><strong id="nombreProductoEliminar"></strong></p>
+                    <p class="text-muted">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarDelete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL detalles pedido -->
     <div class="modal fade" id="modalDetallesPedido" tabindex="-1">

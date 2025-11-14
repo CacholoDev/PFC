@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 5. nombre user no navbar
     const nombreUsuarioElement = document.getElementById("nombreUsuario");
-    nombreUsuarioElement.innerHTML = `<i class="bi bi-person-circle text-dark me-1"></i><b class="text-dark">Hola, bienvenid@! ${usuario.nombre} ${usuario.apellido}, mail: ${usuario.email} </b>`;
+    nombreUsuarioElement.innerHTML = `<i class="bi bi-person-circle text-dark me-1"></i><b class="text-dark">Hola, bienvenid@! ${usuario.nombre} ${usuario.apellido} # ${usuario.email} </b>`;
 
     // 6. pedidos do usuario
     cargarPedidosUsuario(usuario.id);
