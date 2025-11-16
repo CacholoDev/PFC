@@ -3,6 +3,7 @@ package com.pfcdaw.pfcdaw.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,7 +54,7 @@ public class ClienteEntity {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Column(nullable = false)
-    @JsonIgnore  // Non devolve password en respostas JSON
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)// Non devolve password en get pero deixa post
     private String password;
 
     @Enumerated(EnumType.STRING) // Garda Enum como texto na BDD

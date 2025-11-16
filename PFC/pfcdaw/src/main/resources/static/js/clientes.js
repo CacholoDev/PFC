@@ -1,7 +1,12 @@
 // Tabla Clientes
 document.addEventListener("DOMContentLoaded", function () {
 
-    function cargarClientes() {
+    cargarClientes();
+
+});
+
+// function cargar clientes
+ function cargarClientes() {
         const tablaClientes = document.getElementById('tablaClientes');
         tablaClientes.innerHTML = 'Cargando clientes...'; // Mostrar mensaje de carga
 
@@ -18,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <th>Email</th>
                                 <th>Teléfono</th>
                                 <th>Rol</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,6 +38,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${cliente.email}</td>
                             <td>${cliente.telefono}</td>
                             <td>${cliente.role}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" title="Eliminar cliente" onclick="deleteCliente(${cliente.id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
                         </tr>
                     `;
                 });
@@ -50,5 +61,23 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    cargarClientes();
-});
+// eliminar cliente
+function deleteCliente(clienteId) {
+    if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
+        fetch(`/clientes/${clienteId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Cliente eliminado correctamente.');
+                cargarClientes(); // Recargar la lista de clientes después de eliminar
+            } else {
+                alert('Error al eliminar el cliente.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar cliente:', error);
+            alert('Error al eliminar el cliente.');
+        });
+    }
+}

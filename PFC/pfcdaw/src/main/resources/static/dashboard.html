@@ -101,8 +101,11 @@
                                 <h4 class="mb-3">
                                     <i class="bi bi-people-fill text-warning me-2"></i>
                                     Gestión de Clientes
+                                    <!-- button crear cliente -->
+                                    <button class="btn btn-warning ms-4 me-3" title="Crear nuevo cliente" id="btnCrearCliente"><i
+                                            class="bi bi-plus-lg text-dark"></i></button>
                                 </h4>
-                                <p class="text-muted">Mostrando tabla clientes</p>
+                                <p class="text-muted">Mostrando clientes</p>
                                 <!-- tabla clientes -->
                                 <div id="tablaClientes" class="table-responsive">
                                     <!-- Tabla cargase x JS -->
@@ -115,11 +118,11 @@
                                 <h4 class="mb-3">
                                     <i class="bi bi-box-seam-fill text-warning me-2"></i>
                                     Gestión de Productos
-                                    <!-- button crear pedido novo a dereita de todo -->
-                                    <button class="btn btn-warning  me-2" id="btnCrearProducto"><i
+                                    <!-- button crear producto -->
+                                    <button class="btn btn-warning ms-4 me-3" title="Crear nuevo producto" id="btnCrearProducto"><i
                                             class="bi bi-plus-lg text-dark"></i></button>
                                 </h4>
-                                <p class="text-muted">Mostrando tabla productos</p>
+                                <p class="text-muted">Mostrando productos</p>
                                 <!-- tabla productos -->
                                 <div id="tablaProductos" class="table-responsive">
                                     <!-- Tabla cargase x JS -->
@@ -133,7 +136,7 @@
                                     <i class="bi bi-cart-fill text-warning me-2"></i>
                                     Gestión de Pedidos
                                 </h4>
-                                <p class="text-muted">Mostrando tabla pedidos</p>
+                                <p class="text-muted">Mostrando pedidos</p>
                                 <!-- tabla pedidos -->
                                 <div id="tablaPedidos" class="table-responsive">
                                     <!-- Tabla cargase x JS -->
@@ -275,7 +278,7 @@
                             <option value="ENTREGADO">ENTREGADO</option>
                             <option value="CANCELADO">CANCELADO</option>
                         </select>
-                        <button id="btnCambiarEstado" class="btn btn-primary mt-2 w-100">
+                        <button id="btnCambiarEstado" class="btn btn-warning mt-2 w-100">
                             <i class="bi bi-arrow-repeat me-1"></i>
                             Actualizar Estado
                         </button>

@@ -44,7 +44,7 @@ function cargarPedidos() {
                                 <td><span class="badge ${getBadgeClass(pedido.estado)}">${pedido.estado}</span></td>
                                 <td>${pedido.lineasPedido?.length || 0}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning" onclick="verDetallesPedido(${pedido.id})">
+                                    <button class="btn btn-sm btn-warning" title="Ver detalles del pedido" onclick="verDetallesPedido(${pedido.id})">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </td>
@@ -153,7 +153,7 @@ function cambiarEstadoPedido(pedidoId) {
             // exito
             alert(`Estado del pedido #${pedidoId} actualizado a: ${nuevoEstado}`);
 
-            // pecho modal co setTimeout de 500ms
+            // pecho modal co setTimeout
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetallesPedido'));
                 modal.hide();

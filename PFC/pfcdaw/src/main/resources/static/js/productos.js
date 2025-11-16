@@ -60,16 +60,16 @@ function cargarTablaProductos() {
                         <tr>
                             <td>${producto.id}</td>
                             <td>${producto.nombre}</td>
-                            <td>${producto.precio}</td>
+                            <td>${producto.precio.toFixed(2)}€</td>
                             <td>${producto.stock}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning" onclick="modalEditarProducto(${producto.id})">
+                                <button class="btn btn-sm btn-warning" title="Editar producto" onclick="modalEditarProducto(${producto.id})">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" onclick="modalEditarStock(${producto.id})">
+                                <button class="btn btn-sm btn-warning" title="Gestionar stock" onclick="modalEditarStock(${producto.id})">
                                     <i class="bi bi-boxes"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteProducto(${producto.id})">
+                                <button class="btn btn-sm btn-danger" title="Eliminar producto" onclick="deleteProducto(${producto.id})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -154,6 +154,11 @@ function modalCreateProducto() {
     // limpar form
     document.getElementById('formCrearEditarProducto').reset();
 
+    // activar input stock
+    document.getElementById('stockProducto').disabled = false;
+    //quitar el mensaje de editar stock
+    document.getElementById('tituloStockModal').innerHTML = 'Stock';
+
     // cambiar titulo do modal
     document.getElementById('modalProductoTitle').textContent = 'Crear Nuevo Producto';
 
@@ -177,14 +182,15 @@ function crearProducto() {
         return;
     }
     const descripcion = document.getElementById('descripcionProducto').value.trim();
-    const precio = parseFloat(document.getElementById('precioProducto').value);
+    const precioRaw = document.getElementById('precioProducto').value.replace(',', '.');
+    const precio = parseFloat(precioRaw);
     if (precio < 0 || isNaN(precio)) {
         alert('El precio debe ser un número positivo');
         return;
     }
     const stock = parseInt(document.getElementById('stockProducto').value, 10);
     if (stock < 0 || isNaN(stock)) {
-        alert('El stock debe ser un número entero positivo');
+        alert('El stock debe ser un número positivo');
         return;
     }
 
@@ -237,8 +243,8 @@ function modalEditarProducto(id) {
         .then(producto => {
             // 1. Rellenar form coos datos do producto
             document.getElementById('nombreProducto').value = producto.nombre;
-            document.getElementById('descripcionProducto').value = producto.descripcion;
-            document.getElementById('precioProducto').value = producto.precio;
+            document.getElementById('descripcionProducto').value = producto.descripcion.trim();
+            document.getElementById('precioProducto').value = producto.precio.toFixed(2);
             document.getElementById('stockProducto').value = producto.stock;
 
             // 2. cambiando titulo do modal
@@ -268,15 +274,11 @@ function editarProducto() {
         alert('El nombre del producto es obligatorio');
         return;
     }
-    let descripcion = document.getElementById('descripcionProducto').value;
-    let precio = parseFloat(document.getElementById('precioProducto').value);
+    let descripcion = document.getElementById('descripcionProducto').value.trim();
+    let precioRaw = document.getElementById('precioProducto').value.replace(',', '.');
+    let precio = parseFloat(precioRaw);
     if (precio < 0 || isNaN(precio)) {
         alert('El precio debe ser un número positivo');
-        return;
-    }
-    let stock = parseInt(document.getElementById('stockProducto').value, 10);
-    if (stock < 0 || isNaN(stock)) {
-        alert('El stock debe ser un número entero positivo');
         return;
     }
 
@@ -285,7 +287,6 @@ function editarProducto() {
         nombre: name,
         descripcion: descripcion,
         precio: precio,
-        stock: stock
     };
     console.log('Producto editado:', productoEditado);
 
@@ -355,7 +356,7 @@ function aumentarStock() {
     // 4. obter novo valor do input
     let cantidadAumentar = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
     if (isNaN(cantidadAumentar) || cantidadAumentar <= 0) {
-        alert('La cantidad a aumentar debe ser un número entero positivo');
+        alert('La cantidad a aumentar debe ser un número positivo');
         return;
     }
     // 5. enviar POST o backend
@@ -393,7 +394,7 @@ function reducirStock() {
     // 4. obter novo valor do input e validalo
     let cantidadReducir = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
     if (isNaN(cantidadReducir) || cantidadReducir <= 0) {
-        alert('La cantidad a reducir debe ser un número entero positivo');
+        alert('La cantidad a reducir debe ser un número positivo');
         return;
     }
     if (cantidadReducir > stockActual) {
