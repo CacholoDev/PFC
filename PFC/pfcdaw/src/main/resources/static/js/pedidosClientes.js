@@ -1,14 +1,14 @@
 // === MIS PEDIDOS (Usuario) ===
 
 document.addEventListener("DOMContentLoaded", function () {
-    
+
     // 1. usuario do localStorage
     const usuarioTexto = localStorage.getItem("usuario");
-    
+
     // 2. usuario logueado?
     if (!usuarioTexto) {
         window.location.href = "login.html";
-        return; 
+        return;
     }
 
     // 3. Pasar de texto a obxeto
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 4. si nn existe o usuario vai po dashboard que ten esto mismo e mais opcions
     if (usuario.rol === 'ADMIN') {
         window.location.href = "dashboard.html";
-        return; 
+        return;
     }
 
     // 5. nombre user no navbar
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // === CARGAR PEDIDOS x ID USUARIO ===
 function cargarPedidosUsuario(clienteId) {
     const tablaPedidosCliente = document.getElementById("tablaPedidosCliente");
-    
+
     // Cargando pedidos.....
     tablaPedidosCliente.innerHTML = `
         <div class="loading-message">
@@ -119,6 +119,43 @@ function cargarPedidosUsuario(clienteId) {
 
             // insertar tabla
             tablaPedidosCliente.innerHTML = tablaHTML;
+
+            // DATATABLES.NET
+            // destruir dataTables si existe
+            if ($.fn.DataTable.isDataTable('#tablaPedidosCliente table')) {
+                $('#tablaPedidosCliente table').DataTable().destroy();
+            }
+            // Activar DataTables
+            $('#tablaPedidosCliente table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.3.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
+                buttons: [
+                    { extend: 'copy', text: 'Copiar' },
+                    { extend: 'csv', text: 'CSV' },
+                    {
+                        extend: 'excel',
+                        text: 'Excel',
+                        title: 'Lista de Clientes',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF',
+                        title: 'Lista de Clientes',
+                        orientation: 'landscape',  // Horizontal
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    { extend: 'print', text: 'Imprimir' }
+                ]
+            });
+
         })
         .catch(error => {
             console.error('Error al cargar pedidos:', error);

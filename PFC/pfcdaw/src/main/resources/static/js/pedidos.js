@@ -54,6 +54,42 @@ function cargarPedidos() {
                 </table>
             `;
             tablaPedidos.innerHTML = tablaHTML;
+
+            // DATATABLES.NET
+            // destruir dataTables si existe
+            if ($.fn.DataTable.isDataTable('#tablaPedidos table')) {
+                $('#tablaPedidos table').DataTable().destroy();
+            }
+            // Activar DataTables
+            $('#tablaPedidos table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.3.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
+                buttons: [
+                    { extend: 'copy', text: 'Copiar' },
+                    { extend: 'csv', text: 'CSV' },
+                    {
+                        extend: 'excel',
+                        text: 'Excel',
+                        title: 'Lista de Clientes',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF',
+                        title: 'Lista de Clientes',
+                        orientation: 'landscape',  // Horizontal
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    { extend: 'print', text: 'Imprimir' }
+                ]
+            });
         });
 }
 
@@ -105,7 +141,7 @@ function verDetallesPedido(pedidoId) {
 
             // 6. Rellenar total
             document.getElementById('totalPedidoModal').textContent = pedido.total.toFixed(2);
-            
+
             // 7. Mostrar modal con setTimeout pa evitar conflitos do boostrap 
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('modalDetallesPedido'));

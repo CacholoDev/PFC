@@ -20,15 +20,11 @@
   - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
   - [Diagrama de secuencia: Crear Pedido](#diagrama-de-secuencia-crear-pedido)
     - [Decisiones de diseño](#decisiones-de-diseño)
-    - [Uso de Endpoints (API REST)](#uso-de-endpoints-api-rest)
-      - [Endpoints de Clientes](#endpoints-de-clientes)
-      - [Endpoints de Productos](#endpoints-de-productos)
-      - [Endpoints de Pedidos](#endpoints-de-pedidos)
+    - [Documentación de Endpoints API con Swagger/OpenAPI](#documentación-de-endpoints-api-con-swaggeropenapi)
 - [3.Planificación](#3planificación)
   - [Fases del proyecto](#fases-del-proyecto)
   - [Diagrama de Gantt](#diagrama-de-gantt)
   - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
-  - [Conclusión](#conclusión)
       - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
 - [4. Implementación Técnica del Backend](#4-implementación-técnica-del-backend)
   - [4.1. Tecnologías Utilizadas](#41-tecnologías-utilizadas)
@@ -47,6 +43,26 @@
     - [**Tests manuales con Postman**](#tests-manuales-con-postman)
   - [4.6. Problemas Resueltos Durante Desarrollo](#46-problemas-resueltos-durante-desarrollo)
       - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
+- [5. Implementación Técnica del Frontend](#5-implementación-técnica-del-frontend)
+  - [5.1. Tecnologías y Bibliotecas](#51-tecnologías-y-bibliotecas)
+  - [5.2. Estructura de Archivos](#52-estructura-de-archivos)
+  - [5.3. Patrones de Arquitectura Frontend](#53-patrones-de-arquitectura-frontend)
+    - [**Comunicación con API REST mediante Fetch**](#comunicación-con-api-rest-mediante-fetch)
+    - [**Modales Reutilizables con Estado**](#modales-reutilizables-con-estado)
+    - [**Renderizado Dinámico con Template Literals**](#renderizado-dinámico-con-template-literals)
+  - [5.4. Funcionalidades Implementadas](#54-funcionalidades-implementadas)
+    - [**Sistema de Tabs (dashboard.html)**](#sistema-de-tabs-dashboardhtml)
+    - [**DataTables: Búsqueda, Ordenación, Paginación**](#datatables-búsqueda-ordenación-paginación)
+    - [**Sistema de Badges de Color**](#sistema-de-badges-de-color)
+    - [**Alertas de Stock Bajo**](#alertas-de-stock-bajo)
+    - [**Gestión de Stock Separada**](#gestión-de-stock-separada)
+    - [**Validaciones Frontend**](#validaciones-frontend)
+  - [5.5. Decisiones Técnicas](#55-decisiones-técnicas)
+    - [**Vanilla JavaScript vs Frameworks**](#vanilla-javascript-vs-frameworks)
+    - [**Bootstrap como Framework CSS**](#bootstrap-como-framework-css)
+    - [**DataTables para Tablas Interactivas**](#datatables-para-tablas-interactivas)
+    - [**Separación de Concerns**](#separación-de-concerns)
+      - [fin 4ª entrega (Implementación Frontend)](#fin-4ª-entrega-implementación-frontend)
 
 ## Introducción
 
@@ -310,68 +326,26 @@ sequenceDiagram
 
 - Es un prototipo funcional para ejecución local
 
-#### Uso de Endpoints (API REST)
+#### Documentación de Endpoints API con Swagger/OpenAPI
 
-**Base URL**: `http://localhost:8080`
+Se ha integrado **Swagger UI** para documentación interactiva de la API REST. Permite visualizar todos los endpoints, sus parámetros, y probar peticiones directamente desde el navegador.
 
-##### Endpoints de Clientes
+**Acceso a Swagger UI**: `http://localhost:8080/swagger-ui.html`
 
-| Método | Endpoint         | Body (JSON) | Descripción |
-|--------|------------------|-------------|-------------|
-| GET    | `/clientes`      | - | Listar todos los clientes |
-| GET    | `/clientes/{id}` | - | Obtener cliente por ID |
-| POST   | `/clientes`      | `{nombre, apellido, email, direccion, telefono}` | Crear nuevo cliente |
-| PUT    | `/clientes/{id}` | `{nombre, apellido, email, direccion, telefono}` | Actualizar cliente |
-| DELETE | `/clientes/{id}` | - | Eliminar cliente |
+**Probar Swagger**: Usar el boton al lado de cada metodo de "Try It OUT"
 
-##### Endpoints de Productos
+**Ventajas**:
+- Documentación automática generada desde los controllers
+- Interfaz visual para probar endpoints sin Postman
+- Exportación de especificación OpenAPI 3.0 (JSON/YAML)
+- Actualización automática al modificar código
 
-| Método | Endpoint         | Body (JSON) | Descripción |
-|--------|------------------|-------------|-------------|
-| GET    | `/productos`     | - | Listar todos los productos |
-| GET    | `/productos/{id}` | - | Obtener producto por ID |
-| POST   | `/productos`     | `{nombre, descripcion, precio, stock}` | Crear nuevo producto |
-| PUT    | `/productos/{id}` | `{nombre, descripcion, precio}` | Actualizar datos del producto (NO stock) |
-| DELETE | `/productos/{id}` | - | Eliminar producto |
-| POST   | `/productos/{id}/AumStock` | `{cantidad}` | **Aumentar stock** del producto |
+**Recursos principales documentados**:
+- **Clientes**: GET/POST/DELETE (`/clientes`)
+- **Productos**: CRUD completo + gestión de stock (`/productos`, `/productos/{id}/AumStock`, `/productos/{id}/RedStock`)
+- **Pedidos**: GET/POST/PUT para gestión de estados (`/pedidos`, `/pedidos/cliente/{id}`, `/pedidos/{id}/estado`)
 
-**Nota**: El stock solo se modifica mediante:
-- `POST /productos/{id}/AumStock` (aumentar manualmente)
-- `POST /pedidos` (reduce automáticamente al crear pedido)
-
-##### Endpoints de Pedidos
-
-| Método | Endpoint                   | Body (JSON) | Descripción |
-|--------|----------------------------|-------------|-------------|
-| GET    | `/pedidos`                 | - | Listar todos los pedidos con líneas |
-| GET    | `/pedidos/{id}`            | - | Obtener pedido por ID con detalles |
-| GET    | `/pedidos/cliente/{clienteId}` | - | Listar pedidos de un cliente específico |
-| POST   | `/pedidos`                 | `{clienteId, productos: {productoId: cantidad}}` | **Crear pedido** (reduce stock automáticamente) |
-| PUT    | `/pedidos/{id}`            | `{total, estado}` | Actualizar pedido (cambiar estado) |
-| DELETE | `/pedidos/{id}`            | - | Eliminar pedido |
-
-**Ejemplo de creación de pedido**:
-```json
-POST /pedidos
-{
-  "clienteId": 1,
-  "productos": {
-    "1": 2,
-    "3": 1
-  }
-}
-```
-Esto crea un pedido para el cliente 1 con:
-- 2 unidades del producto 1
-- 1 unidad del producto 3
-
-El sistema automáticamente:
-1. Valida que cliente y productos existan
-2. Valida que haya stock suficiente
-3. Crea el pedido con estado PENDIENTE
-4. Crea 2 líneas de pedido (LineaPedido)
-5. Reduce el stock de cada producto
-6. Calcula el total con precisión decimal (BigDecimal)
+**Nota**: El stock se gestiona mediante endpoints dedicados o automáticamente al crear pedidos.
 
 
 ## 3.Planificación
@@ -388,40 +362,29 @@ Para la planificación del desarrollo se empleará una **metodología Kanban**, 
 
 ### Diagrama de Gantt
 
-**Cronograma de desarrollo**: Representa la distribución temporal de las fases del proyecto, marcando las etapas críticas (backend y frontend) y las dependencias entre tareas.
-
 ```mermaid
 gantt
-    title Diagrama de Gantt - Desarrollo Plataforma Panadería
+    title Desarrollo Plataforma Panadería
     dateFormat  YYYY-MM-DD
     axisFormat %d/%m
     section Fase 1
-    Configuración entorno y BBDD :2024-10-01, 4d
-    
+    Configuración entorno :2024-10-01, 4d
     section Fase 2
-    Desarrollo Backend (API REST) :crit, 2024-10-05, 34d
-    
+    Backend (API REST) :crit, 2024-10-05, 34d
     section Fase 3
-    Desarrollo Frontend :crit, 2024-11-5, 28d
-    
+    Frontend :crit, 2024-11-5, 28d
     section Fase 4
-    Integración y pruebas :2024-12-03, 3d
-    
+    Integración :2024-12-03, 3d
     section Fase 5
-    Documentación y entrega :2024-12-06, 3d
+    Documentación :2024-12-06, 3d
 ```
 
 ### Estimación de recursos y costes
 
-* **Duración total estimada:** 9 semanas
-* **Horas de trabajo:** aprox. 75-85 horas
-* **Coste estimado (simulado,ficticio):** 20 €/h * 80h → 1600€ aprox. (non podo ir o mar mentres fago a FCT + PFC como facía mentras taba en DAW a distancia)
-* **Retorno estimado (simulado,ficticio)**: x2 do que invertimos → 3200€
-* **Recursos utilizados:** ordenador personal, VSCode, MySQL, Spring Boot, navegador web, conexión a internet.
-
-### Conclusión
-
-El desarrollo se centra en un único desarrollador, con tiempos ajustados y muy limitados con objetivos realistas. Se prioriza tener un **prototipo funcional** frente a un producto con todas las funcionalidades avanzadas que lo acabaré consiguiendo pero no llego para el PFC.
+* **Duración:** 9 semanas (~75-85 horas)
+* **Coste simulado:** 20 €/h * 80h → 1600€
+* **Retorno estimado(fictio):** 3000€
+* **Recursos:** ordenador personal, VSCode, MySQL, Spring Boot, conexión a internet
 
 
 ##### fin 2º entrega(PFC)
@@ -441,6 +404,7 @@ El desarrollo se centra en un único desarrollador, con tiempos ajustados y muy 
 | Lombok | Latest | Reducción boilerplate |
 | Jakarta Validation | Latest | Validaciones |
 | SLF4J | Latest | Logging |
+| SpringDoc OpenAPI | Documentación API (Swagger UI) |
 
 ### 4.2. Decisiones de Arquitectura
 
@@ -562,6 +526,227 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 1. **Recursión infinita en JSON** → Solucionado con `@JsonIgnore`
 2. **Decimales imprecisos** → Migrado de `Double` a `BigDecimal`
 3. **Totales desincronizados** → Añadidos lifecycle hooks
-4. **Import sin usar** → Limpiado en `PedidoController`
 
 ##### fin 3ª entrega (Implementación Backend)
+
+---
+
+## 5. Implementación Técnica del Frontend
+
+### 5.1. Tecnologías y Bibliotecas
+
+| Tecnología | Versión | Uso |
+|------------|---------|-----|
+| HTML5 | - | Estructura semántica |
+| CSS3 + Bootstrap | 5.3.8 | Estilos y componentes UI |
+| JavaScript (Vanilla) | ES6+ | Lógica cliente, fetch API |
+| jQuery | 3.7.0 | Requerido por DataTables |
+| DataTables | 2.3.5 | Tablas interactivas |
+| DataTables Buttons | 3.2.5 | Exportación datos |
+| Bootstrap Icons | 1.11.3 | Iconografía |
+| JSZip | 3.10.1 | Exportación Excel |
+| pdfmake | 0.2.7 | Exportación PDF |
+
+### 5.2. Estructura de Archivos
+
+```
+resources/static/
+├── login.html              # Autenticación básica
+├── dashboard.html          # Panel admin (tabs)
+├── mis-pedidos.html        # Vista cliente
+├── css/
+│   ├── stylesLogin.css
+│   ├── dashboard.css
+│   └── mis-pedidos.css
+├── js/
+│   ├── login.js            # Lógica autenticación
+│   ├── clientes.js         # CRUD clientes
+│   ├── productos.js        # CRUD productos + stock
+│   ├── pedidos.js          # Gestión pedidos admin
+│   ├── pedidosClientes.js  # Vista pedidos usuario
+│   └── crearPedidoCliente.js  # Carrito y creación pedido
+└── img/
+```
+
+### 5.3. Patrones de Arquitectura Frontend
+
+#### **Comunicación con API REST mediante Fetch**
+Todas las operaciones con el backend usan `fetch()` con manejo de promesas:
+
+```javascript
+fetch('/productos')
+    .then(response => response.json())
+    .then(data => cargarTablaProductos(data))
+    .catch(error => console.error('Error:', error));
+```
+
+#### **Modales Reutilizables con Estado**
+Se usan variables globales (`modoEdicion`, `idActual`) para reutilizar modales en crear/editar:
+
+```javascript
+let modoEdicion = false;
+let productoIdActual = null;
+
+function modalCrearProducto() {
+    modoEdicion = false;
+    document.getElementById('formProducto').reset();
+    // Abrir modal...
+}
+
+function modalEditarProducto(id) {
+    modoEdicion = true;
+    productoIdActual = id;
+    // Cargar datos y abrir modal...
+}
+```
+
+**Ventaja**: Reduce duplicación de HTML, un solo modal maneja crear y editar.
+
+#### **Renderizado Dinámico con Template Literals**
+Las tablas se construyen dinámicamente usando template strings de ES6:
+
+```javascript
+data.forEach(producto => {
+    tablaHTML += `
+        <tr>
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td${producto.stock < 10 ? ' class="bg-danger text-dark fw-bold"' : ''}>
+                ${producto.stock < 10 ? '⚠️ ' : ''}${producto.stock}
+            </td>
+        </tr>
+    `;
+});
+```
+
+**Técnica destacada**: Operador ternario dentro de `${}` para renderizado condicional de clases CSS y contenido.
+
+### 5.4. Funcionalidades Implementadas
+
+#### **Sistema de Tabs (dashboard.html)**
+Panel admin con navegación por pestañas sin recarga de página:
+- **Tab Clientes**: Crear/eliminar clientes, badges de rol (ADMIN/USER)
+- **Tab Productos**: CRUD completo + gestión stock independiente
+- **Tab Pedidos**: Ver todos los pedidos, cambiar estado, ver detalles
+
+#### **DataTables: Búsqueda, Ordenación, Paginación**
+Integración de DataTables en todas las tablas con configuración española:
+
+```javascript
+$('#tablaProductos table').DataTable({
+    language: {
+        url: '//cdn.datatables.net/plug-ins/2.3.5/i18n/es-ES.json'
+    },
+    dom: 'Bfrtip',
+    buttons: [
+        { extend: 'copy', text: 'Copiar' },
+        { extend: 'csv', text: 'CSV' },
+        { extend: 'excel', text: 'Excel', title: 'Lista de Productos' },
+        { extend: 'pdf', text: 'PDF', orientation: 'landscape' },
+        { extend: 'print', text: 'Imprimir' }
+    ]
+});
+```
+
+**Funciones incluidas**:
+- Búsqueda en tiempo real
+- Ordenación por columnas
+- Paginación configurable
+- Exportación a CSV, Excel, PDF, Copiar, Imprimir
+
+#### **Sistema de Badges de Color**
+Indicadores visuales para estados y roles usando clases Bootstrap:
+
+**Estados de pedido** (pedidos.js):
+```javascript
+function getBadgeClass(estado) {
+    switch(estado) {
+        case 'PENDIENTE': return 'bg-warning';
+        case 'EN_PREPARACION': return 'bg-info';
+        case 'LISTO': return 'bg-primary';
+        case 'ENTREGADO': return 'bg-success';
+        case 'CANCELADO': return 'bg-danger';
+    }
+}
+```
+
+**Roles de usuario** (clientes.js):
+```javascript
+function getBadgeRoleClass(role) {
+    return role === 'ADMIN' ? 'bg-warning' : 'bg-info';
+}
+```
+
+#### **Alertas de Stock Bajo**
+Renderizado condicional con operador ternario cuando stock < 10:
+
+```javascript
+<td${producto.stock < 10 ? ' class="bg-danger text-dark fw-bold"' : ''}>
+    ${producto.stock < 10 ? '⚠️ ' : ''}${producto.stock}
+</td>
+```
+
+**Resultado visual**: Celda roja con emoji de advertencia para productos con stock crítico.
+
+#### **Gestión de Stock Separada**
+Modal independiente para aumentar/reducir stock con validaciones frontend:
+
+```javascript
+function reducirStock() {
+    let stockActual = parseInt(document.getElementById('stockActualProducto').value, 10);
+    let cantidadReducir = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
+    
+    if (cantidadReducir > stockActual) {
+        alert('No puedes reducir más stock del disponible');
+        return;
+    }
+    
+    fetch(`/productos/${productoIdActual}/RedStock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cantidad: cantidadReducir })
+    })...
+}
+```
+
+**Ventaja**: Evita modificar stock accidentalmente al editar otros datos del producto.
+
+#### **Validaciones Frontend**
+Antes de enviar datos al backend, se validan:
+- Campos obligatorios no vacíos
+- Cantidades positivas
+- Formato email con regex
+- Stock suficiente antes de reducir
+
+### 5.5. Decisiones Técnicas
+
+#### **Vanilla JavaScript vs Frameworks**
+Se optó por JavaScript puro sin React porque:
+- Proyecto de alcance limitado debido al tiempo disponible
+**Consideración futura**: Migración a React
+
+#### **Bootstrap como Framework CSS**
+Elección de Bootstrap 5 por:
+- Componentes prediseñados (modals, badges, alerts, forms)
+- Responsive design automático
+- Grid system para layouts
+- Documentación extensa
+- Compatibilidad con DataTables
+
+#### **DataTables para Tablas Interactivas**
+Integración de DataTables en vez de implementación manual porque:
+- Ahorra +-30 minutos de desarrollo por tabla
+- Funcionalidad robusta y probada (usado por Netflix, Google)
+- Exportación incluida en extensiones oficiales
+
+#### **Separación de Concerns**
+Cada vista tiene su propio archivo JS:
+- `clientes.js` → Gestión de clientes
+- `productos.js` → Gestión de productos
+- `pedidos.js` → Vista admin de pedidos
+- `pedidosClientes.js` → Vista usuario de pedidos
+- `crearPedidoCliente.js` → Lógica del carrito
+
+**Ventaja**: Mantenibilidad, evita conflictos de nombres, carga bajo demanda.
+
+##### fin 4ª entrega (Implementación Frontend)

@@ -61,7 +61,9 @@ function cargarTablaProductos() {
                             <td>${producto.id}</td>
                             <td>${producto.nombre}</td>
                             <td>${producto.precio.toFixed(2)}€</td>
-                            <td>${producto.stock}</td>
+                            <td${producto.stock < 5 ? ' class="bg-danger text-dark fw-bold"' : ''}>
+                                ${producto.stock < 5 ? '⚠️ ' : ''}${producto.stock}
+                            </td>
                             <td>
                                 <button class="btn btn-sm btn-warning" title="Editar producto" onclick="modalEditarProducto(${producto.id})">
                                     <i class="bi bi-pencil-square"></i>
@@ -83,6 +85,42 @@ function cargarTablaProductos() {
                 `;
 
             tablaProductos.innerHTML = tablaHTML;
+
+            // DATATABLES.NET
+            // destruir dataTables si existe
+            if ($.fn.DataTable.isDataTable('#tablaProductos table')) {
+                $('#tablaProductos table').DataTable().destroy();
+            }
+            // Activar DataTables
+            $('#tablaProductos table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.3.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
+                buttons: [
+                    { extend: 'copy', text: 'Copiar' },
+                    { extend: 'csv', text: 'CSV' },
+                    {
+                        extend: 'excel',
+                        text: 'Excel',
+                        title: 'Lista de Clientes',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF',
+                        title: 'Lista de Clientes',
+                        orientation: 'landscape',  // Horizontal
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'  // Excluir columna Acciones
+                        }
+                    },
+                    { extend: 'print', text: 'Imprimir' }
+                ]
+            });
         })
         .catch(error => {
             console.error('Error al cargar productos:', error);
