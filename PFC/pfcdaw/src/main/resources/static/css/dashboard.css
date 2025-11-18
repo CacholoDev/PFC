@@ -1,5 +1,11 @@
 /* === ESTILOS DASHBOARD === */
 
+/* HTML base */
+html {
+    height: 100%;
+    overflow-y: auto;
+}
+
 /* Fondo degradado cos colores da panadería */
 body {
     background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
@@ -7,6 +13,8 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
+    position: relative;
+    overflow-y: auto;
 }
 
 /* Título principal con sombra */

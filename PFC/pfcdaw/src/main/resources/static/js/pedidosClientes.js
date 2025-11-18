@@ -69,6 +69,7 @@ function cargarPedidosUsuario(clienteId) {
 
             // tabla HTML
             let tablaHTML = `
+            <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -77,6 +78,7 @@ function cargarPedidosUsuario(clienteId) {
                             <th>Estado-Pedido</th>
                             <th>Total</th>
                             <th>Nº Líneas</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,7 +95,7 @@ function cargarPedidosUsuario(clienteId) {
                     minute: '2-digit'
                 });
 
-                // colorear segun estado pendiente, listo , entregado...
+                // colorear x estado pendiente, listo , entregado...
                 let badgeClass = 'bg-secondary';
                 if (pedido.estado === 'PENDIENTE') badgeClass = 'bg-warning text-dark';
                 if (pedido.estado === 'EN_PREPARACION') badgeClass = 'bg-info text-dark';
@@ -108,6 +110,11 @@ function cargarPedidosUsuario(clienteId) {
                         <td><span class="badge ${badgeClass}">${pedido.estado}</span></td>
                         <td>${Number(pedido.total).toFixed(2)} €</td>
                         <td>${pedido.lineasPedido?.length || 0}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" title="Ver lineas del pedido" onclick="verDetallesPedido(${pedido.id})">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
@@ -115,6 +122,7 @@ function cargarPedidosUsuario(clienteId) {
             tablaHTML += `
                     </tbody>
                 </table>
+            </div>
             `;
 
             // insertar tabla
@@ -167,3 +175,33 @@ function cargarPedidosUsuario(clienteId) {
             `;
         });
 }
+
+// function po modal de ver detalles pedido #detallesPedidoBody
+function verDetallesPedido(pedidoId) {
+    fetch(`/pedidos/${pedidoId}`)
+        .then(response => response.json())
+        .then(pedido => {
+            // pintar detalles no modal #detallesPedidoBody
+            const detallesBody = document.getElementById("detallesPedidoBody");
+            detallesBody.innerHTML = "";
+            // pintar productos
+            pedido.lineasPedido.forEach(linea => {
+                const productoDiv = document.createElement("div");
+                productoDiv.classList.add("producto-pedido");
+                productoDiv.innerHTML = `
+                    <h6><b>${linea.producto.nombre}</b></h6>
+                    <p>Cantidad: ${linea.cantidad}</p>
+                    <p>Precio unitario: ${linea.producto.precio.toFixed(2)} €</p>
+                    <p>Subtotal: ${(linea.cantidad * linea.producto.precio).toFixed(2)} €</p>
+                    <hr>
+                `;
+                detallesBody.appendChild(productoDiv);
+            });
+            // abrir modal
+            setTimeout(() => {
+                const detallesModal = new bootstrap.Modal(document.getElementById("modalDetallesPedido"));
+                detallesModal.show();
+            }, 300);
+        });
+}
+
