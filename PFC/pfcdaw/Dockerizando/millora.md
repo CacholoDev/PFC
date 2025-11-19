@@ -1,1 +1,0 @@
-manejar session en el back y usuarios

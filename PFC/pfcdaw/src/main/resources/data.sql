@@ -1,6 +1,5 @@
 -- Script de datos de proba para panadería PFC
--- Executar MANUALMENTE cando queiramos datos de proba no phpmyadmin de xampp
--- por consola: # mysql -u root -p panaderiaPFC < PFC/pfcdaw/src/main/resources/data-sample.sql
+-- Executase automaticamente ahora co cambio en application.properties de spring.jpa.defer-datasource-initialization=true
 -- ============================================
 -- INSERTAR CLIENTES/USUARIOS DE PRUEBA (si non existen)
 -- ADMIN: admin@panaderia.com (password: admin123)
@@ -27,8 +26,8 @@ VALUES
 -- NOTA: Pedidos NON se insertan aquí van co endpoint POST /pedidos
 -- para que o stock se reduza correctamente
 
--- limpiar todo e despois executar o data-sample si queremos ter todo limpo de 0
-TRUNCATE TABLE lineas_pedido;
-TRUNCATE TABLE pedidos;
-TRUNCATE TABLE productos;
-TRUNCATE TABLE clientes;
+-- limpiar todo e despois executar o data.sql si queremos ter todo limpo de 0
+-- TRUNCATE TABLE lineas_pedido;
+-- TRUNCATE TABLE pedidos;
+-- TRUNCATE TABLE productos;
+-- TRUNCATE TABLE clientes;

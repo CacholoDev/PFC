@@ -2,8 +2,8 @@
 
 /* HTML base */
 html {
-    height: 100%;
-    overflow-y: auto;
+    height: 100%;  /* */
+    overflow-y: auto; /* */
 }
 
 /* Fondo degradado cos colores da panadería */
@@ -13,8 +13,8 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
-    position: relative;
-    overflow-y: auto;
+    position: relative; /* */
+    overflow-y: auto; /* */
 }
 
 /* Título principal con sombra */
