@@ -78,11 +78,7 @@ h1 {
 .table tbody td {
     vertical-align: middle;
     padding: 1rem;
-<<<<<<< HEAD
-    font-size: 1.05rem;  /* Texto más grande en celdas */
-=======
 /*    font-size: 1.05rem;   Texto + grande en celdas */
->>>>>>> 1c2db9637a66b3009c99a83c5eb16ec8c0fcf0a0
 }
 
 /* Badge de estado */
@@ -90,38 +86,7 @@ h1 {
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-weight: 600;
-<<<<<<< HEAD
-    font-size: 0.95rem;  /* Badges más grandes */
-}
-
-/* Buttons grandes */
-.btn-sm {
-    font-size: 1.3rem;
-    padding: 0.5rem 0.75rem;
-}
-
-/* Responsive: texto + grande no móvil */
-@media (max-width: 768px) {
-    .table {
-        font-size: 1.6rem;
-    }
-    
-    .table tbody td {
-        font-size: 1.6rem;
-        padding: 0.9rem;
-    }
-    
-    .badge {
-        font-size: 1.4rem;
-        padding: 0.6rem 1.1rem;
-    }
-    
-    h1 {
-        font-size: 1.8rem;
-    }
-=======
 /*    font-size: 0.95rem;  // Badges + grandes */ 
->>>>>>> 1c2db9637a66b3009c99a83c5eb16ec8c0fcf0a0
 }
 
 /* Buttons grandes */
