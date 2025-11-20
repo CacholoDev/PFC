@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,6 +33,7 @@ public class ProductoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "El nombre del producto es obligatorio")
+    @Column(unique = true) // para que non se repitan os productos na BD
     private String nombre;
     @NotNull(message = "El precio del producto es obligatorio")
     @DecimalMin(value = "0.0", message = "El precio debe ser un valor positivo o cero")

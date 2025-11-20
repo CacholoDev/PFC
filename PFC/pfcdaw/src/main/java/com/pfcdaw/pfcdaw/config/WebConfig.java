@@ -13,9 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")  // Permite todas as rutas da API
                 .allowedOrigins(
                     "http://localhost:5500",      // LiveServer
-                    "http://127.0.0.1:5500"       // localhost
+                    "http://127.0.0.1:5500",       // localhost
+                    "http://localhost:8081"      // front po nginx
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") 
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

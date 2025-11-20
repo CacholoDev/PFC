@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <!-- DataTables.net CSS -->
     <link
-        href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.5/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/datatables.min.css"
-        rel="stylesheet" integrity="sha384-QqcgnmBa/YMgME1cwhmRWILN1RwgDrTpNQQQOu2bPoSfvGgxo3K9hn1rGc1Ns1Qg"
+        href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.5/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/cc-1.1.1/r-3.0.7/datatables.min.css"
+        rel="stylesheet" integrity="sha384-IcyJLaR+5T6vvA/pqAwM4QmhXmVPgdEf1XbVcMZk84dK/893Brt7xRkoq+++cIIn"
         crossorigin="anonymous">
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="css/mis-pedidos.css" />
@@ -136,30 +136,54 @@
                     <button type="button" class="btn btn-primary" id="btnConfirmarPedido">Confirmar pedido</button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- DataTables.net JS -->
-            <!-- pdfmake (para exportar PDF) -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
-                integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
-                crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
-                integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
-                crossorigin="anonymous"></script>
-            <!-- DataTables + JSZip + Buttons + HTML5 export -->
-            <script
-                src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.5/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/datatables.min.js"
-                integrity="sha384-8B82qI0g2i4G4s9tIyrDeNP+yZu46YJKsmNCSzmnrEoB4CYwiPxDrmse6YSeg14z"
-                crossorigin="anonymous"></script>
+    <!-- === MODAL DETALLES PEDIDO === -->
+    <div class="modal fade" tabindex="-1" id="modalDetallesPedido">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-card-list text-warning me-2"></i>
+                        Detalles del Pedido
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="detallesPedidoBody">
+                    <!-- Detalles do pedido x JS -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables.net JS -->
+    <!-- pdfmake (para exportar a distintos formatos) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+        integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
+        integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
+        crossorigin="anonymous"></script>
+
+    <!-- DataTables + JSZip + Buttons + HTML5 export -->
+    <script
+        src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.3.5/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/cc-1.1.1/r-3.0.7/datatables.min.js"
+        integrity="sha384-2UaT9IXtvK2KvAiwEKrsjkkMsb/L2lvhpK2HVMJ9jn5vvQlfTukIht5MH8mDagYU"
+        crossorigin="anonymous"></script>
 
 
-            <!-- Bootstrap JS -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-                crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 
-            <!-- JS -->
-            <script src="js/pedidosClientes.js"></script>
-            <script src="js/crearPedidoCliente.js"></script>
+    <!-- JS -->
+    <script src="js/pedidosClientes.js"></script>
+    <script src="js/crearPedidoCliente.js"></script>
 </body>
 
 </html>

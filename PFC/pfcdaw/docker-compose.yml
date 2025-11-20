@@ -1,0 +1,70 @@
+# Versión de Docker Compose
+version: "3.9"
+ 
+# Definición de servicios (contenedores)
+services:
+  # ===== SERVICIO 1: BASE DE DATOS MySQL =====
+  mysql:
+    container_name: mysql           # Nombre del contenedor
+    image: mysql:8.0                # Imagen oficial de MySQL versión 8.0
+    ports:        #acordarse comentar esto para produccion mais o puerto
+      - "3306:3306"                 # Expone puerto 3306 al host (PC local)
+    command:                        # Configuraciones al arrancar MySQL
+      - --default-authentication-plugin=mysql_native_password  # Usa autenticación legacy
+      - --character-set-server=utf8                            # Codificación UTF-8
+      - --collation-server=utf8_general_ci                     # Ordenación de caracteres
+    environment:                    # Variables de entorno para configurar MySQL                    # Variables de entorno para configurar MySQL
+      - MYSQL_ROOT_PASSWORD=root    # Contraseña del usuario root
+      - MYSQL_USER=admin            # Crea usuario 'admin'
+      - MYSQL_PASSWORD=admin123     # Contraseña del usuario 'admin'
+      - MYSQL_DATABASE=panaderiaPFC # Crea automáticamente la BD y da permisos a 'admin'
+      - DOCKER_TIMEZONE=Europe/Madrid
+    volumes:                        # Persistencia de datos
+      - mysql_panaderia:/var/lib/mysql              # Guarda datos de MySQL en volumen persistente
+      - '/etc/timezone:/etc/timezone:ro'            # Sincroniza zona horaria (read-only)
+      - '/etc/localtime:/etc/localtime:ro'          # Sincroniza hora del sistema
+#    restart: always                                # En producción: reinicia automáticamente si falla
+    healthcheck:                    # Verifica que MySQL está listo antes de arrancar backend
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin123"]
+      timeout: 20s                  # Tiempo máximo de espera por respuesta
+      retries: 10                   # Número de intentos
+      start_period: 30s             # Tiempo de gracia inicial
+ 
+  # ===== SERVICIO 2: BACKEND Spring Boot =====
+  backend:
+    build: .                        # Construye imagen usando Dockerfile en esta carpeta
+    container_name: backend         # Nombre del contenedor
+#    restart: always                # En producción: reinicia automáticamente
+    #ports:                         # Mapea puertos (opcional, no necesario con Nginx) porque asi non poden acceder o 8080
+    #  - "8080:8080"                 # Expone puerto 8080 al host
+    environment:                    # Sobreescribe variables de application.properties
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Madrid  # Conexión a MySQL (usa nombre del servicio 'mysql')
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update       # Actualiza esquema de BD automáticamente
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_PROFILES_ACTIVE=docker              # Activa perfil 'docker' de Spring
+      - SERVER_PORT=8080
+    depends_on:                     # No arranca hasta que MySQL esté listo
+      mysql:
+        condition: service_healthy      # Espera a que healthcheck de MySQL sea OK
+    volumes:                        # Sincroniza zona horaria con el host
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+
+  # ===== SERVICIO 3: PROXY Nginx =====
+  nginx:
+    container_name: nginx           # Nombre del contenedor
+    build: 
+      context: .                    # Carpeta donde buscar archivos
+      dockerfile: Dockerfile.nginx  # Usa este Dockerfile específico
+    ports:
+      - "8081:80"                   # Puerto 8081 del host → puerto 80 del contenedor
+    depends_on:                     # No arranca hasta que backend esté corriendo
+      - backend
+    tty: true                       # Mantiene terminal abierta
+#    restart: always                # En producción: reinicia automáticamente
+ 
+# Definición de volúmenes persistentes
+volumes:
+  mysql_panaderia:                  # Volumen para datos de MySQL (persiste entre reinicios)

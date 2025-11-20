@@ -28,7 +28,7 @@ VALUES
 -- para que o stock se reduza correctamente
 
 -- limpiar todo e despois executar o data-sample si queremos ter todo limpo de 0
-TRUNCATE TABLE lineas_pedido;
-TRUNCATE TABLE pedidos;
-TRUNCATE TABLE productos;
-TRUNCATE TABLE clientes;
+-- TRUNCATE TABLE lineas_pedido;
+-- TRUNCATE TABLE pedidos;
+-- TRUNCATE TABLE productos;
+-- TRUNCATE TABLE clientes;
