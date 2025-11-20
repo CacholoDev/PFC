@@ -16,6 +16,7 @@
     - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
 - [2. Diseño](#2-diseño)
   - [Arquitectura general](#arquitectura-general)
+    - [Diagrama de Arquitectura Detallado](#diagrama-de-arquitectura-detallado)
   - [Estructura básica del backend](#estructura-básica-del-backend)
   - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
   - [Diagrama de secuencia: Crear Pedido](#diagrama-de-secuencia-crear-pedido)
@@ -56,12 +57,19 @@
     - [**Sistema de Badges de Color**](#sistema-de-badges-de-color)
     - [**Alertas de Stock Bajo**](#alertas-de-stock-bajo)
     - [**Gestión de Stock Separada**](#gestión-de-stock-separada)
+    - [**Modal de Detalles de Pedido (Vista Usuario)**](#modal-de-detalles-de-pedido-vista-usuario)
+    - [**Autenticación con localStorage**](#autenticación-con-localstorage)
     - [**Validaciones Frontend**](#validaciones-frontend)
   - [5.5. Decisiones Técnicas](#55-decisiones-técnicas)
     - [**Vanilla JavaScript vs Frameworks**](#vanilla-javascript-vs-frameworks)
     - [**Bootstrap como Framework CSS**](#bootstrap-como-framework-css)
     - [**DataTables para Tablas Interactivas**](#datatables-para-tablas-interactivas)
     - [**Separación de Concerns**](#separación-de-concerns)
+  - [5.6. Limitaciones de Seguridad y Roadmap de Mejoras](#56-limitaciones-de-seguridad-y-roadmap-de-mejoras)
+    - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
+    - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
+    - [**Roadmap de Migración a Arquitectura Segura**](#roadmap-de-migración-a-arquitectura-segura)
+    - [**Comunicación de Limitaciones en Defensa del PFC**](#comunicación-de-limitaciones-en-defensa-del-pfc)
       - [fin 4ª entrega (Implementación Frontend)](#fin-4ª-entrega-implementación-frontend)
 
 ## Introducción
@@ -121,7 +129,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
-- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,mejora en vez de texto plano por password usar el spring security con encryptado(BCryptPasswordEncoder) hasheando las password al guardar y comparandolascon .matches al logearse, añadir distintas funcionalidades que pueda pedir el negocio.
+- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker / subirlo a una web), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,mejora en vez de texto plano por password usar el spring security con encryptado(BCryptPasswordEncoder) hasheando las password al guardar y comparandolascon .matches al logearse, manejar sessions en el back(ahora lo controlo por LocalStorage pero para evitar intrusiones a endpoints por ejemplo la lista de clientes lo controlaré por el Back de SpringBoot), añadir distintas funcionalidades que pueda pedir el negocio.
 - Se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
     
 
@@ -164,7 +172,7 @@ Enlace a Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t
 
 El siguiente diagrama muestra de forma general las **interacciones principales** en la aplicación web de pedidos para panadería.
 
-Se refleja las principales funciones del sistema sin entrar aún en detalle de roles avanzados que haré si me da tiempo antes del fin de fecha del PFC, si no lo continuaré después de ello, ya que en esta primera versión no se implementan usuarios diferenciados (admin/user), sino que se centra en el flujo básico de pedidos y del funcionamiento de la API REST con Spring Boot Java.
+Se refleja las principales funciones del sistema, con el detalle del uso de roles avanzados (admin/user), se centra en el flujo básico de pedidos y del funcionamiento de la API REST con Spring Boot Java.
 
 **Diagrama de secuencia simplificado**: Muestra las tres operaciones principales que realizan los actores en el sistema (consultar catálogo, realizar pedido, gestionar pedidos).
 
@@ -190,6 +198,45 @@ El proyecto está dividido en dos partes principales:
 ### Arquitectura general
 [Cliente (HTML/JS)] --> [Spring Boot API REST] --> [Base de datos MySQL]
 
+#### Diagrama de Arquitectura Detallado
+
+Este diagrama muestra el **flujo completo de una petición** desde el navegador hasta la base de datos, incluyendo todas las capas de la arquitectura backend:
+
+```mermaid
+flowchart LR
+    Browser["🌐 Browser<br/>(HTML/CSS/JS)"] -->|"fetch() HTTP"| Controller
+    
+    subgraph SpringBoot["☕ Spring Boot Application"]
+        Controller["📡 Controller<br/>@RestController"] -->|DTO| Service
+        Service["⚙️ Service<br/>@Service + @Transactional"] -->|Entity| Repository
+        Repository["💾 Repository<br/>JpaRepository"] -->|"JPA/Hibernate<br/>SQL"| DB
+    end
+    
+    DB[("🗄️ MySQL<br/>Database")]
+    
+    Controller -.->|"JSON Response"| Browser
+    
+    style Browser fill:#e1f5ff
+    style Controller fill:#fff4e1
+    style Service fill:#ffe1f5
+    style Repository fill:#e1ffe1
+    style DB fill:#f0f0f0
+```
+
+**Flujo de ejemplo - Crear Pedido**:
+1. Usuario hace clic en "Crear Pedido" → `fetch('/pedidos', { method: 'POST', body: pedidoDto })`
+2. **Controller** (`PedidoController`) recibe `PedidoCreateDto` y llama a `pedidoService.createPedido(dto)`
+3. **Service** (`PedidoService`) valida datos, crea entidades `PedidoEntity` + `LineaPedido`, reduce stock
+4. **Repository** (`PedidoRepository`) persiste en BD mediante JPA (cascade guarda líneas automáticamente)
+5. **MySQL** ejecuta `INSERT INTO pedidos`, `INSERT INTO lineas_pedido`, `UPDATE productos SET stock = stock - cantidad`
+6. Response JSON con pedido creado regresa por la cadena hasta el navegador
+7. JavaScript actualiza la tabla sin recargar página
+
+**Ventajas de esta arquitectura**:
+- **Separación de capas**: Controller maneja HTTP, Service lógica de negocio, Repository persistencia
+- **Transaccionalidad**: `@Transactional` en Service garantiza rollback si falla alguna operación
+- **DTOs**: Evitan exponer entidades JPA directamente, permiten validaciones con Jakarta
+- **JPA Cascade**: Simplifica persistencia de relaciones (guardar pedido guarda líneas automáticamente)
 
 ### Estructura básica del backend
 
@@ -355,7 +402,7 @@ Para la planificación del desarrollo se empleará una **metodología Kanban**, 
 ### Fases del proyecto
 
 1. **Configuración del entorno y base de datos** – 1/2 semana
-2. **Desarrollo del backend (API REST y persistencia)** – 4 semanas
+2. **Desarrollo del backend (API REST y persistencia)** – 5 semanas
 3. **Desarrollo del frontend (HTML, CSS, JS)** – 4 semanas
 4. **Integración y pruebas locales** – 1/2 semana
 5. **Documentación y entrega final** – 1 semana
@@ -370,13 +417,13 @@ gantt
     section Fase 1
     Configuración entorno :2024-10-01, 4d
     section Fase 2
-    Backend (API REST) :crit, 2024-10-05, 34d
+    Backend (API REST) :crit, 2024-10-05, 38d
     section Fase 3
-    Frontend :crit, 2024-11-5, 28d
+    Frontend :crit, 2024-11-5, 30d
     section Fase 4
-    Integración :2024-12-03, 3d
+    Integración :2024-12-05, 3d
     section Fase 5
-    Documentación :2024-12-06, 3d
+    Documentación :2024-12-08, 3d
 ```
 
 ### Estimación de recursos y costes
@@ -400,7 +447,7 @@ gantt
 | Java | 21 | Lenguaje base |
 | Spring Boot | 3.5.7 | Framework backend |
 | Spring Data JPA | 3.5.7 | Persistencia ORM |
-| MySQL | 8.x | Base de datos |
+| MySQL | 8.0 | Base de datos |
 | Lombok | Latest | Reducción boilerplate |
 | Jakarta Validation | Latest | Validaciones |
 | SLF4J | Latest | Logging |
@@ -711,6 +758,123 @@ function reducirStock() {
 
 **Ventaja**: Evita modificar stock accidentalmente al editar otros datos del producto.
 
+#### **Modal de Detalles de Pedido (Vista Usuario)**
+En `mis-pedidos.html`, los usuarios pueden ver el detalle completo de sus pedidos en un modal Bootstrap:
+
+```javascript
+function verDetallesPedido(pedidoId) {
+    fetch(`/pedidos/${pedidoId}`)
+        .then(response => response.json())
+        .then(pedido => {
+            // Renderizar productos con forEach inline
+            let productosHTML = '';
+            pedido.lineasPedido.forEach(linea => {
+                productosHTML += `
+                    <tr>
+                        <td>${linea.producto.nombre}</td>
+                        <td>${linea.cantidad}</td>
+                        <td>${linea.pTotal.toFixed(2)}€</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('detallesPedidoBody').innerHTML = productosHTML;
+            new bootstrap.Modal(document.getElementById('modalDetallesPedido')).show();
+        });
+}
+```
+
+**Características**:
+- Petición individual por pedido ID (endpoint `/pedidos/{id}`)
+- Renderizado dinámico de líneas de pedido con template literals
+- Muestra producto, cantidad y subtotal por línea
+- Abre modal Bootstrap sin recarga de página
+
+**Ventaja**: Usuario puede revisar qué productos incluyó en cada pedido histórico.
+
+#### **Autenticación con localStorage**
+El sistema de autenticación es **básico pero funcional**, usando `localStorage` del navegador para persistir sesión:
+
+**Flujo de login** (`login.js`):
+```javascript
+fetch('/clientes')
+    .then(response => response.json())
+    .then(clientes => {
+        const usuario = clientes.find(c => 
+            c.email === email && c.password === password
+        );
+        
+        if (usuario) {
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+            window.location.href = usuario.rol === 'ADMIN' 
+                ? 'dashboard.html' 
+                : 'mis-pedidos.html';
+        }
+    });
+```
+
+**Protección de rutas** (cada página):
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+    const usuarioTexto = localStorage.getItem('usuario');
+    
+    if (!usuarioTexto) {
+        window.location.href = 'login.html';  // Redirigir si no autenticado
+        return;
+    }
+    
+    const usuario = JSON.parse(usuarioTexto);
+    
+    // Validar rol (ej: solo ADMIN en dashboard)
+    if (usuario.rol !== 'ADMIN') {
+        window.location.href = 'mis-pedidos.html';
+        return;
+    }
+});
+```
+
+**Logout**:
+```javascript
+localStorage.removeItem('usuario');
+window.location.href = 'login.html';
+```
+
+**Características**:
+- **Persistencia**: Sesión sobrevive a recargas de página
+- **Redirección por rol**: ADMIN → dashboard, USER → mis-pedidos
+- **Datos de usuario**: Nombre, email, rol disponibles en `localStorage` para personalización UI
+- **Protección básica**: Páginas verifican autenticación en `DOMContentLoaded`
+
+**Limitaciones conocidas y consideraciones de seguridad:**
+
+> **Nota importante sobre seguridad**: Soy consciente de que los endpoints REST están **expuestos públicamente** sin autenticación a nivel backend. Esta decisión es para priorizar la funcionalidad completa del sistema dentro del tiempo disponible durante la FCT
+
+**Vulnerabilidades actuales identificadas:**
+1. **Endpoints sin protección**: Cualquiera puede acceder a `http://localhost:8080/clientes` sin autenticación
+2. **localStorage vulnerable a XSS**: JavaScript malicioso podría robar datos de sesión
+3. **Contraseñas en texto plano**: Almacenadas sin cifrado en MySQL
+4. **Sin expiración de sesión**: Usuario permanece logueado indefinidamente
+5. **Sin validación de tokens**: No hay JWT
+
+**Plan de migración a arquitectura segura** (post-entrega):
+
+| Mejora | Tecnología | Impacto en Seguridad |
+|--------|------------|----------------------|
+| **Sessions backend** | Spring Security + HttpSession | ✅ Protección total de endpoints |
+| **Cookies httpOnly** | `Set-Cookie: httpOnly; secure; sameSite` | ✅ Inmune a XSS (JS no puede leerlas) |
+| **Hash contraseñas** | BCryptPasswordEncoder | ✅ Irreversible incluso con acceso a BD |
+| **CSRF Protection** | Spring Security CSRF tokens | ✅ Prevención de ataques cross-site |
+| **Expiración sesiones** | `server.servlet.session.timeout=30m` | ✅ Cierre automático sesiones inactivas |
+| **JWT** (opcional) | jjwt library | ✅ APIs stateless + refresh tokens |
+
+**Justificación técnica de la decisión:**
+- Implementar Spring Security completo requiere bastante tiempo que ahora no dispongo del (configuración + testing CORS + cookies cross-origin)
+- El proyecto ya incluye: backend funcional, frontend completo, DataTables, Swagger, documentación extensa
+- La autenticación básica con localStorage demuestra comprensión de flujos de login/logout/protección de rutas en frontend
+- Esta limitación está **documentada y reconocida**, no es un descuido
+
+**Ventaja actual**: Prototipo funcional completo que cumple los objetivos del PFC en el tiempo disponible. La migración a Spring Security será la primera mejora implementada post-defensa.
+
 #### **Validaciones Frontend**
 Antes de enviar datos al backend, se validan:
 - Campos obligatorios no vacíos
@@ -727,8 +891,8 @@ Se optó por JavaScript puro sin React porque:
 
 #### **Bootstrap como Framework CSS**
 Elección de Bootstrap 5 por:
-- Componentes prediseñados (modals, badges, alerts, forms)
-- Responsive design automático
+- Componentes prediseñados (modals, badges, alerts, forms...)
+- Responsive
 - Grid system para layouts
 - Documentación extensa
 - Compatibilidad con DataTables
@@ -748,5 +912,128 @@ Cada vista tiene su propio archivo JS:
 - `crearPedidoCliente.js` → Lógica del carrito
 
 **Ventaja**: Mantenibilidad, evita conflictos de nombres, carga bajo demanda.
+
+### 5.6. Limitaciones de Seguridad y Roadmap de Mejoras
+
+#### **Estado Actual del Sistema de Autenticación**
+
+El proyecto implementa **autenticación básica en frontend** mediante `localStorage` con las siguientes características:
+
+**✅ Funcionalidades implementadas:**
+- Login con validación de email/contraseña
+- Redirección automática según rol (ADMIN → dashboard / USER → mis-pedidos)
+- Protección de rutas en frontend (redirección a login si no autenticado)
+- Logout con limpieza de sesión
+- Persistencia de datos de usuario entre recargas
+
+**❌ Limitaciones críticas identificadas:**
+
+1. **Exposición de API REST sin autenticación backend**
+   - **Problema**: Los endpoints como `/clientes`, `/productos`, `/pedidos` son accesibles directamente sin validación
+   - **Riesgo**: Cualquier usuario puede listar/modificar datos sin estar logueado
+   - **Ejemplo**: `curl http://localhost:8080/clientes` devuelve lista completa sin credenciales
+
+2. **Almacenamiento inseguro de sesión**
+   - **Problema**: `localStorage` es accesible por JavaScript y vulnerable a ataques XSS
+   - **Riesgo**: Scripts maliciosos pueden robar datos de sesión y contraseñas
+
+3. **Contraseñas en texto plano**
+   - **Problema**: Campo `password` en `ClienteEntity` sin cifrado
+   - **Riesgo**: Acceso directo a MySQL expone contraseñas reales de usuarios
+
+4. **Sin mecanismo de expiración**
+   - **Problema**: Sesión permanece activa hasta logout manual
+   - **Riesgo**: Equipos compartidos mantienen sesiones abiertas indefinidamente
+
+#### **Justificación de Decisiones Técnicas**
+
+Esta arquitectura fue elegida conscientemente considerando:
+
+**Contexto del proyecto:**
+- PFC desarrollado en paralelo con FCT (8h/día Santiago + 2h desplazamiento)
+- Tiempo disponible: ~6 semanas para backend + frontend completos
+- Prioridad: Demostrar conocimientos de Spring Boot, JPA, REST APIs, frontend moderno
+
+**Análisis de coste-beneficio:**
+
+| Opción | Tiempo Estimado | Valor para PFC | Decisión |
+|--------|-----------------|----------------|----------|
+| localStorage básico | 2h | ⭐⭐⭐ (funcionalidad completa) | ✅ Implementado |
+| Spring Security completo | 6-8h | ⭐⭐⭐⭐⭐ (producción real) | ❌ Descartado (tiempo) |
+| Interceptor custom | 3-4h | ⭐⭐ (solución intermedia) | ❌ Descartado (complejidad) |
+
+**Resultado:** Se priorizó un **prototipo funcional completo** con autenticación frontend sobre seguridad backend, documentando exhaustivamente las limitaciones.
+
+#### **Roadmap de Migración a Arquitectura Segura**
+
+**Fase 1: Spring Security Básico** (6-8 horas)
+```java
+// Dependencia pom.xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+// SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login", "/login.html").permitAll()
+                .requestMatchers("/clientes/**", "/productos/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(true)
+            );
+        return http.build();
+    }
+}
+```
+
+**Fase 2: Hashing de Contraseñas** (2-3 horas)
+```java
+// Migración de ClienteEntity
+@PrePersist
+@PreUpdate
+public void hashPassword() {
+    if (this.password != null && !this.password.startsWith("$2a$")) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(this.password);
+    }
+}
+
+// Validación en AuthService
+public boolean validarCredenciales(String email, String plainPassword) {
+    ClienteEntity cliente = clienteRepository.findByEmail(email);
+    return encoder.matches(plainPassword, cliente.getPassword());
+}
+```
+
+**Fase 3: Cookies httpOnly** (1-2 horas)
+```java
+// application.properties
+server.servlet.session.cookie.http-only=true
+server.servlet.session.cookie.secure=true
+server.servlet.session.cookie.same-site=strict
+server.servlet.session.timeout=30m
+```
+
+**Fase 4: JWT para APIs Stateless** (4-6 horas - opcional)
+- Implementar generación de tokens con `jjwt`
+- Crear filtros de validación de tokens
+- Sistema de refresh tokens para renovación
+
+**Estimación total:** 13-19 horas de desarrollo + testing
+
+#### **Comunicación de Limitaciones en Defensa del PFC**
+
+> *"Soy consciente de que los endpoints REST están expuestos públicamente. Opté por autenticación básica con localStorage para priorizar la funcionalidad completa del sistema dentro del tiempo disponible durante la FCT. La migración a Spring Security con sessions httpOnly y BCryptPasswordEncoder está planificada y documentada como mejora prioritaria post-entrega. Esta decisión demuestra capacidad de priorización técnica y gestión de alcance en proyectos con recursos limitados."*
+
+**Mensaje clave:** El reconocimiento explícito de limitaciones y la propuesta de soluciones técnicas concretas demuestra **madurez profesional** y comprensión profunda de seguridad en aplicaciones web.
 
 ##### fin 4ª entrega (Implementación Frontend)
