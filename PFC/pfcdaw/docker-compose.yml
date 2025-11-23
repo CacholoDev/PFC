@@ -1,36 +1,36 @@
-# Versión de Docker Compose
+# Version
 version: "3.9"
  
-# Definición de servicios (contenedores)
+# servicios (contenedores)
 services:
-  # ===== SERVICIO 1: BASE DE DATOS MySQL =====
+  # ===== SERVICIO 1: BD MySQL =====
   mysql:
-    container_name: mysql           # Nombre del contenedor
-    image: mysql:8.0                # Imagen oficial de MySQL versión 8.0
+    container_name: mysql           # Nombre do contenedor
+    image: mysql:8.0                # Imaxe de MySQL 8.0
     ports:        #acordarse comentar esto para produccion mais o puerto
-      - "3306:3306"                 # Expone puerto 3306 al host (PC local)
-    command:                        # Configuraciones al arrancar MySQL
-      - --default-authentication-plugin=mysql_native_password  # Usa autenticación legacy
-      - --character-set-server=utf8                            # Codificación UTF-8
-      - --collation-server=utf8_general_ci                     # Ordenación de caracteres
+      - "3306:3306"                 # 3306 sale po host (PC local)
+    command:                        # Configuracionn o arrancar MySQL
+      - --default-authentication-plugin=mysql_native_password  # autenticacion
+      - --character-set-server=utf8
+      - --collation-server=utf8_general_ci
     environment:                    # Variables de entorno para configurar MySQL                    # Variables de entorno para configurar MySQL
-      - MYSQL_ROOT_PASSWORD=root    # Contraseña del usuario root
+      - MYSQL_ROOT_PASSWORD=root    # Contraseña do user root
       - MYSQL_USER=admin            # Crea usuario 'admin'
-      - MYSQL_PASSWORD=admin123     # Contraseña del usuario 'admin'
-      - MYSQL_DATABASE=panaderiaPFC # Crea automáticamente la BD y da permisos a 'admin'
+      - MYSQL_PASSWORD=admin123
+      - MYSQL_DATABASE=panaderiaPFC # Crea a BD + permisos a 'admin'
       - DOCKER_TIMEZONE=Europe/Madrid
     volumes:                        # Persistencia de datos
-      - mysql_panaderia:/var/lib/mysql              # Guarda datos de MySQL en volumen persistente
+      - mysql_panaderia:/var/lib/mysql              # persistencia
       - '/etc/timezone:/etc/timezone:ro'            # Sincroniza zona horaria (read-only)
-      - '/etc/localtime:/etc/localtime:ro'          # Sincroniza hora del sistema
-#    restart: always                                # En producción: reinicia automáticamente si falla
-    healthcheck:                    # Verifica que MySQL está listo antes de arrancar backend
+      - '/etc/localtime:/etc/localtime:ro'          # Sincroniza hora do sistema
+#    restart: always                                # si queremos datos novos
+    healthcheck:                    # Verifica que MySQL ta listo antes de arrancar backend
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-padmin123"]
-      timeout: 20s                  # Tiempo máximo de espera por respuesta
-      retries: 10                   # Número de intentos
-      start_period: 30s             # Tiempo de gracia inicial
+      timeout: 20s                  # Tempo de espera por resposta
+      retries: 10                   # intentos
+      start_period: 30s             # tempo antes de empezar a comprobar
  
-  # ===== SERVICIO 2: BACKEND Spring Boot =====
+  # ===== SERVICIO 2: BACKEND SpringBoot =====
   backend:
     build: .                        # Construye imagen usando Dockerfile en esta carpeta
     container_name: backend         # Nombre del contenedor
@@ -64,6 +64,10 @@ services:
       - backend
     tty: true                       # Mantiene terminal abierta
 #    restart: always                # En producción: reinicia automáticamente
+    volumes:                        # Sincroniza zona horaria con el host
+      - '/etc/timezone:/etc/timezone:ro' # Sincroniza zona horaria
+      - '/etc/localtime:/etc/localtime:ro' # Sincroniza hora do sistema
+      - ./src/main/resources/static:/usr/share/nginx/html # Sincroniza archivos estáticos
  
 # Definición de volúmenes persistentes
 volumes:

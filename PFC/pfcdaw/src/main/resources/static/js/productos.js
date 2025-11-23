@@ -93,9 +93,6 @@ function cargarTablaProductos() {
             }
             // Activar DataTables
             $('#tablaProductos table').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/2.3.5/i18n/es-ES.json'
-                },
                 dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
                 buttons: [
                     { extend: 'copy', text: 'Copiar' },
