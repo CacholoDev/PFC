@@ -237,6 +237,7 @@ function verFotoProducto(productoId) {
     .then((response) => response.json())
     .then((producto) => {
       // pintar imaxe no modal
+      const fotoBody = document.querySelector(".btnVerFoto");
       fotoBody.innerHTML = `
             <h5 class="text-center mb-3">${producto.nombre}</h5>
             <img src="${producto.imagenUrl}" alt="${producto.nombre}" class="img-fluid mx-auto d-block">
@@ -248,20 +249,3 @@ function verFotoProducto(productoId) {
       }, 300);
     });
 }
-
-/*
-<!-- Modal para mostrar la foto del producto -->
-<div class="modal fade" id="modalFotoProducto" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Foto del producto</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="fotoProductoBody">
-        <!-- Aquí se insertará la imagen y el nombre -->
-      </div>
-    </div>
-  </div>
-</div>
-*/
