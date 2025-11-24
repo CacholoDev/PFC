@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Cargar productos disponibles
       cargarProductosDisponibles();
     });
-    
+
     // confirmPedido
     document.getElementById("btnConfirmarPedido").addEventListener("click", enviarPedido);
   }, 300);
@@ -35,11 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p>Stock: ${producto.stock}</p>
                         <input type="number" min="1" max="${producto.stock}" value="1" class="form-control">
                         <button class="btn btn-warning mt-2 mb-2">Añadir al carrito</button>
+                        <button class="btn btn-success mt-2 mb-2 text-black btnVerFoto" data-producto-id="${producto.id}">Ver Foto</button>
                     `;
           listaProductosDiv.appendChild(productoDiv);
-
+        
           // Actualizar resumen
           actualizarResumen(producto, productoDiv);
+          // ver foto
+          const btnVerFoto = productoDiv.querySelector('.btnVerFoto');
+          btnVerFoto.addEventListener("click", function () {
+            verFotoProducto(producto.id);
+          });
         });
       })
       .catch((error) => {
@@ -116,8 +122,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <span class="badge bg-warning text-dark rounded-pill">${subtotal.toFixed(
-                   2
-                  )}€</span>
+        2
+      )}€</span>
                   <button class="btn btn-sm btn-danger" data-producto-id="${p.id}">
                     <i class="bi bi-trash-fill"></i>
                   </button>
@@ -131,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Añadir event listeners a los botones de eliminar
     const botonesEliminar = carritoDiv.querySelectorAll('button[data-producto-id]');
     botonesEliminar.forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function () {
         const productoId = Number(btn.getAttribute('data-producto-id'));
         eliminarProducto(productoId);
       });
@@ -224,3 +230,38 @@ document.addEventListener("DOMContentLoaded", function () {
     pintarCarrito();
   }
 });
+
+// function verFoto
+function verFotoProducto(productoId) {
+  fetch(`/productos/${productoId}`)
+    .then((response) => response.json())
+    .then((producto) => {
+      // pintar imaxe no modal
+      fotoBody.innerHTML = `
+            <h5 class="text-center mb-3">${producto.nombre}</h5>
+            <img src="${producto.imagenUrl}" alt="${producto.nombre}" class="img-fluid mx-auto d-block">
+        `;
+      // abrir modal
+      setTimeout(() => {
+        const fotoModal = new bootstrap.Modal(document.getElementById("modalFotoProducto"));
+        fotoModal.show();
+      }, 300);
+    });
+}
+
+/*
+<!-- Modal para mostrar la foto del producto -->
+<div class="modal fade" id="modalFotoProducto" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Foto del producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="fotoProductoBody">
+        <!-- Aquí se insertará la imagen y el nombre -->
+      </div>
+    </div>
+  </div>
+</div>
+*/

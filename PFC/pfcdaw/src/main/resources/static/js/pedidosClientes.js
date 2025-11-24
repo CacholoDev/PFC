@@ -135,6 +135,9 @@ function cargarPedidosUsuario(clienteId) {
             }
             // Activar DataTables
             $('#tablaPedidosCliente table').DataTable({
+                language: {
+                    url: 'js/dataTables/dataTables-ES.json'
+                },
                 dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
                 buttons: [
                     { extend: 'copy', text: 'Copiar' },
@@ -142,7 +145,7 @@ function cargarPedidosUsuario(clienteId) {
                     {
                         extend: 'excel',
                         text: 'Excel',
-                        title: 'Lista de Clientes',
+                        title: 'Lista de Pedidos',
                         exportOptions: {
                             columns: ':visible:not(:last-child)'  // Excluir columna Acciones
                         }
@@ -150,7 +153,7 @@ function cargarPedidosUsuario(clienteId) {
                     {
                         extend: 'pdf',
                         text: 'PDF',
-                        title: 'Lista de Clientes',
+                        title: 'Lista de Pedidos',
                         orientation: 'landscape',  // Horizontal
                         pageSize: 'A4',
                         exportOptions: {

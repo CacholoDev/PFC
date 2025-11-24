@@ -80,6 +80,9 @@ function cargarClientes() {
             }
             // Activar DataTables
             $('#tablaClientes table').DataTable({
+                language: {
+                    url: 'js/dataTables/dataTables-ES.json'
+                },
                 dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
                 buttons: [
                     { extend: 'copy', text: 'Copiar' },
@@ -197,8 +200,8 @@ function crearCliente() {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearCliente'));
                     modal.hide();
                 }, 300);
-            } else if(response.status === 409) {
-                    alert('El email ya está registrado. Por favor, utiliza otro email.');
+            } else if (response.status === 409) {
+                alert('El email ya está registrado. Por favor, utiliza otro email.');
             } else {
                 alert('Error al crear el cliente.');
             }

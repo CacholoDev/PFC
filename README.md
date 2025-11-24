@@ -1,6 +1,40 @@
+
 ##### Enlace a documentación: [doc](doc/doc.md)
 ##### Enlace repo GitLab: [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
+
 # Plataforma web de pedidos para panadería
+
+## Índice
+
+- [Índice](#índice)
+- [Requisitos previos](#requisitos-previos)
+- [Descripción](#descripción)
+- [Estado del Proyecto](#estado-del-proyecto)
+- [Instalación / Puesta en marcha](#instalación--puesta-en-marcha)
+  - [Opción recomendada: Despliegue con Docker](#opción-recomendada-despliegue-con-docker)
+  - [Opción alternativa: XAMPP/MySQL local](#opción-alternativa-xamppmysql-local)
+- [FAQ - Preguntas frecuentes](#faq---preguntas-frecuentes)
+  - [¿Por qué no arranca MySQL en Docker?](#por-qué-no-arranca-mysql-en-docker)
+  - [¿Dónde se guardan los datos de la base de datos?](#dónde-se-guardan-los-datos-de-la-base-de-datos)
+  - [¿Cómo cambio el puerto del backend o frontend?](#cómo-cambio-el-puerto-del-backend-o-frontend)
+  - [¿Puedo usar la app sin Docker?](#puedo-usar-la-app-sin-docker)
+  - [¿Cómo restauro la base de datos si borro el volumen?](#cómo-restauro-la-base-de-datos-si-borro-el-volumen)
+- [Uso](#uso)
+- [Sobre el autor](#sobre-el-autor)
+- [Licencia](#licencia)
+- [Documentación](#documentación)
+- [Guía de contribución](#guía-de-contribución)
+
+## Requisitos previos
+
+| Herramienta         | Versión recomendada | ¿Para qué?                |
+|---------------------|---------------------|---------------------------|
+| Docker              | 20.10+              | Despliegue recomendado    |
+| Docker Compose      | 1.29+ (o integrado) | Orquestar servicios       |
+| Java (JDK)          | 21+                 | Solo si usas modo local   |
+| XAMPP/MySQL         | 8+                  | Solo si usas modo local   |
+| VSCode/IDE          | -                   | Edición de código         |
+
 
 ## Descripción
 
@@ -46,21 +80,49 @@ graph TD
 **(js+html+css+Bootstrap)**
 - Pendiente: Catálogo de productos, carrito y formulario de pedido
 
+
 ## Instalación / Puesta en marcha
 
-En la versión definitiva en producción se utilizaría un servidor (Por ejemplo Apache, al tener SpringBoot un propio apache dentro de cada proyecto funcionaría muy bien), en esta primera versión usaré XAMPP + phpmyadmin para el MySQL con el objetivo de llegar a tiempo a presentación del PFC.
+### Opción recomendada: Despliegue con Docker
 
-**Diagrama de componentes técnicos**: Representa la arquitectura técnica del sistema con las tecnologías utilizadas (Spring Boot, MySQL, XAMPP) y la comunicación entre capas.
 
-```mermaid
-graph TB
-    A[Frontend HTML/CSS/JS] <--> B[Spring Boot Backend]
-    B <--> C[Base de Datos MySQL]
-    B <--> D[Local XAMPP + Apache Tomcat embebbed con SpringBoot]
-    E[Cliente Web] <--> A
-    F[Panadería] <--> B
-    G[Logger por consola] <--> B
+1. **Clonar el repositorio**
+2. **Levantar los servicios con Docker Compose**:
+   ```bash
+   cd PFC/pfcdaw
+   docker-compose up
+   ```
+   Esto levantará automáticamente:
+   - MySQL (con persistencia de datos)
+   - Backend Spring Boot
+   - Nginx (sirviendo el frontend y como proxy)
+
+3. **Acceder a la aplicación:**
+   - Frontend: [http://localhost:8081](http://localhost:8081)
+   - Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+   - Backend: non accesible por seguridad solo 8081 abierto
+
+4. **Comandos Docker útiles:**
+   - Parar los servicios: `docker compose down`
+   - Ver logs: `docker compose logs -f`
+   - Reconstruir todo: `docker-compose up --build`
+
+### Opción alternativa: XAMPP/MySQL local
+
+Si prefieres usar XAMPP y MySQL local, debes ajustar la configuración en `application.properties`:
+
+```properties
+# CONFIGURACIÓN DE BASE DE DATOS //
+#spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true}
+#spring.datasource.username=${DB_USERNAME:root}
+#spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.url=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+spring.datasource.username=admin
+spring.datasource.password=admin123
 ```
+
+**Para usar XAMPP:**
+- Descomenta las 3 primeras líneas y comenta las otras 3 (así la app usará tu MySQL local en vez del contenedor Docker).
 
 1. **Clonar el repositorio**: clonar desde gitlab
 
@@ -104,8 +166,31 @@ POST http://localhost:8080/pedidos
 
 1. **Frontend**: VSCode + LiveServer / endpoints para funcionalidad completa con la app arrancada
 
-## Uso
 
+## FAQ - Preguntas frecuentes
+
+### ¿Por qué no arranca MySQL en Docker?
+- Asegúrate de que el puerto 3306 no está ocupado por otro MySQL local.
+- Si usastes XAMPP antes, para el servicio MySQL de XAMPP antes de levantar Docker.
+- Comprueba los logs con `docker compose logs mysql`.
+
+### ¿Dónde se guardan los datos de la base de datos?
+- En Docker, los datos de MySQL se guardan en un volumen persistente llamado `mysql_panaderia`.
+- Así, aunque borres los contenedores, los datos no se pierden.
+
+### ¿Cómo cambio el puerto del backend o frontend?
+- Cambia la variable `SERVER_PORT` en el archivo `docker-compose.yml` o en `application.properties` para el backend.
+- Cambia el mapeo de puertos en `docker-compose.yml` para Nginx (por ejemplo, `8081:80`).
+
+### ¿Puedo usar la app sin Docker?
+- Sí, usando XAMPP/MySQL local y ajustando `application.properties` como se indica arriba.
+
+### ¿Cómo restauro la base de datos si borro el volumen?
+- Si borras el volumen de Docker, los datos se pierden. Haz backups periódicos si es importante.
+
+
+
+## Uso
 Se trata de una aplicación sencilla para cumplir los tiempos de entrega, enfatizar en que seguiré trabajando en la app y que aplicaré distintas funcionalidades y mejoras.
 
 **Los clientes podrán:**

@@ -93,6 +93,9 @@ function cargarTablaProductos() {
             }
             // Activar DataTables
             $('#tablaProductos table').DataTable({
+                language: {
+                    url: 'js/dataTables/dataTables-ES.json'
+                },
                 dom: 'Bfrtip',  // B = Buttons, f = filtro (search), r = processing, t = tabla, i = info, p = paginación
                 buttons: [
                     { extend: 'copy', text: 'Copiar' },
@@ -100,7 +103,7 @@ function cargarTablaProductos() {
                     {
                         extend: 'excel',
                         text: 'Excel',
-                        title: 'Lista de Clientes',
+                        title: 'Lista de Productos',
                         exportOptions: {
                             columns: ':visible:not(:last-child)'  // Excluir columna Acciones
                         }
@@ -108,7 +111,7 @@ function cargarTablaProductos() {
                     {
                         extend: 'pdf',
                         text: 'PDF',
-                        title: 'Lista de Clientes',
+                        title: 'Lista de Productos',
                         orientation: 'landscape',  // Horizontal
                         pageSize: 'A4',
                         exportOptions: {

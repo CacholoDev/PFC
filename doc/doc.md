@@ -15,7 +15,13 @@
 - [1.Análisis](#1análisis)
     - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
 - [2. Diseño](#2-diseño)
-  - [Arquitectura general](#arquitectura-general)
+  - [Arquitectura general (Dockerizada)](#arquitectura-general-dockerizada)
+  - [Alternativa: Arquitectura local (XAMPP)](#alternativa-arquitectura-local-xampp)
+- [Ventajas de usar Docker](#ventajas-de-usar-docker)
+  - [¿Cómo funciona la persistencia de MySQL con Docker?](#cómo-funciona-la-persistencia-de-mysql-con-docker)
+- [Problemas comunes y soluciones](#problemas-comunes-y-soluciones)
+  - [Despliegue recomendado: Docker Compose](#despliegue-recomendado-docker-compose)
+  - [Alternativa: XAMPP/MySQL local](#alternativa-xamppmysql-local)
     - [Diagrama de Arquitectura Detallado](#diagrama-de-arquitectura-detallado)
   - [Estructura básica del backend](#estructura-básica-del-backend)
   - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
@@ -189,14 +195,107 @@ sequenceDiagram
 
 ## 2. Diseño
 
-El proyecto está dividido en dos partes principales:
+El proyecto está dividido en tres partes principales:
+
+**BaseDatos**: MySQL
 
 **Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos,pedidos y clientes, almacenando los datos en MySQL mediante JPA, se podrán ver logs en consola mediante el uso del Logger de SpringBoot.
 
-**Frontend**: Página web sencilla hecha con HTML, CSS y JavaScript, que permite listar productos y realizar pedidos.
+**Frontend**: Página web sencilla hecha con HTML, CSS, Bootstrap y JavaScript, que permite listar productos y realizar pedidos.
 
-### Arquitectura general
-[Cliente (HTML/JS)] --> [Spring Boot API REST] --> [Base de datos MySQL]
+
+### Arquitectura general (Dockerizada)
+```mermaid
+graph TD
+    Nginx[Nginx Proxy/Frontend]
+    Backend[Spring Boot Backend]
+    MySQL[MySQL Persistencia]
+    User[User/Cliente]
+    Panaderia[Admin]
+    User --> Nginx
+    Panaderia --> Nginx
+    Nginx --> Backend
+    Backend --> MySQL
+```
+
+### Alternativa: Arquitectura local (XAMPP)
+```mermaid
+graph TD
+    A[Frontend HTML/CSS/JS] <--> B[Spring Boot Backend]
+    B <--> C[Base de Datos MySQL XAMPP]
+    E[Cliente Web] <--> A
+    F[Panadería] <--> B
+    G[Logger consola] <--> B
+```
+
+## Ventajas de usar Docker
+
+- **Portabilidad:** El proyecto funciona igual en cualquier máquina con Docker, sin importar el sistema operativo.
+- **Persistencia:** Los datos de MySQL se guardan en un volumen, así no se pierden aunque borres los contenedores.
+- **Fácil despliegue:** Un solo comando (`docker-compose up --build`) levanta toda la plataforma.
+- **Aislamiento:** Cada servicio corre en su propio contenedor, evitando conflictos de dependencias.
+
+### ¿Cómo funciona la persistencia de MySQL con Docker?
+
+En el archivo `docker-compose.yml` se define un volumen llamado `mysql_panaderia`:
+
+```yaml
+volumes:
+    mysql_panaderia:
+```
+
+Esto hace que los datos de la base de datos se almacenen fuera del contenedor, en el sistema de archivos del host. Así, aunque borres o actualices el contenedor de MySQL, los datos permanecen.
+
+Para ver dónde está el volumen en tu máquina, ejecuta:
+```bash
+docker volume inspect mysql_panaderia
+```
+
+Para borrar todos los datos:
+```bash
+docker volume rm mysql_panaderia
+```
+
+## Problemas comunes y soluciones
+
+- **El puerto 3306 está ocupado:** Para el servicio MySQL de XAMPP o cualquier otro MySQL local antes de usar Docker.
+- **Permisos en volúmenes:** Si tienes errores de permisos, prueba a borrar el volumen y crearlo de nuevo.
+- **No se ven los cambios en el frontend:** Asegúrate de que el volumen de archivos estáticos está bien mapeado en `docker-compose.yml`.
+- **No arranca algún servicio:** Usa `docker compose logs <servicio>` para ver los errores detallados.
+
+### Despliegue recomendado: Docker Compose
+
+1. Clona el repositorio y entra en la carpeta donde esten los dockerfile, compose...:
+    ```bash
+    cd PFC/pfcdaw
+    docker-compose up
+    ```
+    Esto levanta MySQL, backend y Nginx con persistencia de datos.
+
+2. Accede a la app en [http://localhost:8081](http://localhost:8081)
+
+3. Comandos Docker útiles:
+    - Parar: `docker compose down`
+    - Logs: `docker compose logs -f`
+    - Reconstruir: `docker compose up --build`
+
+### Alternativa: XAMPP/MySQL local
+
+Si prefieres usar XAMPP y MySQL local, ajusta `application.properties` así:
+
+```properties
+# CONFIGURACIÓN DE BASE DE DATOS //
+#spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true}
+#spring.datasource.username=${DB_USERNAME:root}
+#spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.url=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+spring.datasource.username=admin
+spring.datasource.password=admin123
+```
+
+**Para usar XAMPP:**
+- Descomenta las 3 primeras líneas y comenta las otras 3.
+
 
 #### Diagrama de Arquitectura Detallado
 
@@ -377,7 +476,7 @@ sequenceDiagram
 
 Se ha integrado **Swagger UI** para documentación interactiva de la API REST. Permite visualizar todos los endpoints, sus parámetros, y probar peticiones directamente desde el navegador.
 
-**Acceso a Swagger UI**: `http://localhost:8080/swagger-ui.html`
+**Acceso a Swagger UI**: `http://localhost:8081/swagger-ui/index.html`
 
 **Probar Swagger**: Usar el boton al lado de cada metodo de "Try It OUT"
 

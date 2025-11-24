@@ -1,42 +1,43 @@
 # ===== ETAPA 1: COMPILACIÓN (BUILD) =====
-# Usa imagen con JDK 21 (necesario para compilar)
+# Usa imagen con JDK 21 (necesario para compilar + jar)
 FROM eclipse-temurin:21-jdk AS build
 
-# Establece directorio de trabajo dentro del contenedor
+# Establece directorio de traballo dentro do contedor
 WORKDIR /app
 
-# Copia archivos necesarios para compilar
+# Copia arquivos necesarios para compilar
 # Configuración de Maven (pom.xml)
 COPY pom.xml .
 # Código fuente Java
 COPY src ./src
 
-# Instala Maven para compilar el proyecto
+# Instala Maven para compilar o proxecto
 RUN apt-get update && \
     apt-get install -y maven && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*     # Limpia caché para reducir tamaño
-
+    rm -rf /var/lib/apt/lists/*     # Limpa caché para reducir tamaño
 # Variables de entorno para Maven
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
-# Compila el proyecto: genera el archivo .jar
+# Compila o proxecto + .jar
 # -ntp: no muestra barra de progreso | -DskipTests: omite tests
-RUN mvn -ntp -DskipTests package
+#RUN mvn -ntp -DskipTests package
+# sin ntp pa ver como vai a construccion do jar
+RUN mvn -DskipTests package
 
 # ===== ETAPA 2: IMAGEN FINAL (RUNTIME) =====
-# Usa imagen con JRE 21 (más ligera, solo ejecuta, no compila)
+# Usa imaxe con JRE 21 (+ lixeira, solo executa, non compila)
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Copia SOLO el .jar desde la etapa anterior (no copia Maven ni código fuente)
+# Copia SOLO o .jar desde a etapa anterior (non copia Maven nin código fonte)
 COPY --from=build /app/target/*.jar app.jar
 
-# Informa que la aplicación usa el puerto 8080
+# Informa que a aplicación usa o porto 8080
 EXPOSE 8080
 
-# Comando que se ejecuta al arrancar el contenedor
+# Comando que se executa o arrancar o conteenedor
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
