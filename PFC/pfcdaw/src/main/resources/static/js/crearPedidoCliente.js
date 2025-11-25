@@ -237,11 +237,9 @@ function verFotoProducto(productoId) {
     .then((response) => response.json())
     .then((producto) => {
       // pintar imaxe no modal
-      const fotoBody = document.querySelector(".btnVerFoto");
-      fotoBody.innerHTML = `
-            <h5 class="text-center mb-3">${producto.nombre}</h5>
-            <img src="${producto.imagenUrl}" alt="${producto.nombre}" class="img-fluid mx-auto d-block">
-        `;
+      const foto = document.getElementById("fotoProductoModal");
+      foto.img = producto.imagenUrl;
+      foto.alt = producto.nombre;
       // abrir modal
       setTimeout(() => {
         const fotoModal = new bootstrap.Modal(document.getElementById("modalFotoProducto"));

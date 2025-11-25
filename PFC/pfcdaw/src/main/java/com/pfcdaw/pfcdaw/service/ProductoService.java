@@ -55,4 +55,15 @@ public class ProductoService {
                 producto.getStock());
     }
 
+    // actualizarFoto
+    public ProductoEntity actualizarFoto(Long productoId, String imagenUrl) {
+        ProductoEntity producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        producto.setImagenUrl(imagenUrl);
+        productoRepository.save(producto);
+        log.info("Imagen actualizada para el producto ID {}. Nueva URL: {}", productoId, imagenUrl);
+        return producto;
+    }
+
 }

@@ -40,6 +40,7 @@ public class ProductoEntity {
     private BigDecimal precio;
 
     private String descripcion;
+    private String imagenUrl;
 
     @NotNull(message = "El stock del producto es obligatorio")
     @Min(value = 0, message = "El stock debe ser un valor positivo o cero")
