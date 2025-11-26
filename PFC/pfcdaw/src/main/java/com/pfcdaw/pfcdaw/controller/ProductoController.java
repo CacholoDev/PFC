@@ -1,7 +1,5 @@
 package com.pfcdaw.pfcdaw.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -150,82 +148,89 @@ public class ProductoController {
         return ResponseEntity.ok(productoActualizado);
     }
 
-    // putt con MultiparFile, actualizar foto
+    // putt actualizar foto con MultiparFile q ven a logica desde o ProductoService
     @PutMapping("/{id}/ActFoto")
     public ResponseEntity<ProductoEntity> actualizarFoto(@PathVariable Long id,
             @RequestParam MultipartFile imagenFile) {
+       
         log.info("[PUT /productos/{}/ActFoto] Actualizando foto", id);
-        // facemos a url donde se vai gardar a imaxe
-        if(imagenFile.isEmpty()) {
-            log.error("[PUT /productos/{}/ActFoto] Error: archivo de imagen vacío", id);
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "El archivo de imagen está vacío");
-        }
-        String imagenUrl = "/assets/images/" + imagenFile.getOriginalFilename();
-        // gardamos a imaxe na base de datos
-        productoService.actualizarFoto(id, imagenUrl);
-        // transferimos o ficheiro
-        try {
-            imagenFile.transferTo(new File(imagenUrl));
-            log.info("[PUT /productos/{}/ActFoto] Imagen guardada en: {}", id, imagenUrl);
-        } catch (IOException | IllegalStateException e) {
-            log.error("[PUT /productos/{}/ActFoto] Error al guardar la imagen: {}", id, e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar la imagen");
-        }
-        // obtemos o producto actualizado para a resposta
-        ProductoEntity productoActualizado = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Producto no encontrado"));
+        ProductoEntity productoActualizado = productoService.actualizarFoto(id, imagenFile);
+
+        log.info("[PUT /productos/{}/ActFoto] Foto actualizada correctamente", id);
         return ResponseEntity.ok(productoActualizado);
     }
 
 }
 
+/* unigetui
+pa probar:
+En local:
+Usa Postman o curl para hacer un PUT al endpoint de subir imagen (/productos/{id}/ActFoto) con un archivo.
+Verifica que la imagen aparece en la carpeta de destino y que la URL pública es accesible desde el navegador.
+(Reemplaza {id} por el ID real del producto, por ejemplo: 1)
+URL:
+http://localhost:8080/productos/{1,2,3,4......id}/ActFoto
+Método:
+PUT
 
-/*
-@PutMapping("/{id}/ActFoto")
-public ResponseEntity<ProductoEntity> actualizarFoto(@PathVariable Long id,
-        @RequestParam MultipartFile imagenFile) {
-    log.info("[PUT /productos/{}/ActFoto] Actualizando foto", id);
+Tipo de Body:
+Selecciona form-data
 
-    // Ruta física donde guardar la imagen
-    String nombreArchivo = imagenFile.getOriginalFilename();
-    if (nombreArchivo == null || nombreArchivo.contains("..")) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre de archivo no válido");
-    }
-    String rutaFisica = "src/main/resources/static/assets/images/" + nombreArchivo;
-    String urlPublica = "/assets/images/" + nombreArchivo;
+Clave:
+imagenFile (debe coincidir con el nombre del parámetro en el backend)
 
-    // Guardar el archivo físicamente
-    try {
-        imagenFile.transferTo(new File(rutaFisica));
-        log.info("[PUT /productos/{}/ActFoto] Imagen guardada en: {}", id, rutaFisica);
-    } catch (Exception e) {
-        log.error("[PUT /productos/{}/ActFoto] Error al guardar la imagen: {}", id, e.getMessage());
-        throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar la imagen");
-    }
+Valor:
+Elige un archivo de imagen desde tu PC.
 
-    // Actualizar la URL en la base de datos
-    productoService.actualizarFoto(id, urlPublica);
+    --¿Cómo subir un archivo en Postman?
+Key (Clave)	| Value (Valor)	        | Tipo
+imagenFile	| [Selecciona archivo]  | File
+En el body, selecciona form-data.
+En la fila donde pones la clave imagenFile, verás una columna llamada "Tipo" (a la izquierda del valor).
+Haz clic en el desplegable y selecciona File.
+Ahora, en la columna "Valor", aparecerá un botón para "Select Files" o "Elegir archivo".
+Haz clic ahí y selecciona la imagen desde tu PC (no se arrastra, se selecciona con el explorador de archivos).
 
-    // Devolver el producto actualizado
-    ProductoEntity productoActualizado = productoRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Producto no encontrado"));
-    log.info("[PUT /productos/{}/ActFoto] Foto actualizada: {}", id, urlPublica);
-    return ResponseEntity.ok(productoActualizado);
-}
+En Docker:
+Levanta los contenedores (docker-compose up --build).
+Haz el mismo test con Postman/curl apuntando a la URL del backend o Nginx.
+Comprueba que la imagen se guarda en el volumen compartido y que puedes acceder a ella vía Nginx (por ejemplo, http://localhost:8081/static/assets/images/uploads/tuimagen.jpg).
+
+URL:
+http://localhost:8081/productos/{1,2.....id}/ActFoto
+Método:
+PUT
+
+Tipo de Body:
+form-data
+
+Clave:
+imagenFile
+
+Valor:
+Elige el archivo de imagen.
+
+COMPROBACION: http://localhost:8081/static/assets/images/uploads/tuimagen.jpg
+
+## resumen ##
+1. Define la ruta física en application.properties y usa @Value en el backend.
+2. Crea el directorio en el Dockerfile y/o cópialo si tienes imágenes de ejemplo.
+3. Monta el volumen en docker-compose para persistencia.
+4. Configura el alias en Nginx para servir las imágenes.
+5. Guarda en la base de datos solo la URL pública.
+6. (Opcional) Usa variables de entorno para cambiar la ruta según el entorno (local o Docker).
 
 
-/* Configuración alternativa usando application.properties
-// app.upload.dir=/ruta/absoluta/a/static/assets/images/
-// app.upload.dir=C:/Users/Usuario/PFC/PFC/pfcdaw/src/main/resources/static/assets/images/
-@Value("${app.upload.dir}")
-private String uploadDir;
-...
-String nombreArchivo = imagenFile.getOriginalFilename();
-String rutaFisica = uploadDir + nombreArchivo;
-String urlPublica = "/assets/images/" + nombreArchivo;
-*/
+1. properties
+2. dockerfile 
+3. docker-compose
+4. backend
+4.5 mover logica do controller o service para usar o @value
+5. nginx.conf
+6. frontend
+tocamos (productoController,productoService,crearPedidoCliente cambiomos o .img por .src, app.properties,
+docker-compose.yml,nginx.conf, Dockerfile)
+
+
+
+ */

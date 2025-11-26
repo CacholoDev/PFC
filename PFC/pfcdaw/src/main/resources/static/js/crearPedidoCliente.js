@@ -238,7 +238,9 @@ function verFotoProducto(productoId) {
     .then((producto) => {
       // pintar imaxe no modal
       const foto = document.getElementById("fotoProductoModal");
-      foto.img = producto.imagenUrl;
+      // si nn vai o src.img probar
+      //foto.img = producto.imagenUrl;
+      foto.src = producto.imagenUrl;
       foto.alt = producto.nombre;
       // abrir modal
       setTimeout(() => {

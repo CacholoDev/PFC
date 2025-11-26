@@ -48,7 +48,8 @@ services:
     depends_on:                     # Non arranca hasta que MySQL este listo
       mysql:
         condition: service_healthy      # Espera polo healthcheck de MySQL a q sea OK
-    volumes:                        # Sincroniza zona horaria co host
+    volumes:
+      - ./static/images:/app/static/images  # Mapeo carpeta para subir imaxes
       - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
 
@@ -65,9 +66,10 @@ services:
     tty: true                       # sigue ca terminal aberta
 #    restart: always                # reinicia automáticamente
     volumes:                        # Sincroniza zona horaria co host
-      - '/etc/timezone:/etc/timezone:ro' # Sincroniza zona horaria
-      - '/etc/localtime:/etc/localtime:ro' # Sincroniza hora do sistema
-      - ./src/main/resources/static:/usr/share/nginx/html # Sincroniza archivos static
+      - '/etc/timezone:/etc/timezone:ro'    # Sincroniza zona horaria
+      - '/etc/localtime:/etc/localtime:ro'  # Sincroniza hora do sistema
+      #- ./src/main/resources/static:/usr/share/nginx/html # Sincroniza archivos static
+      - ./static:/usr/share/nginx/html/static  # Sincroniza archivos static
  
 # volumes (persistencia de datos)
 volumes:
