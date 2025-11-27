@@ -21,7 +21,7 @@
   - [¿Cómo funciona la persistencia de MySQL con Docker?](#cómo-funciona-la-persistencia-de-mysql-con-docker)
 - [Problemas comunes y soluciones](#problemas-comunes-y-soluciones)
   - [Despliegue recomendado: Docker Compose](#despliegue-recomendado-docker-compose)
-  - [Alternativa: XAMPP/MySQL local](#alternativa-xamppmysql-local)
+  - [Localhost: XAMPP/MySQL local](#localhost-xamppmysql-local)
     - [Diagrama de Arquitectura Detallado](#diagrama-de-arquitectura-detallado)
   - [Estructura básica del backend](#estructura-básica-del-backend)
   - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
@@ -279,22 +279,10 @@ docker volume rm mysql_panaderia
     - Logs: `docker compose logs -f`
     - Reconstruir: `docker compose up --build`
 
-### Alternativa: XAMPP/MySQL local
+### Localhost: XAMPP/MySQL local
 
-Si prefieres usar XAMPP y MySQL local, ajusta `application.properties` así:
-
-```properties
-# CONFIGURACIÓN DE BASE DE DATOS //
-#spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true}
-#spring.datasource.username=${DB_USERNAME:root}
-#spring.datasource.password=${DB_PASSWORD:}
-spring.datasource.url=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-spring.datasource.username=admin
-spring.datasource.password=admin123
-```
-
-**Para usar XAMPP:**
-- Descomenta las 3 primeras líneas y comenta las otras 3.
+**Para usar localhost:**
+- Como uso variables de entorno si arrancas con docker leera las variables de entorno y estaras en docker, si no si arrancas desde el main o comandos te ira al localhost
 
 
 #### Diagrama de Arquitectura Detallado
@@ -949,7 +937,7 @@ window.location.href = 'login.html';
 > **Nota importante sobre seguridad**: Soy consciente de que los endpoints REST están **expuestos públicamente** sin autenticación a nivel backend. Esta decisión es para priorizar la funcionalidad completa del sistema dentro del tiempo disponible durante la FCT
 
 **Vulnerabilidades actuales identificadas:**
-1. **Endpoints sin protección**: Cualquiera puede acceder a `http://localhost:8080/clientes` sin autenticación
+1. **Endpoints sin protección**: Cualquiera puede acceder a `http://localhost:8080/clientes` o enlaces similares como /productos sin autenticación
 2. **localStorage vulnerable a XSS**: JavaScript malicioso podría robar datos de sesión
 3. **Contraseñas en texto plano**: Almacenadas sin cifrado en MySQL
 4. **Sin expiración de sesión**: Usuario permanece logueado indefinidamente

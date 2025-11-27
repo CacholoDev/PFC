@@ -7,13 +7,13 @@ services:
   mysql:
     container_name: mysql           # Nombre
     image: mysql:8.0                # Imaxe de MySQL 8.0
-    ports:        #acordarse comentar esto para produccion mais o puerto
+    ports:       #acordarse comentar esto para produccion mais o puerto
       - "3306:3306"                 # 3306 sale po host (PC local)
     command:                        # Configuracionn o arrancar MySQL
       - --default-authentication-plugin=mysql_native_password  # autenticacion
       - --character-set-server=utf8
       - --collation-server=utf8_general_ci
-    environment:                    # Variables de entorno para configurar MySQL                    # Variables de entorno para configurar MySQL
+    environment:                    # Variables de entorno para configurar MySQL
       - MYSQL_ROOT_PASSWORD=root    # Contraseña do user root
       - MYSQL_USER=admin            # Crea usuario 'admin'
       - MYSQL_PASSWORD=admin123
@@ -38,18 +38,21 @@ services:
     #ports:                         # Mapea puertos porque asi non poden acceder o 8080
     #  - "8080:8080"                 # puerto 8080 o host
     environment:                    # Sobreescribe variables de application.properties
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Madrid  # Conexión a MySQL (usa nombre del servicio 'mysql')
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin123
+      - DB_URL=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Madrid  # Conexión a MySQL (usa nombre del servicio 'mysql')
+      - DB_USERNAME=admin
+      - DB_PASSWORD=admin123
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update       # Actualiza esquema de BD automáticamente
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
       - SPRING_PROFILES_ACTIVE=docker              # Activa perfil 'docker' de Spring
       - SERVER_PORT=8080
+      - APP_UPLOAD_DIR=/app/static/images/        # variable entorno docker + directorio para subir imaxes 
+      
     depends_on:                     # Non arranca hasta que MySQL este listo
       mysql:
         condition: service_healthy      # Espera polo healthcheck de MySQL a q sea OK
     volumes:
-      - ./static/images:/app/static/images  # Mapeo carpeta para subir imaxes
+      #- ./static/images:/app/static/images  # Mapeo carpeta para subir imaxes
+      - ./src/main/resources/static/assets/images/uploads:/app/static/images/uploads # Volumen compartido co front para as imaxes subidas
       - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
 
@@ -68,8 +71,8 @@ services:
     volumes:                        # Sincroniza zona horaria co host
       - '/etc/timezone:/etc/timezone:ro'    # Sincroniza zona horaria
       - '/etc/localtime:/etc/localtime:ro'  # Sincroniza hora do sistema
-      #- ./src/main/resources/static:/usr/share/nginx/html # Sincroniza archivos static
-      - ./static:/usr/share/nginx/html/static  # Sincroniza archivos static
+      #- ./static:/usr/share/nginx/html/static #
+      - ./src/main/resources/static:/usr/share/nginx/html # Monta os statics e subidas na raiz de Nginx
  
 # volumes (persistencia de datos)
 volumes:

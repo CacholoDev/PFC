@@ -163,6 +163,7 @@ public class ProductoController {
 }
 
 /* unigetui
+# https://ninite.com/
 pa probar:
 En local:
 Usa Postman o curl para hacer un PUT al endpoint de subir imagen (/productos/{id}/ActFoto) con un archivo.
