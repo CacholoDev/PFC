@@ -71,9 +71,12 @@ function cargarTablaProductos() {
                                 <button class="btn btn-sm btn-warning" title="Gestionar stock" onclick="modalEditarStock(${producto.id})">
                                     <i class="bi bi-boxes"></i>
                                 </button>
+                                <button class="btn btn-sm btn-warning" title="Gestionar foto" onclick="modalEditarFoto(${producto.id})">
+                                    <i class="bi bi-image"></i>
+                                </button>
                                 <button class="btn btn-sm btn-danger" title="Eliminar producto" onclick="deleteProducto(${producto.id})">
                                     <i class="bi bi-trash-fill"></i>
-                                </button>
+                                </button>                                
                             </td>
                         </tr>
                     `;
@@ -192,7 +195,7 @@ function modalCreateProducto() {
     // limpar form
     document.getElementById('formCrearEditarProducto').reset();
 
-    // activar input stock
+    // desactivar input stock
     document.getElementById('stockProducto').disabled = false;
     //quitar el mensaje de editar stock
     document.getElementById('tituloStockModal').innerHTML = 'Stock';
@@ -237,7 +240,8 @@ function crearProducto() {
         nombre: nombre,
         descripcion: descripcion,
         precio: precio,
-        stock: stock
+        stock: stock,
+//esto        imagenUrl: imagenUrl
     };
 
     // enviar POST o backend
@@ -284,6 +288,7 @@ function modalEditarProducto(id) {
             document.getElementById('descripcionProducto').value = producto.descripcion.trim();
             document.getElementById('precioProducto').value = producto.precio.toFixed(2);
             document.getElementById('stockProducto').value = producto.stock;
+//esto            document.getElementById('imagenProducto').value = producto.imagenUrl;
 
             // 2. cambiando titulo do modal
             document.getElementById('modalProductoTitle').textContent = 'Editar Producto';
@@ -319,12 +324,14 @@ function editarProducto() {
         alert('El precio debe ser un número positivo');
         return;
     }
+//esto    let imagenUrl = document.getElementById('imagenProducto').value.trim();
 
     // 5. crear json producto editado
     const productoEditado = {
         nombre: name,
         descripcion: descripcion,
         precio: precio,
+//esto        imagenUrl: imagenUrl
     };
     console.log('Producto editado:', productoEditado);
 
@@ -467,3 +474,86 @@ function reducirStock() {
             alert('Error al reducir el stock');
         });
 }
+
+
+
+/*
+PASO 1: Crear producto con imagen (flujo correcto)
+A. En el modal de crear producto:
+El input file solo sirve para seleccionar la imagen, no para mostrar la URL.
+No pongas .value = producto.imagenUrl en el input file (no funciona).
+B. En el JS (crearProducto):
+Envía primero el producto SIN imagen:
+
+Recoge los datos del formulario (nombre, descripción, precio, stock).
+Haz el fetch POST /productos con el JSON (sin imagen).
+Cuando el backend responde con el producto creado (tiene un id):
+
+Si el usuario seleccionó una imagen, crea un FormData y añade la imagen.
+Haz un segundo fetch tipo PUT a /productos/{id}/ActFoto con el FormData.
+Cuando acabe, recarga la tabla y cierra el modal.
+
+PASO 2: Editar solo la foto (botón "Gestionar foto")
+Crea un modal aparte para cambiar la foto.
+Al pulsar el botón de la cámara, abre ese modal, muestra la imagen actual y permite seleccionar una nueva.
+Al guardar, haz el PUT /productos/{id}/ActFoto con la nueva imagen.
+
+PASO 3: No uses .value en el input file para mostrar la URL
+El input file solo sirve para seleccionar archivos, nunca para mostrar la URL de la imagen.
+*/
+
+/*
+// crear json producto (sin imagen)
+    const nuevoProducto = {
+        nombre: nombre,
+        descripcion: descripcion,
+        precio: precio,
+        stock: stock
+    };
+
+    // enviar POST al backend para crear el producto
+    fetch('/productos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuevoProducto)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al crear el producto');
+            }
+            return response.json();
+        })
+        .then(productoCreado => {
+            // Si hay imagen seleccionada, subirla
+            const inputFile = document.getElementById('imagenProducto');
+            if (inputFile && inputFile.files && inputFile.files.length > 0) {
+                const formData = new FormData();
+                formData.append('imagenFile', inputFile.files[0]);
+                // PUT al endpoint de imagen
+                return fetch(`/productos/${productoCreado.id}/ActFoto`, {
+                    method: 'PUT',
+                    body: formData
+                })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Error al subir la imagen');
+                });
+            }
+        })
+        .then(() => {
+            // cerrar modal con timeout polos bugs oscuros esos
+            setTimeout(() => {
+                const modalElement = document.getElementById('modalCrearEditarProducto');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+            }, 300);
+            // Recargar tabla
+            cargarTablaProductos();
+            alert('Producto creado');
+        })
+        .catch(error => {
+            console.error('Error al crear el producto:', error);
+            alert(error.message || 'Error al crear el producto');
+        });
+*/
