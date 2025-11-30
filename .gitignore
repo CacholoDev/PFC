@@ -1,4 +1,4 @@
-##### GITIGNORE CONSOLIDADO - PFC PANADERÍA #####
+##### GITIGNORE - PFC PANADERÍA #####
 
 ### Java / Spring Boot ###
 HELP.md
@@ -34,11 +34,11 @@ build/
 
 ### VS Code ###
 .vscode/*
-# Excepción: permitir extensiones recomendadas y settings específicos
+# Excepción: permitir extensiones recomendadas + settings
 !.vscode/extensions.json
 !.vscode/settings.json
 
-### Node.js (si llegas a migrar frontend a React) ###
+### Node.js (frontend a React) ###
 node_modules/
 
 ### Archivos de logs ###
@@ -52,9 +52,9 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-### Archivos de entorno ###
-# NOTA: .env NO está ignorado para facilitar pruebas
-# .env.local y similares SÍ se ignoran por seguridad
+### Arquivos de entorno ###
+# NOTA: .env NON esta ignorado para facilitar probas
+# .env.local SÍ se ignoran por seguridade
 .env.local
 .env.development.local
 .env.test.local
@@ -66,7 +66,7 @@ coverage
 ### Cache ###
 .cache
 
-### PDFs (no incluir en repo) ###
+### PDFs (non incluir no repo) ###
 *.pdf
 
 ##### FIN GITIGNORE #####

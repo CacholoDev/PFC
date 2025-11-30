@@ -68,10 +68,10 @@ function cargarTablaProductos() {
                                 <button class="btn btn-sm btn-warning" title="Editar producto" onclick="modalEditarProducto(${producto.id})">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" title="Gestionar stock" onclick="modalEditarStock(${producto.id})">
+                                <button class="btn btn-sm btn-warning" title="Editar stock" onclick="modalEditarStock(${producto.id})">
                                     <i class="bi bi-boxes"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" title="Gestionar foto" onclick="modalEditarFoto(${producto.id})">
+                                <button class="btn btn-sm btn-warning" title="Editar foto" onclick="modalEditarFoto(${producto.id})">
                                     <i class="bi bi-image"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" title="Eliminar producto" onclick="deleteProducto(${producto.id})">
@@ -475,12 +475,41 @@ function reducirStock() {
         });
 }
 
+//fotos
+function modalEditarFoto(id) {
+
+    productoIdActual = id;
+    fetch(`/productos/${id}`)
+        .then(response => response.json())
+        .then(producto => {
+            // 1. Rellenar form coos datos do producto
+            document.getElementById('nombreProductoFoto').value = producto.nombre;
+            // limpar input file
+            document.getElementById('fotoProducto').value = '';
+            // mostrar imaxe actual
+            document.getElementById('fotoActualProducto').src = producto.imagenUrl;
+            document.getElementById('fotoActualProducto').alt = producto.nombre;
+            // 2. cambiando titulo do modal
+            document.getElementById('modalFotoTitle').textContent = 'Editar Foto Producto';
+            // 3. abrir modal con setTimeout
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('modalEditarFoto'));
+                modal.show();
+            }, 300);
+
+        }).catch(error => {
+            console.error('Error al obtener el producto:', error);
+            alert('Error al obtener el producto');
+        });
+
+}
+
 
 
 /*
 PASO 1: Crear producto con imagen (flujo correcto)
 A. En el modal de crear producto:
-El input file solo sirve para seleccionar la imagen, no para mostrar la URL.
+El input file solo sirve para seleccionar la imagen, no para mostrar laURL.
 No pongas .value = producto.imagenUrl en el input file (no funciona).
 B. En el JS (crearProducto):
 Envía primero el producto SIN imagen:

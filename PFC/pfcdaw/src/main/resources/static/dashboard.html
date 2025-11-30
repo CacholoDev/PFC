@@ -374,6 +374,44 @@
         </div>
     </div>
 
+    <!-- modal editar foto -->
+    <div class="modal fade" id="modalEditarFoto" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFotoTitle">
+                        <i class="bi bi-image text-warning me-2"></i>
+                        Editar Foto del Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarFoto">
+                        <div class="mb-3">
+                            <label for="nombreProductoFoto" class="form-label">Producto:</label>
+                            <input type="text" class="form-control" id="nombreProductoFoto" name="nombreProductoFoto"
+                                disabled>
+                        
+                            <div class="mt-2 mb-3">
+                                <label for="fotoActualProducto" class="form-label">Foto actual:</label>
+                                <img id="fotoActualProducto" src="" alt="Foto Actual del Producto" class="img-fluid">
+                        </div>
+                            <div class="mb-3">
+                                <label for="fotoProducto" class="form-label">Seleccionar nueva foto:</label>
+                                <input type="file" class="form-control" id="fotoProducto" name="fotoProducto" accept="image/*">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardarFoto">Guardar Foto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- DataTables.net JS -->
     <!-- pdfmake (para exportar PDF,CSV,IMPRIMIR...) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"

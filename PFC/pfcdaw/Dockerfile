@@ -15,7 +15,7 @@ COPY src ./src
 RUN apt-get update && \
     apt-get install -y maven && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*     # Limpa caché para reducir tamaño
+    rm -rf /var/lib/apt/lists/*
 # Variables de entorno para Maven
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
