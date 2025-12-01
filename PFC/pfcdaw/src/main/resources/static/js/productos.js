@@ -1,8 +1,11 @@
+// Variable global para gardar a imaxe seleccionada o crear producto
+let archivoImagenSeleccionado = null;
 // variable global para modo crear + edit
 let modoEdicion = false;
 let productoIdActual = null;
 
 document.addEventListener("DOMContentLoaded", function () {
+
     cargarTablaProductos();
 
     //coller o button crear producto ca function modalCreateProducto para que abra o modal
@@ -30,6 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('btnReducirStock').onclick = function () {
         reducirStock();
     };
+
+    //button guardar foto
+    document.getElementById('btnGuardarFoto').onclick = function () {
+        guardarFotoProducto();
+    };
+    // Gardar arquivo seleccionado en variable global
+    document.getElementById('imagenProducto').addEventListener('change', function (e) {
+        archivoImagenSeleccionado = e.target.files[0] || null;
+    });
 
 });
 
@@ -194,6 +206,8 @@ function modalCreateProducto() {
 
     // limpar form
     document.getElementById('formCrearEditarProducto').reset();
+    // limpar variable global imaxe
+    archivoImagenSeleccionado = null;
 
     // desactivar input stock
     document.getElementById('stockProducto').disabled = false;
@@ -241,7 +255,6 @@ function crearProducto() {
         descripcion: descripcion,
         precio: precio,
         stock: stock,
-//esto        imagenUrl: imagenUrl
     };
 
     // enviar POST o backend
@@ -253,23 +266,42 @@ function crearProducto() {
         body: JSON.stringify(nuevoProducto)
     })
         .then(response => {
-            if (response.ok) {
-                // cerrar modal con timeout polos bugs oscuros esos
-                setTimeout(() => {
-                    const modalElement = document.getElementById('modalCrearEditarProducto');
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    modal.hide();
-                }, 300);
-
-                // Recargar tabla
-                cargarTablaProductos();
-                alert('Producto creado');
-            } else {
-                alert('Error al crear el producto');
+            if (!response.ok) {
+                throw new Error('Error al crear el producto');
             }
-        }).catch(error => {
+            return response.json();
+        })
+        .then(productoCreado => {
+            // Si hai imaxe seleccionada, subila
+            if (archivoImagenSeleccionado) {
+                const formData = new FormData();
+                formData.append('imagenFile', archivoImagenSeleccionado);
+
+                return fetch(`/productos/${productoCreado.id}/ActFoto`, {
+                    method: 'PUT',
+                    body: formData
+                })
+                    .then(resp => {
+                        if (!resp.ok) throw new Error('Error al subir la imagen');
+                    });
+            }
+        })
+        .then(() => {
+            // pechar modal con timeout polos bugs oscuros esos
+            setTimeout(() => {
+                const modalElement = document.getElementById('modalCrearEditarProducto');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+            }, 300);
+            // Recargar tabla
+            cargarTablaProductos();
+            alert('Producto creado');
+            archivoImagenSeleccionado = null;
+        })
+        .catch(error => {
             console.error('Error al crear el producto:', error);
-            alert('Error al crear el producto');
+            alert(error.message || 'Error al crear el producto');
+            archivoImagenSeleccionado = null;
         });
 }
 
@@ -288,7 +320,6 @@ function modalEditarProducto(id) {
             document.getElementById('descripcionProducto').value = producto.descripcion.trim();
             document.getElementById('precioProducto').value = producto.precio.toFixed(2);
             document.getElementById('stockProducto').value = producto.stock;
-//esto            document.getElementById('imagenProducto').value = producto.imagenUrl;
 
             // 2. cambiando titulo do modal
             document.getElementById('modalProductoTitle').textContent = 'Editar Producto';
@@ -324,16 +355,13 @@ function editarProducto() {
         alert('El precio debe ser un número positivo');
         return;
     }
-//esto    let imagenUrl = document.getElementById('imagenProducto').value.trim();
 
     // 5. crear json producto editado
     const productoEditado = {
         nombre: name,
         descripcion: descripcion,
         precio: precio,
-//esto        imagenUrl: imagenUrl
     };
-    console.log('Producto editado:', productoEditado);
 
     // 6. Enviar PUT o backend
     fetch(`/productos/${productoIdActual}`, {
@@ -497,6 +525,8 @@ function modalEditarFoto(id) {
                 modal.show();
             }, 300);
 
+
+
         }).catch(error => {
             console.error('Error al obtener el producto:', error);
             alert('Error al obtener el producto');
@@ -504,85 +534,36 @@ function modalEditarFoto(id) {
 
 }
 
-
-
-/*
-PASO 1: Crear producto con imagen (flujo correcto)
-A. En el modal de crear producto:
-El input file solo sirve para seleccionar la imagen, no para mostrar laURL.
-No pongas .value = producto.imagenUrl en el input file (no funciona).
-B. En el JS (crearProducto):
-Envía primero el producto SIN imagen:
-
-Recoge los datos del formulario (nombre, descripción, precio, stock).
-Haz el fetch POST /productos con el JSON (sin imagen).
-Cuando el backend responde con el producto creado (tiene un id):
-
-Si el usuario seleccionó una imagen, crea un FormData y añade la imagen.
-Haz un segundo fetch tipo PUT a /productos/{id}/ActFoto con el FormData.
-Cuando acabe, recarga la tabla y cierra el modal.
-
-PASO 2: Editar solo la foto (botón "Gestionar foto")
-Crea un modal aparte para cambiar la foto.
-Al pulsar el botón de la cámara, abre ese modal, muestra la imagen actual y permite seleccionar una nueva.
-Al guardar, haz el PUT /productos/{id}/ActFoto con la nueva imagen.
-
-PASO 3: No uses .value en el input file para mostrar la URL
-El input file solo sirve para seleccionar archivos, nunca para mostrar la URL de la imagen.
-*/
-
-/*
-// crear json producto (sin imagen)
-    const nuevoProducto = {
-        nombre: nombre,
-        descripcion: descripcion,
-        precio: precio,
-        stock: stock
-    };
-
-    // enviar POST al backend para crear el producto
-    fetch('/productos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(nuevoProducto)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al crear el producto');
-            }
-            return response.json();
+function guardarFotoProducto() {
+    const inputFile = document.getElementById('fotoProducto');
+    if (inputFile && inputFile.files && inputFile.files.length > 0) {
+        const formData = new FormData();
+        formData.append('imagenFile', inputFile.files[0]);
+        // PUT al endpoint de imagen
+        fetch(`/productos/${productoIdActual}/ActFoto`, {
+            method: 'PUT',
+            body: formData
         })
-        .then(productoCreado => {
-            // Si hay imagen seleccionada, subirla
-            const inputFile = document.getElementById('imagenProducto');
-            if (inputFile && inputFile.files && inputFile.files.length > 0) {
-                const formData = new FormData();
-                formData.append('imagenFile', inputFile.files[0]);
-                // PUT al endpoint de imagen
-                return fetch(`/productos/${productoCreado.id}/ActFoto`, {
-                    method: 'PUT',
-                    body: formData
-                })
-                .then(resp => {
-                    if (!resp.ok) throw new Error('Error al subir la imagen');
-                });
-            }
-        })
-        .then(() => {
-            // cerrar modal con timeout polos bugs oscuros esos
-            setTimeout(() => {
-                const modalElement = document.getElementById('modalCrearEditarProducto');
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                modal.hide();
-            }, 300);
-            // Recargar tabla
-            cargarTablaProductos();
-            alert('Producto creado');
-        })
-        .catch(error => {
-            console.error('Error al crear el producto:', error);
-            alert(error.message || 'Error al crear el producto');
-        });
-*/
+            .then(resp => {
+                if (resp.ok) {
+                    // cerrar modal con timeout polos bugs oscuros esos
+                    setTimeout(() => {
+                        const modalElement = document.getElementById('modalEditarFoto');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    }, 300);
+                    // Recargar tabla
+                    cargarTablaProductos();
+                    alert('Imagen actualizada con éxito');
+                } else {
+                    throw new Error('Error al subir la imagen');
+                }
+            })
+            .catch(error => {
+                console.error('Error al subir la imagen:', error);
+                alert('Error al subir la imagen');
+            });
+    } else {
+        alert('Por favor, selecciona una imagen para subir');
+    }
+}
