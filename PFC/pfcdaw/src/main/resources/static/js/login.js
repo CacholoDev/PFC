@@ -108,6 +108,7 @@ async function crearCuenta() {
     const email = document.getElementById('emailUser').value.trim();
     const tlf = document.getElementById('telefonoUser').value.trim();
     const direccion = document.getElementById('direccionUser').value.trim();
+    const nombreEmpresa = document.getElementById('nombreEmpresaUser').value.trim();
     const password = document.getElementById('passwordUser').value;
     const confirmPass = document.getElementById('confirmPasswordUser').value;
 
@@ -122,6 +123,7 @@ async function crearCuenta() {
         apellido: apellido,
         email: email,
         direccion: direccion,
+        nombreEmpresa: nombreEmpresa,
         telefono: tlf,
         password: password,
     };

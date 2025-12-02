@@ -6,14 +6,13 @@
 -- ADMIN: admin@panaderia.com (password: admin123)
 -- ADMIN: empleado@panaderia.com (password: empleado123)
 -- USERS: Resto de clientes (password: user123)
-INSERT IGNORE INTO clientes (nombre, apellido, email, direccion, telefono, password, role)
+INSERT IGNORE INTO clientes (nombre, apellido, email, direccion, nombre_empresa, telefono, password, role)
 VALUES 
-('Admin', 'Panadería', 'admin@panaderia.com', 'Rúa Principal 1, Noia', '666000000', 'admin123', 'ADMIN'),
-('UserAdmin', 'Panadero2', 'useradmin@panaderia.com', 'Rúa Secundaria 2, Noia', '666000001', 'admin123', 'ADMIN'),
-('Juan', 'Pérez', 'juan.perez@example.com', 'Rúa de Noia 1', '666666666', 'user123', 'USER'),
-('María', 'García', 'maria.garcia@example.com', 'Avenida Galicia 1, Santiago', '981820000', 'user123', 'USER'),
-('Anxo', 'López', 'anxo.lopez@example.com', 'Praza da Coruña 1, Coruña', '606060606', 'user123', 'USER');
-
+('Admin', 'Panadería', 'admin@panaderia.com', 'Rúa Principal 1, Noia', 'Panadería PFC', '666000000', 'admin123', 'ADMIN'),
+('UserAdmin', 'Panadero2', 'useradmin@panaderia.com', 'Rúa Secundaria 2, Noia', 'Panadería PFC', '666000001', 'admin123', 'ADMIN'),
+('Juan', 'Pérez', 'juan.perez@example.com', 'Rúa de Noia 1', 'Empresa Deportivo', '666666666', 'user123', 'USER'),
+('María', 'García', 'maria.garcia@example.com', 'Avenida Galicia 1, Santiago', 'Empresa Altia', '981820000', 'user123', 'USER'),
+('Anxo', 'López', 'anxo.lopez@example.com', 'Praza da Coruña 1, Coruña', 'Empresa Blizzard', '606060606', 'user123', 'USER');
 -- ============================================
 -- INSERTAR PRODUCTOS DE PRUEBA (si non existen)
 INSERT IGNORE INTO productos (nombre, descripcion, precio, stock)

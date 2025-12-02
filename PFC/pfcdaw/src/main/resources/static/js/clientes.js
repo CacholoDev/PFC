@@ -39,6 +39,9 @@ function cargarClientes() {
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Email</th>
+                                <th>Direccion</th>
+                                <th>Fecha Alta</th>
+                                <th>Empresa</th>
                                 <th>Teléfono</th>
                                 <th>Rol</th>
                                 <th>Acciones</th>
@@ -54,6 +57,9 @@ function cargarClientes() {
                             <td>${cliente.id}</td>
                             <td>${cliente.nombre}</td>
                             <td>${cliente.email}</td>
+                            <td>${cliente.direccion}</td>
+                            <td>${new Date(cliente.fechaAlta).toLocaleDateString('es-ES')}</td>
+                            <td>${cliente.nombreEmpresa}</td>
                             <td>${cliente.telefono}</td>
                             <td><span class="badge ${getBadgeRoleClass(cliente.role)}">${cliente.role}</span></td>
                             <td>
@@ -160,6 +166,7 @@ function crearCliente() {
     const email = document.getElementById('emailCliente').value.trim();
     const telefono = document.getElementById('telefonoCliente').value.trim();
     const direccion = document.getElementById('direccionCliente').value.trim();
+    const empresa = document.getElementById('nombreEmpresaCliente').value.trim();
     const password = document.getElementById('passwordCliente').value;
     const role = document.getElementById('roleCliente').value;
 
@@ -179,6 +186,7 @@ function crearCliente() {
         email: email,
         telefono: telefono,
         direccion: direccion,
+        nombreEmpresa: empresa,
         password: password,
         role: role
     };
