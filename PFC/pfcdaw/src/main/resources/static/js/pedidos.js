@@ -99,9 +99,6 @@ function verDetallesPedido(pedidoId) {
     fetch(`/pedidos/${pedidoId}`)
         .then(response => response.json())
         .then(pedido => {
-            // logs pa ver o que trae o pedido + lineas
-            console.log('📦 PEDIDO COMPLETO:', pedido);
-            console.log('📋 LÍNEAS:', pedido.lineasPedido);
 
             // 1. Rellenar ID do pedido no titulo
             document.getElementById('pedidoIdModal').textContent = pedido.id;

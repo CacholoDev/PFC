@@ -1,0 +1,1 @@
+2. poñer o campo de empresa po user

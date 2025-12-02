@@ -18,6 +18,7 @@
         crossorigin="anonymous">
     <!-- CSS -->
     <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 
 <body>
@@ -169,33 +170,47 @@
                 <div class="modal-body">
                     <form id="formCrearCliente">
                         <div class="mb-3">
-                            <label for="nombreCliente" class="form-label">Nombre</label>
+                            <label for="nombreCliente" class="form-label">
+                                <i class="bi bi-person-fill me-1"></i>
+                                Nombre</label>
                             <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" required>
                         </div>
                         <div class="mb-3">
-                            <label for="apellidoCliente" class="form-label">Apellido</label>
+                            <label for="apellidoCliente" class="form-label">
+                                <i class="bi bi-person-fill me-1"></i>
+                                Apellido</label>
                             <input type="text" class="form-control" id="apellidoCliente" name="apellidoCliente"
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="emailCliente" class="form-label">Correo Electrónico</label>
+                            <label for="emailCliente" class="form-label">
+                                <i class="bi bi-envelope-fill me-1"></i>
+                                Correo Electrónico</label>
                             <input type="email" class="form-control" id="emailCliente" name="emailCliente" required>
                         </div>
                         <div class="mb-3">
-                            <label for="telefonoCliente" class="form-label">Teléfono</label>
+                            <label for="telefonoCliente" class="form-label">
+                                <i class="bi bi-telephone-fill me-1"></i>
+                                Teléfono</label>
                             <input type="text" class="form-control" id="telefonoCliente" name="telefonoCliente">
                         </div>
                         <div class="mb-3">
-                            <label for="direccionCliente" class="form-label">Dirección</label>
+                            <label for="direccionCliente" class="form-label">
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                Dirección</label>
                             <input type="text" class="form-control" id="direccionCliente" name="direccionCliente">
                         </div>
                         <div class="mb-3">
-                            <label for="passwordCliente" class="form-label">Contraseña</label>
+                            <label for="passwordCliente" class="form-label">
+                                <i class="bi bi-lock-fill me-1"></i>
+                                Contraseña</label>
                             <input type="password" class="form-control" id="passwordCliente" name="passwordCliente"
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="roleCliente" class="form-label">Rol</label>
+                            <label for="roleCliente" class="form-label">
+                                <i class="bi bi-shield-lock-fill me-1"></i>
+                                Rol</label>
                             <select class="form-select" id="roleCliente" name="roleCliente" required>
                                 <option value="USER">Usuario</option>
                                 <option value="ADMIN">Administrador</option>
@@ -247,7 +262,7 @@
                             <label for="imagenProducto" class="form-label">Imagen del Producto</label>
                             <input type="file" class="form-control" id="imagenProducto" name="imagenProducto"
                                 accept="image/*">
-                        </div>                         
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -391,14 +406,15 @@
                             <label for="nombreProductoFoto" class="form-label">Producto:</label>
                             <input type="text" class="form-control" id="nombreProductoFoto" name="nombreProductoFoto"
                                 disabled>
-                        
+
                             <div class="mt-2 mb-3">
                                 <label for="fotoActualProducto" class="form-label">Foto actual:</label>
                                 <img id="fotoActualProducto" src="" alt="Foto Actual del Producto" class="img-fluid">
-                        </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="fotoProducto" class="form-label">Seleccionar nueva foto:</label>
-                                <input type="file" class="form-control" id="fotoProducto" name="fotoProducto" accept="image/*">
+                                <input type="file" class="form-control" id="fotoProducto" name="fotoProducto"
+                                    accept="image/*">
                             </div>
                         </div>
                     </form>
