@@ -252,7 +252,7 @@ function editarCliente(clienteId) {
             document.getElementById('telefonoCliente').value = cliente.telefono;
             document.getElementById('direccionCliente').value = cliente.direccion;
             document.getElementById('nombreEmpresaCliente').value = cliente.nombreEmpresa;
-            document.getElementById('passwordCliente').value = '';
+            document.getElementById('passwordCliente').value = cliente.password;
             document.getElementById('roleCliente').value = cliente.role;
 
             // cambiar titulo
