@@ -7,4 +7,5 @@ import com.pfcdaw.pfcdaw.model.ClienteEntity;
 
 public interface ClienteRepository extends JpaRepository<ClienteEntity, Long> {
     Optional<ClienteEntity> findByEmail(String email);
+    boolean existsByEmail(String email);
 }

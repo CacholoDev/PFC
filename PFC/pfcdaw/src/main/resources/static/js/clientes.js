@@ -1,4 +1,7 @@
 // Tabla Clientes
+let modoEdicionC = false;
+let clienteIdEdicion = null;
+
 document.addEventListener("DOMContentLoaded", function () {
 
     cargarClientes();
@@ -8,16 +11,20 @@ document.addEventListener("DOMContentLoaded", function () {
         modalCrearCliente();
     };
 
-    // button gardar cliente para o post
+    // button gardar/actualizar cliente
     document.getElementById('btnGuardarCliente').onclick = function () {
-        crearCliente();
+        if (modoEdicionC) {
+            actualizarCliente(clienteIdEdicion);
+        } else {
+            crearCliente();
+        }
     }
 
 });
 
 // function badges colorear role
 function getBadgeRoleClass(role) {
-    if (role === 'ADMIN') return 'bg-warning text-black';
+    if (role === 'ADMIN') return 'bg-dark text-warning';
     if (role === 'USER') return 'bg-info text-black';
     if (role !== 'ADMIN' && role !== 'USER') return 'bg-secondary text-dark';
 }
@@ -63,6 +70,10 @@ function cargarClientes() {
                             <td>${cliente.telefono}</td>
                             <td><span class="badge ${getBadgeRoleClass(cliente.role)}">${cliente.role}</span></td>
                             <td>
+                                <button class="btn btn-sm btn-warning" title="Editar cliente" onclick="editarCliente(${cliente.id})">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
                                 <button class="btn btn-sm btn-danger" title="Eliminar cliente" onclick="deleteCliente(${cliente.id})">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -142,10 +153,14 @@ function deleteCliente(clienteId) {
     }
 }
 
-// function modalCrearCliente
+// function modal crear cliente
 function modalCrearCliente() {
-    // Limpiar campos
+    // limpar formulario
     document.getElementById('formCrearCliente').reset();
+
+    // activar modo creación
+    modoEdicionC = false;
+    clienteIdEdicion = null;
 
     // cambiar titulo
     document.getElementById('modalClienteTitle').textContent = 'Crear Nuevo Cliente';
@@ -217,5 +232,104 @@ function crearCliente() {
         .catch(error => {
             console.error('Error al crear cliente:', error);
             alert('Error al crear el cliente.');
+        });
+}
+
+// function editarCliente
+function editarCliente(clienteId) {
+    // activar modo edición
+    modoEdicionC = true;
+    clienteIdEdicion = clienteId;
+
+    // fetch cliente por id
+    fetch(`/clientes/${clienteId}`)
+        .then(response => response.json())
+        .then(cliente => {
+            // llenar formulario
+            document.getElementById('nombreCliente').value = cliente.nombre;
+            document.getElementById('apellidoCliente').value = cliente.apellido;
+            document.getElementById('emailCliente').value = cliente.email;
+            document.getElementById('telefonoCliente').value = cliente.telefono;
+            document.getElementById('direccionCliente').value = cliente.direccion;
+            document.getElementById('nombreEmpresaCliente').value = cliente.nombreEmpresa;
+            document.getElementById('passwordCliente').value = '';
+            document.getElementById('roleCliente').value = cliente.role;
+
+            // cambiar titulo
+            document.getElementById('modalClienteTitle').textContent = `Editar Cliente #${clienteId}`;
+            document.getElementById('btnGuardarCliente').textContent = 'Actualizar';
+
+            // Mostrar modal
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('modalCrearCliente'));
+                modal.show();
+            }, 300);
+        });
+}
+
+// function actualizarCliente
+function actualizarCliente(clienteId) {
+
+    // recopilar datos do formulario
+    const nombre = document.getElementById('nombreCliente').value.trim();
+    const apellido = document.getElementById('apellidoCliente').value.trim();
+    const email = document.getElementById('emailCliente').value.trim();
+    const telefono = document.getElementById('telefonoCliente').value.trim();
+    const direccion = document.getElementById('direccionCliente').value.trim();
+    const empresa = document.getElementById('nombreEmpresaCliente').value.trim();
+    const password = document.getElementById('passwordCliente').value;
+    const role = document.getElementById('roleCliente').value;
+
+    //validacions
+    if (!nombre || !apellido || !email || !role || !telefono || !direccion || !empresa || !password) {
+        alert('Por favor, todos los campos son obligatorios.');
+        return;
+    }
+
+    //telefono validacion
+    if (!telefono.match(/^[0-9]{9}$/)) {
+        alert('El teléfono debe tener exactamente 9 dígitos numéricos.');
+        return;
+    }
+
+    // crear obxeto cliente
+    const clienteActualizado = {
+        id: clienteId, // ✅ IMPORTANTE: incluir el ID para que JPA actualice en vez de crear
+        nombre: nombre,
+        apellido: apellido,
+        email: email,
+        telefono: telefono,
+        direccion: direccion,
+        nombreEmpresa: empresa,
+        password: password,
+        role: role
+    };
+
+    // enviar PUT request para actualizar cliente
+    fetch(`/clientes/${clienteId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(clienteActualizado)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Cliente actualizado correctamente.');
+                cargarClientes(); // recargar clientes
+
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearCliente'));
+                    modal.hide();
+                }, 300);
+            } else if (response.status === 409) {
+                alert('El email ya está registrado. Por favor, utiliza otro email.');
+            } else {
+                alert('Error al actualizar el cliente.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al actualizar cliente:', error);
+            alert('Error al actualizar el cliente.');
         });
 }

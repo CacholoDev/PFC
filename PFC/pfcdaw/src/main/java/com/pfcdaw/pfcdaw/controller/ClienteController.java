@@ -71,16 +71,25 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteEntity> updateCliente(@PathVariable @NonNull Long id,
+    public ResponseEntity<?> updateCliente(@PathVariable @NonNull Long id,
         @Valid @RequestBody @NonNull ClienteEntity clienteActualizado) {
         log.info("[PUT /clientes/{}] Actualizando cliente", id);
         return clienteRepository.findById(id)
                 .map(cliente -> {
+                    // Comprobar si o mail querese cambiar e xa existe noutro cliente
+                    ClienteEntity clienteConEmail = clienteRepository.findByEmail(clienteActualizado.getEmail()).orElse(null);
+                    if (clienteConEmail != null && !clienteConEmail.getId().equals(cliente.getId())) {
+                        log.warn("[PUT /clientes/{}] Email duplicado: {}", id, clienteActualizado.getEmail());
+                        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                    }
                     cliente.setNombre(clienteActualizado.getNombre());
                     cliente.setApellido(clienteActualizado.getApellido());
                     cliente.setEmail(clienteActualizado.getEmail());
                     cliente.setDireccion(clienteActualizado.getDireccion());
+                    cliente.setNombreEmpresa(clienteActualizado.getNombreEmpresa());
                     cliente.setTelefono(clienteActualizado.getTelefono());
+                    cliente.setPassword(clienteActualizado.getPassword());
+                    cliente.setRole(clienteActualizado.getRole());
                     ClienteEntity clienteGuardado = clienteRepository.save(cliente);
                     log.info("[PUT /clientes/{}] Actualizado correctamente", id);
                     return ResponseEntity.ok(clienteGuardado);
