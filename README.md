@@ -6,24 +6,24 @@
 
 ## Índice
 
-- [Índice](#índice)
-- [Requisitos previos](#requisitos-previos)
-- [Descripción](#descripción)
-- [Estado del Proyecto](#estado-del-proyecto)
-- [Instalación / Puesta en marcha](#instalación--puesta-en-marcha)
-  - [Opción recomendada: Despliegue con Docker](#opción-recomendada-despliegue-con-docker)
-  - [Opción alternativa: XAMPP/MySQL local](#opción-alternativa-xamppmysql-local)
-- [FAQ - Preguntas frecuentes](#faq---preguntas-frecuentes)
-  - [¿Por qué no arranca MySQL en Docker?](#por-qué-no-arranca-mysql-en-docker)
-  - [¿Dónde se guardan los datos de la base de datos?](#dónde-se-guardan-los-datos-de-la-base-de-datos)
-  - [¿Cómo cambio el puerto del backend o frontend?](#cómo-cambio-el-puerto-del-backend-o-frontend)
-  - [¿Puedo usar la app sin Docker?](#puedo-usar-la-app-sin-docker)
-  - [¿Cómo restauro la base de datos si borro el volumen?](#cómo-restauro-la-base-de-datos-si-borro-el-volumen)
-- [Uso](#uso)
-- [Sobre el autor](#sobre-el-autor)
-- [Licencia](#licencia)
-- [Documentación](#documentación)
-- [Guía de contribución](#guía-de-contribución)
+- [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
+  - [Índice](#índice)
+  - [Requisitos previos](#requisitos-previos)
+  - [Descripción](#descripción)
+  - [Instalación / Puesta en marcha](#instalación--puesta-en-marcha)
+    - [Opción recomendada: Despliegue con Docker](#opción-recomendada-despliegue-con-docker)
+    - [Opción alternativa: XAMPP/MySQL local](#opción-alternativa-xamppmysql-local)
+  - [FAQ - Preguntas frecuentes](#faq---preguntas-frecuentes)
+    - [¿Por qué no arranca MySQL en Docker?](#por-qué-no-arranca-mysql-en-docker)
+    - [¿Dónde se guardan los datos de la base de datos?](#dónde-se-guardan-los-datos-de-la-base-de-datos)
+    - [¿Cómo cambio el puerto del backend o frontend?](#cómo-cambio-el-puerto-del-backend-o-frontend)
+    - [¿Puedo usar la app sin Docker?](#puedo-usar-la-app-sin-docker)
+    - [¿Cómo restauro la base de datos si borro el volumen?](#cómo-restauro-la-base-de-datos-si-borro-el-volumen)
+  - [Uso](#uso)
+  - [Sobre el autor](#sobre-el-autor)
+  - [Licencia](#licencia)
+  - [Documentación](#documentación)
+  - [Guía de contribución](#guía-de-contribución)
 
 ## Requisitos previos
 
@@ -66,21 +66,6 @@ graph TD
     A --> D
 ```
 
-## Estado del Proyecto
-
-✅ **BACKEND COMPLETADO**
-**(Spring Boot)**
-- API REST funcional con 15+ endpoints
-- Gestión completa de Clientes, Productos y Pedidos
-- Sistema de stock automático con transacciones
-- Validaciones en múltiples capas
-- Precisión decimal exacta con BigDecimal
-
-⏳ **FRONTEND EN DESARROLLO**
-**(js+html+css+Bootstrap)**
-- Pendiente: Catálogo de productos, carrito y formulario de pedido
-
-
 ## Instalación / Puesta en marcha
 
 ### Opción recomendada: Despliegue con Docker
@@ -109,20 +94,7 @@ graph TD
 
 ### Opción alternativa: XAMPP/MySQL local
 
-Si prefieres usar XAMPP y MySQL local, debes ajustar la configuración en `application.properties`:
-
-```properties
-# CONFIGURACIÓN DE BASE DE DATOS //
-#spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true}
-#spring.datasource.username=${DB_USERNAME:root}
-#spring.datasource.password=${DB_PASSWORD:}
-spring.datasource.url=jdbc:mysql://mysql:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-spring.datasource.username=admin
-spring.datasource.password=admin123
-```
-
-**Para usar XAMPP:**
-- Descomenta las 3 primeras líneas y comenta las otras 3 (así la app usará tu MySQL local en vez del contenedor Docker).
+Si prefieres usar XAMPP y MySQL local.
 
 1. **Clonar el repositorio**: clonar desde gitlab
 
@@ -142,7 +114,7 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
 
-5. **Levantar el backend**:
+1. **Levantar el backend**:
 ```bash
 cd PFC/pfcdaw
 ./mvnw spring-boot:run

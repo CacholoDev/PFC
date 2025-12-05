@@ -1,82 +1,80 @@
 # Plataforma web de pedidos para panadería
 ### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
-- [Introducción](#introducción)
-- [Estado de arte o análisis del contexto](#estado-de-arte-o-análisis-del-contexto)
-- [Propósito](#propósito)
-- [Objetivos](#objetivos)
-- [Alcance](#alcance)
-  - [Funcionalidades incluidas:](#funcionalidades-incluidas)
-  - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
-  - [Contexto de uso:](#contexto-de-uso)
-- [Conclusiones](#conclusiones)
-- [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
-      - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
-- [1.Análisis](#1análisis)
-    - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
-- [2. Diseño](#2-diseño)
-  - [Arquitectura general (Dockerizada)](#arquitectura-general-dockerizada)
-  - [Alternativa: Arquitectura local (XAMPP)](#alternativa-arquitectura-local-xampp)
-- [Ventajas de usar Docker](#ventajas-de-usar-docker)
-  - [¿Cómo funciona la persistencia de MySQL con Docker?](#cómo-funciona-la-persistencia-de-mysql-con-docker)
-- [Problemas comunes y soluciones](#problemas-comunes-y-soluciones)
-  - [Despliegue recomendado: Docker Compose](#despliegue-recomendado-docker-compose)
-  - [Localhost: XAMPP/MySQL local](#localhost-xamppmysql-local)
-    - [Diagrama de Arquitectura Detallado](#diagrama-de-arquitectura-detallado)
-  - [Estructura básica del backend](#estructura-básica-del-backend)
-  - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
-  - [Diagrama de secuencia: Crear Pedido](#diagrama-de-secuencia-crear-pedido)
-    - [Decisiones de diseño](#decisiones-de-diseño)
-    - [Documentación de Endpoints API con Swagger/OpenAPI](#documentación-de-endpoints-api-con-swaggeropenapi)
-- [3.Planificación](#3planificación)
-  - [Fases del proyecto](#fases-del-proyecto)
-  - [Diagrama de Gantt](#diagrama-de-gantt)
-  - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
-      - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
-- [4. Implementación Técnica del Backend](#4-implementación-técnica-del-backend)
-  - [4.1. Tecnologías Utilizadas](#41-tecnologías-utilizadas)
-  - [4.2. Decisiones de Arquitectura](#42-decisiones-de-arquitectura)
-    - [**Uso de BigDecimal en vez de Double**](#uso-de-bigdecimal-en-vez-de-double)
-    - [**LineaPedido como entidad separada**](#lineapedido-como-entidad-separada)
-    - [**Lifecycle Hooks para recalcular totales**](#lifecycle-hooks-para-recalcular-totales)
-    - [**Prevención de recursión infinita en JSON**](#prevención-de-recursión-infinita-en-json)
-    - [**Gestión de stock transaccional**](#gestión-de-stock-transaccional)
-  - [4.3. Validaciones Implementadas](#43-validaciones-implementadas)
-    - [**Nivel DTO** (entrada de datos)](#nivel-dto-entrada-de-datos)
-    - [**Nivel Entity** (persistencia)](#nivel-entity-persistencia)
-    - [**Nivel Service** (lógica de negocio)](#nivel-service-lógica-de-negocio)
-  - [4.4. Logs Implementados](#44-logs-implementados)
-  - [4.5. Testing Realizado](#45-testing-realizado)
-    - [**Tests manuales con Postman**](#tests-manuales-con-postman)
-  - [4.6. Problemas Resueltos Durante Desarrollo](#46-problemas-resueltos-durante-desarrollo)
-      - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
-- [5. Implementación Técnica del Frontend](#5-implementación-técnica-del-frontend)
-  - [5.1. Tecnologías y Bibliotecas](#51-tecnologías-y-bibliotecas)
-  - [5.2. Estructura de Archivos](#52-estructura-de-archivos)
-  - [5.3. Patrones de Arquitectura Frontend](#53-patrones-de-arquitectura-frontend)
-    - [**Comunicación con API REST mediante Fetch**](#comunicación-con-api-rest-mediante-fetch)
-    - [**Modales Reutilizables con Estado**](#modales-reutilizables-con-estado)
-    - [**Renderizado Dinámico con Template Literals**](#renderizado-dinámico-con-template-literals)
-  - [5.4. Funcionalidades Implementadas](#54-funcionalidades-implementadas)
-    - [**Sistema de Tabs (dashboard.html)**](#sistema-de-tabs-dashboardhtml)
-    - [**DataTables: Búsqueda, Ordenación, Paginación**](#datatables-búsqueda-ordenación-paginación)
-    - [**Sistema de Badges de Color**](#sistema-de-badges-de-color)
-    - [**Alertas de Stock Bajo**](#alertas-de-stock-bajo)
-    - [**Gestión de Stock Separada**](#gestión-de-stock-separada)
-    - [**Modal de Detalles de Pedido (Vista Usuario)**](#modal-de-detalles-de-pedido-vista-usuario)
-    - [**Autenticación con localStorage**](#autenticación-con-localstorage)
-    - [**Validaciones Frontend**](#validaciones-frontend)
-  - [5.5. Decisiones Técnicas](#55-decisiones-técnicas)
-    - [**Vanilla JavaScript vs Frameworks**](#vanilla-javascript-vs-frameworks)
-    - [**Bootstrap como Framework CSS**](#bootstrap-como-framework-css)
-    - [**DataTables para Tablas Interactivas**](#datatables-para-tablas-interactivas)
-    - [**Separación de Concerns**](#separación-de-concerns)
-  - [5.6. Limitaciones de Seguridad y Roadmap de Mejoras](#56-limitaciones-de-seguridad-y-roadmap-de-mejoras)
-    - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
-    - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
-    - [**Roadmap de Migración a Arquitectura Segura**](#roadmap-de-migración-a-arquitectura-segura)
-    - [**Comunicación de Limitaciones en Defensa del PFC**](#comunicación-de-limitaciones-en-defensa-del-pfc)
-      - [fin 4ª entrega (Implementación Frontend)](#fin-4ª-entrega-implementación-frontend)
+- [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
+    - [RepoGitLab](#repogitlab)
+  - [Introducción](#introducción)
+  - [Análisis del contexto](#análisis-del-contexto)
+  - [Propósito](#propósito)
+  - [Objetivos](#objetivos)
+  - [Alcance](#alcance)
+    - [Funcionalidades incluidas:](#funcionalidades-incluidas)
+    - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
+    - [Contexto de uso:](#contexto-de-uso)
+  - [Conclusiones](#conclusiones)
+  - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
+        - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
+- [TODO](#todo)
+  - [1.Análisis](#1análisis)
+      - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
+  - [2. Diseño](#2-diseño)
+    - [Arquitectura general (Dockerizada)](#arquitectura-general-dockerizada)
+    - [Alternativa: Arquitectura local (XAMPP)](#alternativa-arquitectura-local-xampp)
+  - [Ventajas de usar Docker](#ventajas-de-usar-docker)
+    - [¿Cómo funciona la persistencia de MySQL con Docker?](#cómo-funciona-la-persistencia-de-mysql-con-docker)
+  - [Problemas comunes y soluciones](#problemas-comunes-y-soluciones)
+    - [Despliegue recomendado: Docker Compose](#despliegue-recomendado-docker-compose)
+    - [Localhost: XAMPP/MySQL local](#localhost-xamppmysql-local)
+      - [Diagrama de Arquitectura Detallado](#diagrama-de-arquitectura-detallado)
+    - [Diagrama de clases (Modelo de datos)](#diagrama-de-clases-modelo-de-datos)
+    - [Diagrama de secuencia: Crear Pedido](#diagrama-de-secuencia-crear-pedido)
+      - [Decisiones de diseño](#decisiones-de-diseño)
+      - [Documentación de Endpoints API con Swagger/OpenAPI](#documentación-de-endpoints-api-con-swaggeropenapi)
+  - [3.Planificación](#3planificación)
+    - [Fases del proyecto](#fases-del-proyecto)
+    - [Diagrama de Gantt](#diagrama-de-gantt)
+    - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
+        - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
+  - [4. Implementación Técnica del Backend](#4-implementación-técnica-del-backend)
+    - [4.1. Tecnologías Utilizadas](#41-tecnologías-utilizadas)
+    - [4.2. Decisiones de Arquitectura](#42-decisiones-de-arquitectura)
+      - [**Uso de BigDecimal en vez de Double**](#uso-de-bigdecimal-en-vez-de-double)
+      - [**LineaPedido como entidad separada**](#lineapedido-como-entidad-separada)
+      - [**Lifecycle Hooks para recalcular totales**](#lifecycle-hooks-para-recalcular-totales)
+      - [**Prevención de recursión infinita en JSON**](#prevención-de-recursión-infinita-en-json)
+      - [**Gestión de stock transaccional**](#gestión-de-stock-transaccional)
+    - [4.3. Validaciones Implementadas](#43-validaciones-implementadas)
+      - [**Nivel DTO** (entrada de datos)](#nivel-dto-entrada-de-datos)
+      - [**Nivel Entity** (persistencia)](#nivel-entity-persistencia)
+      - [**Nivel Service** (lógica de negocio)](#nivel-service-lógica-de-negocio)
+    - [4.4. Logs Implementados](#44-logs-implementados)
+    - [4.5. Problemas Resueltos Durante Desarrollo](#45-problemas-resueltos-durante-desarrollo)
+        - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
+  - [5. Implementación Técnica del Frontend](#5-implementación-técnica-del-frontend)
+    - [5.1. Tecnologías y Bibliotecas](#51-tecnologías-y-bibliotecas)
+    - [5.2. Estructura de Archivos](#52-estructura-de-archivos)
+    - [5.3. Arquitectura Frontend](#53-arquitectura-frontend)
+      - [**Comunicación con API REST mediante Fetch**](#comunicación-con-api-rest-mediante-fetch)
+      - [**Modales Reutilizables con Estado**](#modales-reutilizables-con-estado)
+      - [**Renderizado Dinámico con Template Literals**](#renderizado-dinámico-con-template-literals)
+    - [5.4. Funcionalidades Implementadas](#54-funcionalidades-implementadas)
+      - [**Sistema de Tabs (dashboard.html)**](#sistema-de-tabs-dashboardhtml)
+      - [**DataTables: Búsqueda, Ordenación, Paginación**](#datatables-búsqueda-ordenación-paginación)
+      - [**Sistema de Badges de Color**](#sistema-de-badges-de-color)
+      - [**Alertas de Stock Bajo**](#alertas-de-stock-bajo)
+      - [**Gestión de Stock Separada**](#gestión-de-stock-separada)
+      - [**Modal de Detalles de Pedido (Vista Usuario)**](#modal-de-detalles-de-pedido-vista-usuario)
+      - [**Autenticación con localStorage**](#autenticación-con-localstorage)
+      - [**Validaciones Frontend**](#validaciones-frontend)
+    - [5.5. Decisiones Técnicas](#55-decisiones-técnicas)
+      - [**Vanilla JavaScript vs Frameworks**](#vanilla-javascript-vs-frameworks)
+      - [**Bootstrap como Framework CSS**](#bootstrap-como-framework-css)
+      - [**DataTables para Tablas Interactivas**](#datatables-para-tablas-interactivas)
+      - [**Separación de Concerns**](#separación-de-concerns)
+    - [5.6. Limitaciones](#56-limitaciones)
+      - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
+      - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
+        - [fin 4ª entrega](#fin-4ª-entrega)
 
 ## Introducción
 
@@ -84,7 +82,7 @@ El presente proyecto tiene como finalidad el diseño y desarrollo de una aplicac
 
 El sistema constará de un **backend desarrollado con Spring Boot** y persistencia en **MySQL**, junto con un **frontend sencillo en HTML, CSS y JavaScript**. Se busca crear un **prototipo funcional** que facilite el registro de productos, la consulta de catálogo y la realización de pedidos, constituyendo una base sólida que podría evolucionar en el futuro hacia un sistema más completo.
 
-## Estado de arte o análisis del contexto
+## Análisis del contexto
 
 En la actualidad, la digitalización en pequeños negocios de alimentación sigue siendo desigual. Mientras que grandes cadenas cuentan con aplicaciones móviles o webs personalizadas, muchas panaderías y negocios locales continúan gestionando pedidos únicamente de manera presencial o telefónica.
 
@@ -129,7 +127,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 - La autenticación será básica.
 - El carrito sera básico.
 - El frontend será simple (HTML/CSS/JS).
-- Se desarrollará como un **prototipo funcional** para entorno local, con futura implementacion de por ejemplo un docker.
+- Se desarrollará como un **prototipo funcional** para entorno local, con futuras implementaciones.
 
 ### Contexto de uso:
 
@@ -324,35 +322,6 @@ flowchart LR
 - **Transaccionalidad**: `@Transactional` en Service garantiza rollback si falla alguna operación
 - **DTOs**: Evitan exponer entidades JPA directamente, permiten validaciones con Jakarta
 - **JPA Cascade**: Simplifica persistencia de relaciones (guardar pedido guarda líneas automáticamente)
-
-### Estructura básica del backend
-
-```
-com.pfcdaw.pfcdaw
- ├─ model/
- │   ├─ ClienteEntity.java
- │   ├─ ProductoEntity.java
- │   ├─ PedidoEntity.java
- │   ├─ LineaPedido.java
- │   └─ EstadoPedidoEnum.java
- ├─ dto/
- │   ├─ PedidoCreateDto.java
- │   └─ StockUpdateDto.java
- ├─ repository/
- │   ├─ ClienteRepository.java
- │   ├─ ProductoRepository.java
- │   └─ PedidoRepository.java
- ├─ service/
- │   ├─ ProductoService.java
- │   └─ PedidoService.java
- ├─ controller/
- │   ├─ ClienteController.java
- │   ├─ ProductoController.java
- │   └─ PedidoController.java
- ├─ config/
- │   └─ WebConfig.java (CORS)
- └─ PfcdawApplication.java (Main)
-```
 
 ### Diagrama de clases (Modelo de datos)
 
@@ -639,23 +608,7 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 - Queries SQL ejecutadas
 - Operaciones de negocio (creación pedido, reducción stock)
 
-### 4.5. Testing Realizado
-
-#### **Tests manuales con Postman**
-
-| Test | Resultado |
-|------|-----------|
-| Crear cliente | ✅ OK |
-| Crear producto | ✅ OK |
-| Crear pedido con 2 productos | ✅ OK (stock reduce correctamente) |
-| Crear pedido con stock insuficiente | ✅ OK (rechaza con error) |
-| Aumentar stock manualmente | ✅ OK |
-| Eliminar producto usado en pedidos | ✅ OK (cascade elimina líneas, recalcula total) |
-| Obtener pedidos de un cliente | ✅ OK |
-| JSON sin recursión infinita | ✅ OK |
-| Decimales exactos en totales | ✅ OK (BigDecimal funciona) |
-
-### 4.6. Problemas Resueltos Durante Desarrollo
+### 4.5. Problemas Resueltos Durante Desarrollo
 
 1. **Recursión infinita en JSON** → Solucionado con `@JsonIgnore`
 2. **Decimales imprecisos** → Migrado de `Double` a `BigDecimal`
@@ -702,7 +655,7 @@ resources/static/
 └── img/
 ```
 
-### 5.3. Patrones de Arquitectura Frontend
+### 5.3. Arquitectura Frontend
 
 #### **Comunicación con API REST mediante Fetch**
 Todas las operaciones con el backend usan `fetch()` con manejo de promesas:
@@ -1000,7 +953,7 @@ Cada vista tiene su propio archivo JS:
 
 **Ventaja**: Mantenibilidad, evita conflictos de nombres, carga bajo demanda.
 
-### 5.6. Limitaciones de Seguridad y Roadmap de Mejoras
+### 5.6. Limitaciones
 
 #### **Estado Actual del Sistema de Autenticación**
 
@@ -1013,7 +966,7 @@ El proyecto implementa **autenticación básica en frontend** mediante `localSto
 - Logout con limpieza de sesión
 - Persistencia de datos de usuario entre recargas
 
-**❌ Limitaciones críticas identificadas:**
+**❌ Limitaciones identificadas:**
 
 1. **Exposición de API REST sin autenticación backend**
    - **Problema**: Los endpoints como `/clientes`, `/productos`, `/pedidos` son accesibles directamente sin validación
@@ -1035,92 +988,6 @@ El proyecto implementa **autenticación básica en frontend** mediante `localSto
 #### **Justificación de Decisiones Técnicas**
 
 Esta arquitectura fue elegida conscientemente considerando:
-
-**Contexto del proyecto:**
 - PFC desarrollado en paralelo con FCT (8h/día Santiago + 2h desplazamiento)
-- Tiempo disponible: ~6 semanas para backend + frontend completos
-- Prioridad: Demostrar conocimientos de Spring Boot, JPA, REST APIs, frontend moderno
 
-**Análisis de coste-beneficio:**
-
-| Opción | Tiempo Estimado | Valor para PFC | Decisión |
-|--------|-----------------|----------------|----------|
-| localStorage básico | 2h | ⭐⭐⭐ (funcionalidad completa) | ✅ Implementado |
-| Spring Security completo | 6-8h | ⭐⭐⭐⭐⭐ (producción real) | ❌ Descartado (tiempo) |
-| Interceptor custom | 3-4h | ⭐⭐ (solución intermedia) | ❌ Descartado (complejidad) |
-
-**Resultado:** Se priorizó un **prototipo funcional completo** con autenticación frontend sobre seguridad backend, documentando exhaustivamente las limitaciones.
-
-#### **Roadmap de Migración a Arquitectura Segura**
-
-**Fase 1: Spring Security Básico** (6-8 horas)
-```java
-// Dependencia pom.xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-
-// SecurityConfig.java
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/login.html").permitAll()
-                .requestMatchers("/clientes/**", "/productos/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(true)
-            );
-        return http.build();
-    }
-}
-```
-
-**Fase 2: Hashing de Contraseñas** (2-3 horas)
-```java
-// Migración de ClienteEntity
-@PrePersist
-@PreUpdate
-public void hashPassword() {
-    if (this.password != null && !this.password.startsWith("$2a$")) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(this.password);
-    }
-}
-
-// Validación en AuthService
-public boolean validarCredenciales(String email, String plainPassword) {
-    ClienteEntity cliente = clienteRepository.findByEmail(email);
-    return encoder.matches(plainPassword, cliente.getPassword());
-}
-```
-
-**Fase 3: Cookies httpOnly** (1-2 horas)
-```java
-// application.properties
-server.servlet.session.cookie.http-only=true
-server.servlet.session.cookie.secure=true
-server.servlet.session.cookie.same-site=strict
-server.servlet.session.timeout=30m
-```
-
-**Fase 4: JWT para APIs Stateless** (4-6 horas - opcional)
-- Implementar generación de tokens con `jjwt`
-- Crear filtros de validación de tokens
-- Sistema de refresh tokens para renovación
-
-**Estimación total:** 13-19 horas de desarrollo + testing
-
-#### **Comunicación de Limitaciones en Defensa del PFC**
-
-> *"Soy consciente de que los endpoints REST están expuestos públicamente. Opté por autenticación básica con localStorage para priorizar la funcionalidad completa del sistema dentro del tiempo disponible durante la FCT. La migración a Spring Security con sessions httpOnly y BCryptPasswordEncoder está planificada y documentada como mejora prioritaria post-entrega. Esta decisión demuestra capacidad de priorización técnica y gestión de alcance en proyectos con recursos limitados."*
-
-**Mensaje clave:** El reconocimiento explícito de limitaciones y la propuesta de soluciones técnicas concretas demuestra **madurez profesional** y comprensión profunda de seguridad en aplicaciones web.
-
-##### fin 4ª entrega (Implementación Frontend)
+##### fin 4ª entrega

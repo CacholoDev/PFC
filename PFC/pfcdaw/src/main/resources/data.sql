@@ -17,7 +17,7 @@ VALUES
 -- INSERTAR PRODUCTOS DE PRUEBA (si non existen)
 INSERT IGNORE INTO productos (nombre, descripcion, precio, stock)
 VALUES 
-('Pan de Centeno', 'Pan artesano de centeno con masa madre', 1.40, 500),
+('Pan artesanal', 'Pan artesano con masa madre', 1.40, 500),
 ('Croissant', 'Croissant de mantequilla recién horneado', 1.20, 300),
 ('Empanada millo de zamburiñas', 'Empanada de millo con zamburiñas tradicional gallega', 12.50, 150),
 ('Rosca de Reyes', 'Rosca tradicional con frutas confitadas', 8.50, 100);
