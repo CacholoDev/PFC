@@ -15,12 +15,12 @@ VALUES
 ('Anxo', 'López', 'anxo.lopez@example.com', 'Praza da Coruña 1, Coruña', 'Empresa Blizzard', '606060606', 'user123', 'USER');
 -- ============================================
 -- INSERTAR PRODUCTOS DE PRUEBA (si non existen)
-INSERT IGNORE INTO productos (nombre, descripcion, precio, stock)
+INSERT IGNORE INTO productos (nombre, descripcion, precio, stock,imagen_url)
 VALUES 
-('Pan artesanal', 'Pan artesano con masa madre', 1.40, 500),
-('Croissant', 'Croissant de mantequilla recién horneado', 1.20, 300),
-('Empanada millo de zamburiñas', 'Empanada de millo con zamburiñas tradicional gallega', 12.50, 150),
-('Rosca de Reyes', 'Rosca tradicional con frutas confitadas', 8.50, 100);
+('Pan artesanal', 'Pan artesano con masa madre', 1.40, 500, '/assets/images/uploads/panArt.jpg'),
+('Croissant', 'Croissant de mantequilla recién horneado', 1.20, 300, '/assets/images/uploads/cruasan.jpg'),
+('Empanada millo de zamburiñas', 'Empanada de millo con zamburiñas tradicional gallega', 12.50, 150, '/assets/images/uploads/EmpMillo.jpg'),
+('Rosca de Reyes', 'Rosca tradicional con frutas confitadas', 8.50, 100, '/assets/images/uploads/redonda.jpg');
 
 -- ============================================
 -- NOTA: Pedidos NON se insertan aquí van co endpoint POST /pedidos
