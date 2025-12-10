@@ -239,12 +239,12 @@ function crearProducto() {
     const descripcion = document.getElementById('descripcionProducto').value.trim();
     const precioRaw = document.getElementById('precioProducto').value.replace(',', '.');
     const precio = parseFloat(precioRaw);
-    if (precio < 0 || isNaN(precio)) {
+    if (precio < 0 || Number.isNaN(precio)) {
         alert('El precio debe ser un número positivo');
         return;
     }
     const stock = parseInt(document.getElementById('stockProducto').value, 10);
-    if (stock < 0 || isNaN(stock)) {
+    if (stock < 0 || Number.isNaN(stock)) {
         alert('El stock debe ser un número positivo');
         return;
     }
@@ -428,7 +428,7 @@ function modalEditarStock(id) {
 function aumentarStock() {
     // 4. obter novo valor do input
     let cantidadAumentar = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
-    if (isNaN(cantidadAumentar) || cantidadAumentar <= 0) {
+    if (Number.isNaN(cantidadAumentar) || cantidadAumentar <= 0) {
         alert('La cantidad a aumentar debe ser un número positivo');
         return;
     }
@@ -466,7 +466,7 @@ function reducirStock() {
 
     // 4. obter novo valor do input e validalo
     let cantidadReducir = parseInt(document.getElementById('cantidadAnadirStock').value, 10);
-    if (isNaN(cantidadReducir) || cantidadReducir <= 0) {
+    if (Number.isNaN(cantidadReducir) || cantidadReducir <= 0) {
         alert('La cantidad a reducir debe ser un número positivo');
         return;
     }

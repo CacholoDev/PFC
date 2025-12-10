@@ -1,12 +1,29 @@
 
-##### Enlace a documentación: [doc](doc/doc.md)
+##### Enlace a documentación: [doc](./doc/doc.md)
 ##### Enlace repo GitLab: [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
 # Plataforma web de pedidos para panadería
 
+## 🔗 Enlaces de Acceso y Credenciales
+
+**Acceso a la aplicación (con Docker):**
+- 🌐 **Frontend**: [http://localhost:8081](http://localhost:8081)
+- 📚 **Swagger UI (API Docs)**: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+- 💻 **Código GitLab**: [https://gitlab.iessanclemente.net/dawd/a22adrianfh/-/tree/main/PFC/pfcdaw](https://gitlab.iessanclemente.net/dawd/a22adrianfh/-/tree/main/PFC/pfcdaw)
+- 🧪 **Pruebas y Testing**: Ver sección [Codificación y Pruebas](#codificación-y-pruebas)
+
+**Credenciales de prueba:**
+| Rol   | Email                      | Contraseña |
+|-------|----------------------------|------------|
+| ADMIN | admin@panaderia.com        | admin123   |
+| USER  | juan.perez@example.com     | user123    |
+
+---
+
 ## Índice
 
 - [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
+  - [🔗 Enlaces de Acceso y Credenciales](#-enlaces-de-acceso-y-credenciales)
   - [Índice](#índice)
   - [Requisitos previos](#requisitos-previos)
   - [Descripción](#descripción)
@@ -14,11 +31,10 @@
     - [Opción recomendada: Despliegue con Docker](#opción-recomendada-despliegue-con-docker)
     - [Opción alternativa: XAMPP/MySQL local](#opción-alternativa-xamppmysql-local)
   - [FAQ - Preguntas frecuentes](#faq---preguntas-frecuentes)
-    - [¿Por qué no arranca MySQL en Docker?](#por-qué-no-arranca-mysql-en-docker)
-    - [¿Dónde se guardan los datos de la base de datos?](#dónde-se-guardan-los-datos-de-la-base-de-datos)
-    - [¿Cómo cambio el puerto del backend o frontend?](#cómo-cambio-el-puerto-del-backend-o-frontend)
-    - [¿Puedo usar la app sin Docker?](#puedo-usar-la-app-sin-docker)
-    - [¿Cómo restauro la base de datos si borro el volumen?](#cómo-restauro-la-base-de-datos-si-borro-el-volumen)
+  - [Manual de Usuario](#manual-de-usuario)
+    - [👤 Para Clientes (Usuarios)](#-para-clientes-usuarios)
+    - [⚙️ Para Administradores](#️-para-administradores)
+  - [Codificación y Pruebas](#codificación-y-pruebas)
   - [Uso](#uso)
   - [Sobre el autor](#sobre-el-autor)
   - [Licencia](#licencia)
@@ -68,99 +84,108 @@ graph TD
 
 ## Instalación / Puesta en marcha
 
+> Guía completa en [./doc/doc.md](doc/doc.md) → secciones "Despliegue recomendado: Docker Compose" y "Localhost: XAMPP/MySQL local".
+
 ### Opción recomendada: Despliegue con Docker
-
-
-1. **Clonar el repositorio**
-2. **Levantar los servicios con Docker Compose**:
-   ```bash
-   cd PFC/pfcdaw
-   docker-compose up
-   ```
-   Esto levantará automáticamente:
-   - MySQL (con persistencia de datos)
-   - Backend Spring Boot
-   - Nginx (sirviendo el frontend y como proxy)
-
-3. **Acceder a la aplicación:**
-   - Frontend: [http://localhost:8081](http://localhost:8081)
-   - Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
-   - Backend: non accesible por seguridad solo 8081 abierto
-
-4. **Comandos Docker útiles:**
-   - Parar los servicios: `docker compose down`
-   - Ver logs: `docker compose logs -f`
-   - Reconstruir todo: `docker-compose up --build`
+1. `cd PFC/pfcdaw`
+2. `docker compose up` (o `docker-compose up --build` para recompilar)
+3. Accede a frontend y Swagger en `http://localhost:8081/` y `/swagger-ui/index.html`
 
 ### Opción alternativa: XAMPP/MySQL local
-
-Si prefieres usar XAMPP y MySQL local.
-
-1. **Clonar el repositorio**: clonar desde gitlab
-
-2. **Acceder al directorio del proyecto y levantar el backend**: abrirlo en vscode y darle al run en el main de springBoot o `./mvnw spring-boot:run`
-
-3. **Instalar XAMPP**, en phpMyAdmin crear base de datos `panaderiaPFC`:
-   - Abrir XAMPP Control Panel → Start MySQL
-   - Ir a `http://localhost/phpmyadmin`
-   - Nueva base de datos: `panaderiaPFC` (cotejamiento: `utf8mb4_unicode_ci`)
-
-4. **Configurar application.properties** (ya configurado con valores por defecto):
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/panaderiaPFC?useSSL=false&serverTimezone=UTC
-spring.datasource.username=root
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-```
-
-1. **Levantar el backend**:
-```bash
-cd PFC/pfcdaw
-./mvnw spring-boot:run
-```
-O desde VSCode: Run → Start Debugging (F5) en `PfcdawApplication.java`
-
-El backend arrancará en `http://localhost:8080`
-
-6. **Cargar datos de prueba** (opcional):
-   - Abrir phpMyAdmin → Base de datos `panaderiaPFC` → pestaña SQL
-   - Copiar y pegar contenido de `src/main/resources/data-sample.sql`
-   - Click **Continuar**
-   - Esto creará 3 clientes y 4 productos de ejemplo
-
-7. **Probar la API** con Postman:
-```http
-GET http://localhost:8080/productos
-GET http://localhost:8080/clientes
-POST http://localhost:8080/pedidos
-```
-
-1. **Frontend**: VSCode + LiveServer / endpoints para funcionalidad completa con la app arrancada
+1. Crea la base `panaderiaPFC` en phpMyAdmin (XAMPP → MySQL).
+2. Ajusta `application.properties` si cambias usuario/clave.
+3. Arranca el backend con `./mvnw spring-boot:run` (frontend con LiveServer). Pasos detallados en [doc/doc.md#localhost-xamppmysql-local](doc/doc.md#localhost-xamppmysql-local).
 
 
 ## FAQ - Preguntas frecuentes
 
-### ¿Por qué no arranca MySQL en Docker?
-- Asegúrate de que el puerto 3306 no está ocupado por otro MySQL local.
-- Si usastes XAMPP antes, para el servicio MySQL de XAMPP antes de levantar Docker.
-- Comprueba los logs con `docker compose logs mysql`.
+Resolución de problemas centralizada en [Problemas comunes y soluciones](./doc/doc.md#problemas-comunes-y-soluciones) (puertos, volúmenes, cambio de puertos, uso sin Docker, backups de la BD).
 
-### ¿Dónde se guardan los datos de la base de datos?
-- En Docker, los datos de MySQL se guardan en un volumen persistente llamado `mysql_panaderia`.
-- Así, aunque borres los contenedores, los datos no se pierden.
+---
 
-### ¿Cómo cambio el puerto del backend o frontend?
-- Cambia la variable `SERVER_PORT` en el archivo `docker-compose.yml` o en `application.properties` para el backend.
-- Cambia el mapeo de puertos en `docker-compose.yml` para Nginx (por ejemplo, `8081:80`).
+## Manual de Usuario
 
-### ¿Puedo usar la app sin Docker?
-- Sí, usando XAMPP/MySQL local y ajustando `application.properties` como se indica arriba.
+### 👤 Para Clientes (Usuarios)
 
-### ¿Cómo restauro la base de datos si borro el volumen?
-- Si borras el volumen de Docker, los datos se pierden. Haz backups periódicos si es importante.
+**1. Registrarse en la aplicación:**
+- Accede a [http://localhost:8081](http://localhost:8081)
+- Haz clic en el botón **"Registrarse"**
+- Rellena el formulario con tus datos (nombre, email, contraseña, dirección, teléfono)
+- Pulsa **"Crear Cuenta"**
+- Inicia sesión con tu email y contraseña
 
+**2. Realizar un pedido:**
+- Una vez dentro, verás el catálogo de productos disponibles
+- Selecciona la cantidad de cada producto que desees
+- Haz clic en **"Añadir al carrito"**
+- Revisa tu carrito y pulsa **"Realizar Pedido"**
+- Confirma tu pedido
 
+**3. Ver mis pedidos:**
+- En la página principal, verás todos tus pedidos realizados
+- Puedes ver el estado de cada pedido (PENDIENTE, EN_PREPARACION, LISTO, ENTREGADO)
+- Haz clic en el botón 👁️ para ver los detalles de cada pedido
+
+**4. Cerrar sesión:**
+- Haz clic en tu nombre de usuario en la esquina superior derecha
+- Selecciona **"Cerrar Sesión"**
+
+---
+
+### ⚙️ Para Administradores
+
+**1. Acceso al panel de administración:**
+- Inicia sesión con credenciales de admin: `admin@panaderia.com` / `admin123`
+- Serás redirigido automáticamente al **Dashboard**
+
+**2. Gestionar Productos:**
+- Ve a la pestaña **"Productos"**
+- **Crear producto**: Pulsa el botón ➕, rellena el formulario (nombre, descripción, precio, stock, imagen) y guarda
+- **Editar producto**: Pulsa el botón ✏️, modifica los datos y guarda
+- **Gestionar stock**: Pulsa el botón 📦, añade o reduce stock según necesites
+- **Editar foto**: Pulsa el botón 🖼️, selecciona nueva imagen y guarda
+- **Eliminar producto**: Pulsa el botón 🗑️ y confirma
+
+**3. Gestionar Clientes:**
+- Ve a la pestaña **"Clientes"**
+- **Crear cliente**: Pulsa ➕ y rellena el formulario
+- **Editar cliente**: Pulsa ✏️ para modificar datos
+- **Eliminar cliente**: Pulsa 🗑️ y confirma
+
+**4. Gestionar Pedidos:**
+- Ve a la pestaña **"Pedidos"**
+- Verás todos los pedidos con su estado actual
+- **Ver detalles**: Pulsa 👁️ para ver productos del pedido
+- **Cambiar estado**: Dentro del modal de detalles, selecciona el nuevo estado y pulsa **"Actualizar Estado"**
+- Estados disponibles: PENDIENTE → EN_PREPARACION → LISTO → ENTREGADO (o CANCELADO)
+
+**5. Exportar datos:**
+- En cada tabla, usa los botones superiores para exportar:
+  - 📋 Copiar
+  - 📄 CSV
+  - 📊 Excel
+  - 📕 PDF
+  - 🖨️ Imprimir
+
+**6. Buscar y ordenar:**
+- Usa la barra de búsqueda para filtrar datos
+- Haz clic en los encabezados de columna para ordenar
+
+---
+
+## Codificación y Pruebas
+
+**Estructura del código en GitLab:**
+- 📂 Backend (Spring Boot): [PFC/pfcdaw/src/main/java](https://gitlab.iessanclemente.net/dawd/a22adrianfh/-/tree/main/PFC/pfcdaw/src/main/java/com/pfcdaw/pfcdaw)
+- 📂 Frontend (HTML/CSS/JS): [PFC/pfcdaw/src/main/resources/static](https://gitlab.iessanclemente.net/dawd/a22adrianfh/-/tree/main/PFC/pfcdaw/src/main/resources/static)
+- 📂 Configuración Docker: [PFC/pfcdaw](https://gitlab.iessanclemente.net/dawd/a22adrianfh/-/tree/main/PFC/pfcdaw)
+
+**Pruebas rápidas:**
+- Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+- Flujos mínimos: registrar usuario → crear pedido → revisar pedido; admin → crear producto → actualizar stock → cambiar estado pedido.
+- Validaciones y decisiones técnicas detalladas en [./doc/doc.md](./doc/doc.md) (secciones 4 y 5).
+
+---
 
 ## Uso
 Se trata de una aplicación sencilla para cumplir los tiempos de entrega, enfatizar en que seguiré trabajando en la app y que aplicaré distintas funcionalidades y mejoras.
@@ -198,7 +223,7 @@ Usaré MIT por la libertad total que tiene a la hora del uso o de la modificaci�
 
 ## Documentación
 
-Este proyecto dispone de [documentación extendida](doc/doc.md) con detalles técnicos y diseño.
+Este proyecto dispone de [documentación extendida](./doc/doc.md) con detalles técnicos y diseño.
 
 ## Guía de contribución
 

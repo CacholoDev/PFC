@@ -75,6 +75,20 @@
       - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
       - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
         - [fin 4ª entrega](#fin-4ª-entrega)
+  - [6. Propuestas de Mejora](#6-propuestas-de-mejora)
+    - [6.1. Mejoras de Seguridad (Prioridad Alta)](#61-mejoras-de-seguridad-prioridad-alta)
+    - [6.2. Mejoras Funcionales](#62-mejoras-funcionales)
+    - [6.3. Mejoras de Experiencia de Usuario](#63-mejoras-de-experiencia-de-usuario)
+    - [6.4. Mejoras Técnicas](#64-mejoras-técnicas)
+    - [6.5. Mejoras de Negocio](#65-mejoras-de-negocio)
+  - [7. Conclusiones Finales del Proyecto](#7-conclusiones-finales-del-proyecto)
+    - [7.1. Objetivos Alcanzados](#71-objetivos-alcanzados)
+    - [7.2. Dificultades Encontradas y Soluciones](#72-dificultades-encontradas-y-soluciones)
+    - [7.3. Lecciones Aprendidas](#73-lecciones-aprendidas)
+    - [7.4. Estado Final del Proyecto](#74-estado-final-del-proyecto)
+    - [7.5. Valoración Personal](#75-valoración-personal)
+    - [7.6. Aplicabilidad Real](#76-aplicabilidad-real)
+        - [fin documentación PFC](#fin-documentación-pfc)
 
 ## Introducción
 
@@ -114,11 +128,18 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 ### Funcionalidades incluidas:
 
-- Visualización del catálogo de productos.
 - Carrito básico
-- Realización de pedidos.
-- Gestión interna de pedidos recibidos.
-- En principio la haré sin roles pero si me da tiempo a llegar al PFC haré admin / user, si no será futura implementación.
+- Realización del cliente de pedidos.
+- Gestión admin de pedidos recibidos y cambiar estado.
+- Gestión admin de añadir/editar/deletear clientes.
+- Gestión admin de añadir/editar/editar multimedia/deletear productos.
+- Visualización de fotos de productos.
+- Roles admin / user.
+- Validaciones.
+- Logs.
+- Gestión de errores básica.
+- Desplegable con cerrar sesión.
+- Ordenacion y mejor visualización de las tablas de Bootstrap con el DataTables.
 - Persistencia en base de datos MySQL.
 
 ### Límites: debido al tiempo que tengo para realizar el PFC
@@ -126,15 +147,17 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 - No incluirá pasarela de pago en esta primera versión.
 - La autenticación será básica.
 - El carrito sera básico.
-- El frontend será simple (HTML/CSS/JS).
-- Se desarrollará como un **prototipo funcional** para entorno local, con futuras implementaciones.
+- El frontend será simple (HTML/CSS/JS/BOOTSTRAP).
+- Gestión de categorías de productos(panadería,bollería,postres...)
+- Web inicial.
+- SpringBoot Security
 
 ### Contexto de uso:
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
-- Base para **futuras ampliaciones** (ej.: mejora del despliegue(implementacion de un Docker / subirlo a una web), integración de notificaciones,mejora del carrito,mejora del FrontEnd migrandolo a React,mejora en vez de texto plano por password usar el spring security con encryptado(BCryptPasswordEncoder) hasheando las password al guardar y comparandolascon .matches al logearse, manejar sessions en el back(ahora lo controlo por LocalStorage pero para evitar intrusiones a endpoints por ejemplo la lista de clientes lo controlaré por el Back de SpringBoot), añadir distintas funcionalidades que pueda pedir el negocio.
-- Se desarrollará un prototipo funcional con datos de prueba, no una versión en producción.).  
+- Base para **futuras ampliaciones** (ver detalles en la sección 6: [Propuestas de Mejora](#6-propuestas-de-mejora)).
+- Prototipo funcional con datos de prueba, no una versión en producción.).  
     
 
 ## Conclusiones
@@ -421,7 +444,7 @@ sequenceDiagram
 #### Decisiones de diseño
 -Uso de de Logger para ver la info de lo que está pasando en la app por consola
 
-- No se implementan roles ni autenticación en esta versión (MVP)
+- Autenticación implementada en frontend con roles (ADMIN/USER) y sesiones en localStorage; seguridad backend pendiente (ver sección 6: [Propuestas de Mejora](#6-propuestas-de-mejora), Spring Security/JWT)
 
 - Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)(en este caso los subiremos al github, no pondremos gitignore para mostrar el 100% en el PFC y cuando lo termine, poner el .gitignore con el .env cambiando los datos del user/pass).
 
@@ -989,5 +1012,305 @@ El proyecto implementa **autenticación básica en frontend** mediante `localSto
 
 Esta arquitectura fue elegida conscientemente considerando:
 - PFC desarrollado en paralelo con FCT (8h/día Santiago + 2h desplazamiento)
+- Priorización de funcionalidades core del negocio sobre seguridad avanzada que aplicaremos en futuras mejoras
+
+**Ventaja actual**: Sistema completamente funcional que cumple todos los objetivos del PFC en el tiempo disponible. La migración a Spring Security con sesiones backend será la primera mejora post-defensa.
 
 ##### fin 4ª entrega
+
+---
+
+## 6. Propuestas de Mejora
+
+Esta sección recoge todas las mejoras futuras identificadas para evolucionar el proyecto hacia una aplicación más robusta y escalable.
+
+### 6.1. Mejoras de Seguridad (Prioridad Alta)
+
+| Mejora | Tecnología | Impacto | Estimación |
+|--------|------------|---------|------------|
+| **Spring Security** | Spring Security 6+ | Autenticación backend completa | 2-3 semanas |
+| **Hash de contraseñas** | BCryptPasswordEncoder | Protección de credenciales en BD | 3-4 días |
+| **Sesiones backend** | HttpSession + Cookies httpOnly | Inmunidad a XSS | 1 semana |
+| **CSRF Protection** | Spring Security CSRF tokens | Prevención ataques cross-site | 2-3 días |
+| **JWT** | jjwt library | APIs stateless + refresh tokens | 1-2 semanas |
+| **Roles y permisos mejorados** | @PreAuthorize, @Secured | Control acceso por endpoint | 1 semana |
+
+### 6.2. Mejoras Funcionales
+
+**Frontend:**
+- **Migración a React**
+  - Componentes reutilizables
+  - Estado global con Redux
+  - React Router para navegación
+  - React Query para caché de datos
+  - Estimación: 5-7 semanas
+
+- **Carrito mejorado**
+  - Persistencia en localStorage
+  - Actualización en tiempo real
+  - Modificar cantidades sin recargar
+  - Estimación: 2 semanas
+
+- **Sistema de categorías**
+  - Entidad `CategoriaEntity` (Panadería, Bollería, Repostería)
+  - Filtrado por categoría en catálogo
+  - Badges visuales por categoría
+  - Estimación: 4-6 días
+
+- **Página de inicio (Landing Page)**
+  - Presentación del negocio
+  - Galería de productos destacados
+  - Horarios y ubicación
+  - Estimación: 2 semanass
+
+**Backend:**
+- **Sistema de notificaciones**
+  - Email al cliente cuando cambia estado pedido
+  - Spring Mail + plantillas HTML
+  - Cola de mensajes con RabbitMQ
+  - Estimación: 2-3 semanas
+
+- **Historial de precios**
+  - Tabla `producto_precio_historico`
+  - Permite análisis de cambios de precio
+  - Estimación: 4-5 días
+
+- **@Version**
+  - Añadir `@Version` en entidades
+  - Previene conflictos de concurrencia
+  - Estimación: 2 días
+
+
+### 6.3. Mejoras de Experiencia de Usuario
+
+- **Modo oscuro/claro**
+  - Toggle en navbar / mejora de alerts
+  - Persistencia
+  - Clases CSS dinámicas
+  - Estimación: 3-4 días
+
+- **Búsqueda avanzada**
+  - Autocompletado de productos
+  - Filtros combinados (precio, stock, categoría)
+  - Estimación: 5-6 días
+
+- **Gestión de perfil de usuario**
+  - Editar datos personales
+  - Cambiar contraseña
+  - Múltiples direcciones de entrega
+  - Estimación: 1-2 semanas
+
+- **Valoraciones y reseñas**
+  - Sistema de estrellas (1-5)
+  - Comentarios en productos
+  - Moderación admin
+  - Estimación: 2-3 semanas
+
+### 6.4. Mejoras Técnicas
+
+- **Caché con Redis**
+  - Cachear lista de productos
+  - Reducir consultas a BD
+  - Estimación: 5-6 días
+
+- **Testing automatizado**
+  - JUnit + Mockito para backend
+  - Jest + React Testing Library para frontend
+  - Tests de integración con Testcontainers
+  - Coverage mínimo 70%
+  - Estimación: 4-5 semanas
+
+- **CI/CD con GitLab Pipelines**
+  - Build automático
+  - Tests en cada commit
+  - Deploy a staging/producción
+  - Estimación: 2 semanas
+
+- **Monitoreo y métricas**
+  - Spring Boot Actuator
+  - Prometheus + Grafana
+  - Logs centralizados con ELK Stack
+  - Estimación: 2-3 semanas
+
+- **Dockerización avanzada**
+  - Multi-stage builds
+  - Imágenes más ligeras (Alpine Linux)
+  - Docker Swarm o Kubernetes para escalabilidad
+  - Estimación: 2 semanas
+
+### 6.5. Mejoras de Negocio
+
+- **Pasarela de pago**
+  - Integración con Stripe/PayPal
+  - Gestión de transacciones
+  - Webhooks para confirmación
+  - Estimación: 3-4 semanas
+
+- **Sistema de descuentos y promociones**
+  - Códigos de descuento
+  - Ofertas por fecha (Black Friday,Navidad...)
+  - Descuentos por volumen
+  - Estimación: 2-3 semanas
+
+- **Programa de fidelización**
+  - Puntos por compra
+  - Canje de puntos por descuentos
+  - Estimación: 3 semanas
+
+- **Reportes y estadísticas**
+  - Dashboard con gráficos (Chart.js)
+  - Productos más vendidos
+  - Ingresos por fechas
+  - Estimación: 2-3 semanas
+
+---
+
+## 7. Conclusiones Finales del Proyecto
+
+### 7.1. Objetivos Alcanzados
+
+El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfactoriamente todos los objetivos planteados inicialmente:
+
+✅ **Backend funcional con Spring Boot:**
+- API REST completa con endpoints para productos, clientes y pedidos
+- Persistencia en MySQL con JPA/Hibernate
+- Validaciones en múltiples niveles (DTO, Entity, Service)
+- Logs estructurados para debugging
+- Documentación automática con Swagger UI
+
+✅ **Frontend operativo con HTML/CSS/JS/BOOTSTRAP:**
+- Interfaz intuitiva con Bootstrap 5
+- Sistema de autenticación con roles (ADMIN/USER)
+- Panel de administración completo con tabs
+- Vista de cliente para realizar y consultar pedidos
+- Tablas interactivas con DataTables (búsqueda, ordenación, exportación)
+- Modales reutilizables para CRUD completo
+
+✅ **Funcionalidades core implementadas:**
+- CRUD completo de productos (con gestión de imágenes)
+- CRUD de clientes con asignación de roles
+- Creación de pedidos con carrito básico
+- Gestión de estados de pedido
+- Control de stock automático al crear pedidos
+- Gestión independiente de stock (aumentar/reducir)
+
+✅ **Despliegue dockerizado:**
+- Docker Compose orquestando MySQL, Backend y Nginx
+- Persistencia de datos con volúmenes
+- Proxy inverso con Nginx para seguridad
+- Fácil replicación en cualquier entorno
+
+### 7.2. Dificultades Encontradas y Soluciones
+
+Durante el desarrollo se enfrentaron varios desafíos técnicos que fueron resueltos satisfactoriamente:
+
+**1. Precisión en cálculos monetarios**
+- **Problema**: `Double` generaba decimales imprecisos (1.80 * 3 = 3.5999...)
+- **Solución**: Migración completa a `BigDecimal` en todas las entidades y cálculos
+
+**2. Recursión infinita en JSON**
+- **Problema**: Relación bidireccional `PedidoEntity` ↔ `LineaPedido` causaba StackOverflow al serializar
+- **Solución**: Uso estratégico de `@JsonIgnore` en la referencia inversa
+
+**3. Sincronización de totales**
+- **Problema**: Total del pedido podía desincronizarse si se eliminaban productos
+- **Solución**: Lifecycle hooks (`@PrePersist`, `@PreUpdate`) recalculan automáticamente
+
+**4. Gestión de stock transaccional**
+- **Problema**: Riesgo de vender productos sin stock suficiente
+- **Solución**: `@Transactional` en `PedidoService` garantiza atomicidad (todo o nada)
+
+**5. Compatibilidad CORS en Docker**
+- **Problema**: Frontend servido por Nginx no podía comunicarse con backend
+- **Solución**: Nginx como proxy inverso, todo bajo mismo dominio/puerto
+
+**6. Limitaciones de tiempo FCT+PFC**
+- **Problema**: 10h/día entre FCT Santiago y desplazamiento, responsabilidades personales
+- **Solución**: Priorización de funcionalidades core, documentación de limitaciones conocidas
+
+### 7.3. Lecciones Aprendidas
+
+**Técnicas:**
+- **Spring Boot**: Profundización en JPA, relaciones complejas, DTOs, validaciones Jakarta
+- **Arquitectura en capas**: Importancia de separar Controller/Service/Repository
+- **Docker**: Valor de la contenedorización para portabilidad y despliegue
+- **Frontend vanilla**: Más experiencia para JavaScript
+- **Logs y debugging**: Importancia de logging
+
+**Metodológicas:**
+- **Documentación temprana**: Escribir documentación durante desarrollo evita olvidos
+- **Kanban para proyectos individuales**: Trello como herramienta visual de seguimiento
+- **Priorización realista**: Mejor un proyecto funcional que un proyecto incompleto
+- **Iteración incremental**: Desarrollo por capas (backend → frontend → despliegue)
+
+**Personales:**
+- **Gestión del tiempo**: Conciliar FCT, PFC y vida personal requiere fuerza mental a mis 31 años
+- **Aprendizaje continuo**: Autodidacta, aprendiendo continuamente por mi cuenta, fué una buena elección la de usar SpringBoot, me he aficionado a Java!
+
+
+### 7.4. Estado Final del Proyecto
+
+**Métricas del proyecto:**
+- **Backend**: 6 Controllers, 6 Services, 5 Entities, 5 Repositories, 4 DTOs
+- **Frontend**: 3 páginas HTML, 6 archivos JavaScript, 3 CSS personalizados
+- **Endpoints API**: 18 endpoints REST documentados en Swagger
+- **Base de datos**: 5 tablas relacionadas con integridad referencial
+- **Líneas de código**: ~2500 líneas backend + ~1800 líneas frontend
+- **Duración desarrollo**: ~9 semanas (90-100h)
+
+**Funcionalidad completa:**
+- ✅ Sistema de autenticación con roles
+- ✅ CRUD completo para 3 entidades principales
+- ✅ Gestión avanzada de stock
+- ✅ Creación de pedidos con reducción automática de stock
+- ✅ Cambio de estados de pedido
+- ✅ Subida y gestión de imágenes de productos
+- ✅ Exportación de datos a múltiples formatos
+- ✅ Interfaz responsive con Bootstrap
+- ✅ Persistencia de datos en MySQL
+- ✅ Logs estructurados para auditoría
+- ✅ Documentación completa con Swagger
+
+### 7.5. Valoración Personal
+
+Este proyecto ha supuesto un **desafío considerable** pero extremadamente gratificante. Desarrollar una aplicación completa desde cero, abarcando backend, frontend, base de datos, dockerización y documentación exhaustiva, ha consolidado mi comprensión del desarrollo web full-stack.
+
+**Aspectos más satisfactorios:**
+- Ver funcionar la aplicación completa desde login hasta creación de pedidos
+- Resolver problemas técnicos complejos (BigDecimal, recursión JSON...)
+- Crear una documentación técnica detallada que facilite mantenimiento futuro
+- Aplicar conocimientos teóricos del ciclo en un proyecto real con valor práctico
+
+**Aspectos mejorables:**
+- Hubiese preferido implementar Spring Security completo (limitación temporal)
+- Testing automatizado (JUnit, Mockito) quedó fuera del alcance
+- Frontend en React sería más escalable (decisión consciente por tiempo)
+
+**Proyección futura:**
+Este proyecto **no termina aquí**. Las mejoras planificadas (Spring Security, migración React, notificaciones, testing) serán implementadas post-defensa como evolución continua de mi aprendizaje. La base sólida construida permite estas ampliaciones sin refactorización mayor.
+
+### 7.6. Aplicabilidad Real
+
+Aunque concebido como proyecto académico, esta plataforma tiene **viabilidad real** para pequeños negocios:
+- **Bajo coste**: Sin dependencias de servicios externos de pago
+- **Fácil adaptación**: Cambiar "panadería" por cualquier comercio local
+- **Escalable**: Arquitectura preparada para crecer con el negocio
+- **Open Source**: MIT License permite uso y modificación libre
+
+Con las mejoras de seguridad implementadas (Spring Security + HTTPS), podría desplegarse en producción para panaderías reales de Noia u otras localidades.
+
+---
+
+**Agradecimientos:**
+A los profesores del ciclo DAW por la formación recibida, a mi familia por el apoyo durante estos meses intensos de FCT+PFC, y a la comunidad de Stack Overflow y documentación oficial de Spring/Bootstrap por resolver innumerables dudas técnicas.
+
+---
+
+**Fecha finalización**: Diciembre 2025  
+**Autor**: Adrián Fábregas  
+**Contacto**: adriannoia104@gmail.com  
+**Repositorio**:
+- [https://github.com/CacholoDev/PFC](https://github.com/CacholoDev/PFC)
+- [https://gitlab.iessanclemente.net/dawd/a22adrianfh](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
+
+##### fin documentación PFC

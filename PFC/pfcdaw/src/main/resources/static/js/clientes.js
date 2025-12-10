@@ -186,7 +186,11 @@ function crearCliente() {
     const role = document.getElementById('roleCliente').value;
 
     //validacions
-    if (!nombre || !apellido || !email || !password || !role || !telefono || !direccion) {
+    if (password.length < 5) {
+        alert('La contraseña debe tener al menos 4 caracteres.');
+        return;
+    }
+    if (!nombre || !apellido || !email || !password || !role || !telefono || !direccion || !empresa) {
         alert('Por favor, completa los campos obligatorios.');
         return;
     }
@@ -281,12 +285,16 @@ function actualizarCliente(clienteId) {
     const role = document.getElementById('roleCliente').value;
 
     //validacions
+    if(password.length < 5) {
+        alert('La contraseña debe tener al menos 4 caracteres.');
+        return;
+    }
+
     if (!nombre || !apellido || !email || !role || !telefono || !direccion || !empresa || !password) {
         alert('Por favor, todos los campos son obligatorios.');
         return;
     }
 
-    //telefono validacion
     if (!telefono.match(/^[0-9]{9}$/)) {
         alert('El teléfono debe tener exactamente 9 dígitos numéricos.');
         return;
