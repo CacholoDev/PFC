@@ -60,6 +60,8 @@ La idea principal es ofrecer a los clientes la posibilidad de consultar el catá
 
 El objetivo es digitalizar empresas pequeñas en este caso en el sector panadero, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago). También me gustaría migrar el front a React cuando controle un poco más de la librería y tenga algo más de tiempo ya que con la FCT en Santiago y lo poco que dura la FCT + PFC no dispongo de mucho espacio de tiempo para hacer un proyecto como el que me gustaría desarrollar y el cual seguiré trabajándolo cuando finalice el ciclo.
 
+**Estado y seguridad actuales**: API REST sin sesiones de servidor (stateless); el “login” se guarda en `localStorage` y el backend no valida autenticación/roles. Planificado migrar a Spring Security con sesiones / JWT (ver [doc/doc.md](doc/doc.md) sección 6.1).
+
 **Diagrama de arquitectura general**: Muestra los actores principales (Clientes y Panadería), las funcionalidades disponibles para cada uno, y las mejoras futuras planificadas.
 
 ```mermaid

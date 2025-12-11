@@ -72,10 +72,11 @@
       - [**DataTables para Tablas Interactivas**](#datatables-para-tablas-interactivas)
       - [**Separación de Concerns**](#separación-de-concerns)
     - [5.6. Limitaciones](#56-limitaciones)
+      - [**Estado cliente-servidor (stateless)**](#estado-cliente-servidor-stateless)
       - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
       - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
         - [fin 4ª entrega](#fin-4ª-entrega)
-  - [6. Propuestas de Mejora](#6-propuestas-de-mejora)
+  - [6. Propuestas de  / Roadmap](#6-propuestas-de---roadmap)
     - [6.1. Mejoras de Seguridad (Prioridad Alta)](#61-mejoras-de-seguridad-prioridad-alta)
     - [6.2. Mejoras Funcionales](#62-mejoras-funcionales)
     - [6.3. Mejoras de Experiencia de Usuario](#63-mejoras-de-experiencia-de-usuario)
@@ -88,6 +89,7 @@
     - [7.4. Estado Final del Proyecto](#74-estado-final-del-proyecto)
     - [7.5. Valoración Personal](#75-valoración-personal)
     - [7.6. Aplicabilidad Real](#76-aplicabilidad-real)
+  - [8. Cobertura de rúbrica](#8-cobertura-de-rúbrica)
         - [fin documentación PFC](#fin-documentación-pfc)
 
 ## Introducción
@@ -156,7 +158,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
-- Base para **futuras ampliaciones** (ver detalles en la sección 6: [Propuestas de Mejora](#6-propuestas-de-mejora)).
+- Base para **futuras ampliaciones** (ver detalles en la sección 6.
 - Prototipo funcional con datos de prueba, no una versión en producción.).  
     
 
@@ -353,57 +355,47 @@ Este diagrama muestra las **entidades principales** del sistema y sus **relacion
 ```mermaid
 classDiagram
     class ClienteEntity {
-      +Long id
-      +String nombre
-      +String apellido
-      +String email (unique)
-      +String direccion
-      +String telefono
-      +List~PedidoEntity~ pedidos
+        id : Long
+        nombre : String
+        apellido : String
+        email : String
+        direccion : String
+        telefono : String
+        pedidos : List
     }
     
     class ProductoEntity {
-      +Long id
-      +String nombre
-      +String descripcion
-      +BigDecimal precio
-      +Integer stock
-      +List~LineaPedido~ lineasPedido
-      +aumentarStock(cantidad)
-      +reducirStock(cantidad)
+        id : Long
+        nombre : String
+        descripcion : String
+        precio : BigDecimal
+        stock : Integer
+        lineasPedido : List
+        aumentarStock(cantidad)
+        reducirStock(cantidad)
     }
     
     class PedidoEntity {
-      +Long id
-      +LocalDateTime fechaPedido
-      +BigDecimal total
-      +EstadoPedidoEnum estado
-      +ClienteEntity cliente
-      +List~LineaPedido~ lineasPedido
-      +recalcularTotal()
+        id : Long
+        fechaPedido : LocalDateTime
+        total : BigDecimal
+        estado : String
+        cliente : ClienteEntity
+        lineasPedido : List
+        recalcularTotal()
     }
     
     class LineaPedido {
-      +Long id
-      +PedidoEntity pedido
-      +ProductoEntity producto
-      +Integer cantidad
-      +BigDecimal pTotal
+        id : Long
+        pedido : PedidoEntity
+        producto : ProductoEntity
+        cantidad : Integer
+        pTotal : BigDecimal
     }
     
-    class EstadoPedidoEnum {
-      <<enumeration>>
-      PENDIENTE
-      EN_PREPARACION
-      COMPLETADO
-      ENTREGADO
-      CANCELADO
-    }
-    
-    ClienteEntity "1" --> "*" PedidoEntity : tiene
-    PedidoEntity "1" --> "*" LineaPedido : contiene
-    ProductoEntity "1" --> "*" LineaPedido : aparece en
-    PedidoEntity --> EstadoPedidoEnum : estado
+    ClienteEntity --> "many" PedidoEntity : tiene
+    PedidoEntity --> "many" LineaPedido : contiene
+    ProductoEntity --> "many" LineaPedido : aparece en
 ```
 
 ### Diagrama de secuencia: Crear Pedido
@@ -978,6 +970,11 @@ Cada vista tiene su propio archivo JS:
 
 ### 5.6. Limitaciones
 
+#### **Estado cliente-servidor (stateless)**
+- El único estado de usuario vive en el frontend (localStorage) y no es validado en servidor, por lo que el backend no aplica control de sesión.
+- Justificación actual: prototipo académico priorizando rapidez y despliegue simple en Docker/XAMPP.
+- Plan próximo (ver sección 6.1): añadir **Spring Security** con sesiones backend + cookies `httpOnly` (stateful) o JWT (stateless seguro) según necesidad.
+
 #### **Estado Actual del Sistema de Autenticación**
 
 El proyecto implementa **autenticación básica en frontend** mediante `localStorage` con las siguientes características:
@@ -1020,7 +1017,7 @@ Esta arquitectura fue elegida conscientemente considerando:
 
 ---
 
-## 6. Propuestas de Mejora
+## 6. Propuestas de  / Roadmap
 
 Esta sección recoge todas las mejoras futuras identificadas para evolucionar el proyecto hacia una aplicación más robusta y escalable.
 
@@ -1301,8 +1298,21 @@ Con las mejoras de seguridad implementadas (Spring Security + HTTPS), podría de
 
 ---
 
-**Agradecimientos:**
-A los profesores del ciclo DAW por la formación recibida, a mi familia por el apoyo durante estos meses intensos de FCT+PFC, y a la comunidad de Stack Overflow y documentación oficial de Spring/Bootstrap por resolver innumerables dudas técnicas.
+## 8. Cobertura de rúbrica
+
+- **Licencias y dependencias**: Licencia MIT indicada en `README.md` y `LICENSE`; dependencias listadas en `pom.xml` (Spring Boot, JPA, Validation, OpenAPI, Lombok) y frontend (Bootstrap, DataTables) descritas en secciones 4.1 y 5.1.
+- **Seguimiento + reviews**: Kanban en Trello (sección 1.Análisis) usado para seguimiento de tareas y validación incremental.
+- **Texto justificando cada diagrama**: Cada diagrama (arquitectura, clases, secuencia) tiene texto explicativo.
+- **Comparativa tiempos (estimado vs real)**: Estimado 9 semanas. Real: 9 semanas.
+- **Coste + impacto**: Coste simulado 1600€ (sección 3) y retorno estimado 3000€; impacto en digitalización de pequeños negocios descrito en Introducción/Contexto.
+- **Roadmap + guía de contribución**: Roadmap en sección 6 (Propuestas de Mejora) y guía en `README.md` > Guía de contribución.
+- **Justificación no usar framework frontend**: Sección 5.5 (Vanilla JS vs frameworks) justifica no usar React por alcance/tiempo.
+- **Usabilidad (CSS, Bootstrap, accesibilidad)**: Uso de Bootstrap 5, DataTables, responsive grid y modales (secciones 5.1-5.4); validaciones de formularios.
+- **Estado y pseudoidentidad**: Backend stateless sin sesión; “login” sólo en `localStorage`, sin validación en servidor (sección 5.6). Plan de migrar a Spring Security/JWT en 6.1.
+- **Justificación BD normalizada**: Modelo relacional con separación de entidades `Cliente`, `Producto`, `Pedido`, `LineaPedido` (sección 2, diagrama de clases).
+- **Documentación REST más explícita**: Endpoints detallados y acceso Swagger en sección “Documentación de Endpoints API con Swagger/OpenAPI” + enlaces en README.
+- **Escalabilidad**: Arquitectura en contenedores (Docker Compose) permite escalar servicios; separación frontend/backend/BD descrita en secciones 2 y 6.4.
+- **Tests mínimos**: Pruebas manuales documentadas (Swagger, flujos end-to-end) en README “Pruebas rápidas”; sin tests automatizados aún (pendiente en roadmap 6.4 Técnicas).
 
 ---
 
@@ -1314,3 +1324,6 @@ A los profesores del ciclo DAW por la formación recibida, a mi familia por el a
 - [https://gitlab.iessanclemente.net/dawd/a22adrianfh](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
 ##### fin documentación PFC
+
+---
+
