@@ -56,32 +56,40 @@
 
 Este proyecto consiste en el desarrollo de una **aplicación web para la gestión de pedidos en una panadería aplicable también con pequeñas modificaciones a pequeños negocios en general que se quieran digitalizar**.
 
-La idea principal es ofrecer a los clientes la posibilidad de consultar el catálogo de productos disponibles (panes, bollería y repostería), realizar pedidos online y permitir a la panadería gestionar dichos pedidos.
+La idea principal es que el cliente(user) pueda logearse/registrarse, realizar pedidos online, consultar las fotos de productos disponibles y permitir a la panadería(admin) gestionar dichos pedidos, clientes o productos
 
-El objetivo es digitalizar empresas pequeñas en este caso en el sector panadero, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago). También me gustaría migrar el front a React cuando controle un poco más de la librería y tenga algo más de tiempo ya que con la FCT en Santiago y lo poco que dura la FCT + PFC no dispongo de mucho espacio de tiempo para hacer un proyecto como el que me gustaría desarrollar y el cual seguiré trabajándolo cuando finalice el ciclo.
+El objetivo es digitalizar empresas pequeñas en este caso en el sector panadero o cualquier negocio pequeño, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago...). También me gustaría migrar el front a React cuando controle un poco más de la librería y tenga algo más de tiempo ya que con la FCT en Santiago y lo poco que dura la FCT + PFC no dispongo de mucho espacio de tiempo para hacer un proyecto como el que me gustaría desarrollar y el cual seguiré trabajándolo cuando finalice el ciclo.
 
-**Estado y seguridad actuales**: API REST sin sesiones de servidor (stateless); el “login” se guarda en `localStorage` y el backend no valida autenticación/roles. Planificado migrar a Spring Security con sesiones / JWT (ver [doc/doc.md](doc/doc.md) sección 6.1).
+**Estado y seguridad actuales**: API REST sin sesiones de servidor (stateless); el “login” se guarda en el cliente en `localStorage` y el backend no valida autenticación/roles. Planificado migrar a Spring Security con sesiones / JWT (ver [doc/doc.md](doc/doc.md) sección 6.1).
 
-**Diagrama de arquitectura general**: Muestra los actores principales (Clientes y Panadería), las funcionalidades disponibles para cada uno, y las mejoras futuras planificadas.
+**Diagrama de arquitectura general (actual)**: Frontend estático (HTML/JS/Bootstrap) servido por Nginx, API REST en Spring Boot, MySQL persistente. Login/rol se guarda en `localStorage` (pendiente migrar a Spring Security/JWT), tráfico expuesto por Nginx en `8081`.
 
 ```mermaid
-graph TD
-    A[Plataforma Web Panadería] --> B[Clientes]
-    A --> C[Panadería/Negocio]
-    
-    B --> B1[Catálogo Productos]
-    B --> B2[Carrito Compra]
-    B --> B3[Pedidos Online]
-    
-    C --> C1[Gestión Pedidos]
-    C --> C2[Actualizar Disponibilidad]
-    
-    D[Futuras Mejoras] --> D1[Migración a React]
-    D --> D2[Pasarela de Pago]
-    D --> D3[Sistema Notificaciones]
-    D --> D4[".@Version" en ProductosEntity: Optimistic locking]
-    
-    A --> D
+graph LR
+  subgraph Cliente
+    U[Usuario/Administrador]
+  end
+
+  subgraph Frontend
+    F[HTML/CSS/JS + Bootstrap
+    Auth en localStorage]
+  end
+
+  subgraph Backend
+    B[Spring Boot
+    API REST stateless]
+  end
+
+  subgraph Datos
+    D[(MySQL
+    volumen persistente)]
+  end
+
+  U -->|HTTP 8081| F
+  F -->|fetch REST| B
+  B --> D
+  D --> B
+  B -->|JSON| F
 ```
 
 ## Instalación / Puesta en marcha
@@ -89,9 +97,9 @@ graph TD
 > Guía completa en [./doc/doc.md](doc/doc.md) → secciones "Despliegue recomendado: Docker Compose" y "Localhost: XAMPP/MySQL local".
 
 ### Opción recomendada: Despliegue con Docker
-1. `cd PFC/pfcdaw`
+1. `cd a la carpeta donde este el docker-compose: PFC/pfcdaw`
 2. `docker compose up` (o `docker-compose up --build` para recompilar)
-3. Accede a frontend y Swagger en `http://localhost:8081/` y `/swagger-ui/index.html`
+3. Accede a frontend y el Swagger en `http://localhost:8081/` y `/swagger-ui/index.html`
 
 ### Opción alternativa: XAMPP/MySQL local
 1. Crea la base `panaderiaPFC` en phpMyAdmin (XAMPP → MySQL).
@@ -112,7 +120,7 @@ Resolución de problemas centralizada en [Problemas comunes y soluciones](./doc/
 **1. Registrarse en la aplicación:**
 - Accede a [http://localhost:8081](http://localhost:8081)
 - Haz clic en el botón **"Registrarse"**
-- Rellena el formulario con tus datos (nombre, email, contraseña, dirección, teléfono)
+- Rellena el formulario con tus datos (nombre, email, contraseña, dirección, empresa, teléfono)
 - Pulsa **"Crear Cuenta"**
 - Inicia sesión con tu email y contraseña
 
@@ -193,21 +201,45 @@ Resolución de problemas centralizada en [Problemas comunes y soluciones](./doc/
 Se trata de una aplicación sencilla para cumplir los tiempos de entrega, enfatizar en que seguiré trabajando en la app y que aplicaré distintas funcionalidades y mejoras.
 
 **Los clientes podrán:**
-- Navegar por el catálogo de productos
 - Añadir productos al carrito
 - Realizar un pedido
+- Visualizar fotos de los productos
 
 **La panadería podrá:**
 - Gestionar pedidos recibidos
-- Actualizar disponibilidad de productos
+- Gestionar productos/pedidos/clientes 
 
-**Diagrama de interacciones básicas**: Representa los casos de uso principales del sistema desde la perspectiva de los actores.
+**Diagrama de interacciones básicas**: Representa los casos de uso principales del sistema desde la perspectiva de los actores, es decir como se gestiona cada "rol" y sus funcionalizades.
 
 ```mermaid
 sequenceDiagram
-    Cliente->>Sistema: Consultar catálogo
-    Cliente->>Sistema: Realizar pedido
-    Panaderia->>Sistema: Gestionar pedidos
+  participant Cliente
+  participant Admin as Admin/Panadería
+  participant Frontend as Frontend (HTML/JS)
+  participant Backend as API REST (stateless)
+  participant DB as MySQL
+
+  Cliente->>Frontend: Login (localStorage)
+  Frontend->>Backend: GET /productos
+  Backend->>DB: SELECT productos
+  DB-->>Backend: Resultados
+  Backend-->>Frontend: Catálogo
+  Cliente->>Frontend: Crear pedido (carrito)
+  Frontend->>Backend: POST /pedidos
+  Backend->>DB: INSERT pedido + líneas
+  DB-->>Backend: OK
+  Backend-->>Frontend: Pedido creado
+
+  Admin->>Frontend: Login (rol ADMIN)
+  Frontend->>Backend: GET /pedidos
+  Backend->>DB: SELECT pedidos + líneas
+  DB-->>Backend: Resultados
+  Backend-->>Frontend: Listado pedidos
+  Admin->>Frontend: Cambiar estado / ajustar stock
+  Frontend->>Backend: PUT /pedidos/{id}/estado | PUT /productos/{id}/AumStock
+  Backend->>DB: UPDATE pedido | UPDATE producto
+  DB-->>Backend: OK
+  Backend-->>Frontend: Estado/stock actualizado
 ```
 ## Sobre el autor
 
@@ -230,7 +262,7 @@ Este proyecto dispone de [documentación extendida](./doc/doc.md) con detalles t
 ## Guía de contribución
 
 Las contribuciones son bienvenidas en forma de:
-- Nuevas funcionalidades (ej.: notificaciones, mejora del carrito, mejora del FrontEnd migrándolo a React...)
+- Nuevas funcionalidades (ej.: notificaciones, mejora del carrito...)
 - Corrección de errores
 - Mejora del código o de la documentación
 

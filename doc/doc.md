@@ -13,8 +13,6 @@
     - [Contexto de uso:](#contexto-de-uso)
   - [Conclusiones](#conclusiones)
   - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
-        - [fin 1ª entrega(PFC)](#fin-1ª-entregapfc)
-- [TODO](#todo)
   - [1.Análisis](#1análisis)
       - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
   - [2. Diseño](#2-diseño)
@@ -34,7 +32,6 @@
     - [Fases del proyecto](#fases-del-proyecto)
     - [Diagrama de Gantt](#diagrama-de-gantt)
     - [Estimación de recursos y costes](#estimación-de-recursos-y-costes)
-        - [fin 2º entrega(PFC)](#fin-2º-entregapfc)
   - [4. Implementación Técnica del Backend](#4-implementación-técnica-del-backend)
     - [4.1. Tecnologías Utilizadas](#41-tecnologías-utilizadas)
     - [4.2. Decisiones de Arquitectura](#42-decisiones-de-arquitectura)
@@ -49,7 +46,6 @@
       - [**Nivel Service** (lógica de negocio)](#nivel-service-lógica-de-negocio)
     - [4.4. Logs Implementados](#44-logs-implementados)
     - [4.5. Problemas Resueltos Durante Desarrollo](#45-problemas-resueltos-durante-desarrollo)
-        - [fin 3ª entrega (Implementación Backend)](#fin-3ª-entrega-implementación-backend)
   - [5. Implementación Técnica del Frontend](#5-implementación-técnica-del-frontend)
     - [5.1. Tecnologías y Bibliotecas](#51-tecnologías-y-bibliotecas)
     - [5.2. Estructura de Archivos](#52-estructura-de-archivos)
@@ -75,7 +71,6 @@
       - [**Estado cliente-servidor (stateless)**](#estado-cliente-servidor-stateless)
       - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
       - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
-        - [fin 4ª entrega](#fin-4ª-entrega)
   - [6. Propuestas de  / Roadmap](#6-propuestas-de---roadmap)
     - [6.1. Mejoras de Seguridad (Prioridad Alta)](#61-mejoras-de-seguridad-prioridad-alta)
     - [6.2. Mejoras Funcionales](#62-mejoras-funcionales)
@@ -94,9 +89,9 @@
 
 ## Introducción
 
-El presente proyecto tiene como finalidad el diseño y desarrollo de una aplicación web orientada a la gestión de pedidos en una panadería. La motivación surge de la necesidad de digitalizar procesos tradicionales en pequeños comercios, permitiendo que clientes y negocio interactúen de una forma más eficiente y moderna.
+El presente proyecto tiene como finalidad el diseño y desarrollo de una aplicación web orientada a la gestión de pedidos en una panadería o un negocio pequeño. La motivación surge de la necesidad de digitalizar procesos tradicionales en pequeños comercios, permitiendo que clientes y negocio interactúen de una forma más eficiente y moderna.
 
-El sistema constará de un **backend desarrollado con Spring Boot** y persistencia en **MySQL**, junto con un **frontend sencillo en HTML, CSS y JavaScript**. Se busca crear un **prototipo funcional** que facilite el registro de productos, la consulta de catálogo y la realización de pedidos, constituyendo una base sólida que podría evolucionar en el futuro hacia un sistema más completo.
+El sistema constará de un **backend desarrollado con Spring Boot** y persistencia en **MySQL**, junto con un **frontend en HTML, CSS, BootsTrap y JavaScript**. Se busca crear un **prototipo funcional** que facilite la gestion o realizacion de pedidos y de clientes o productos constituyendo una base sólida que podría evolucionar en el futuro hacia un sistema más completo.
 
 ## Análisis del contexto
 
@@ -107,13 +102,13 @@ La aplicación se orienta principalmente a:
 - **Clientes** habituales que buscan comodidad y rapidez al realizar sus pedidos.
 - **Propietarios de panaderías** que necesitan un método simple para organizar encargos sin recurrir a herramientas complejas o costosas.
 
-Existen soluciones en el mercado como aplicaciones de delivery (Glovo, Uber Eats), pero resultan demasiado generales o implican costes elevados para pequeños comercios. Nuestro enfoque propone una solución ligera, adaptable y pensada **específicamente para un negocio pequeño**, sin dependencias externas.
+Existen soluciones en el mercado como aplicaciones de delivery (Glovo, Uber Eats), pero resultan demasiado generales o implican costes elevados para pequeños comercios. El enfoque que hago propone una solución ligera, adaptable y pensada **específicamente para un negocio pequeño**, sin dependencias externas.
 
 El desarrollo abre una oportunidad de modernización para estos negocios, con un prototipo que podría evolucionar hacia una solución más robusta e incluso comercializable.
 
 ## Propósito
 
-El propósito de este proyecto es **crear una aplicación web que facilite la gestión de pedidos en una panadería**, permitiendo a los clientes visualizar un catálogo online y realizar pedidos, y al admin gestionar dichos pedidos de forma sencilla.
+El propósito de este proyecto es **crear una aplicación web que facilite la gestión de pedidos en una panadería**, permitiendo a los clientes realizar/ver pedidos, y al admin gestionar dichos pedidos de forma sencilla ademas de los clientes y los productos disponibles.
 
 El objetivo principal es la **digitalización de la panader´ia**, con una solución ligera, práctica y de fácil implementación.
 
@@ -121,8 +116,8 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 - Desarrollar un **backend en Spring Boot** con una API REST que gestione productos,pedidos e clientes.
 - Implementar la **persistencia de datos en MySQL**.
-- Diseñar un **frontend sencillo con HTML, CSS y JavaScript**, que permita al cliente navegar por el catálogo y realizar pedidos.
-- Crear una interfaz básica para la **gestión de pedidos por parte del negocio**.
+- Diseñar un **frontend con HTML, CSS, BootsTrap y JavaScript**, que permita al cliente navegar por el catálogo y realizar pedidos.
+- Crear una interfaz para la **gestión de pedidos,productos y clientes por parte del negocio**.
 - Documentar el proyecto en GitLab/GitHub con instrucciones claras de instalación y uso.
 - Desplegar un prototipo funcional que pueda ser probado en entorno local.
 
@@ -159,14 +154,14 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
 - Base para **futuras ampliaciones** (ver detalles en la sección 6.
-- Prototipo funcional con datos de prueba, no una versión en producción.).  
+- Prototipo funcional con datos de prueba, no una versión en producción.  
     
 
 ## Conclusiones
 
 Este anteproyecto propone una solución concreta a la falta de digitalización en pequeños comercios, ofreciendo una aplicación sencilla pero funcional que puede servir como prototipo y base para futuras mejoras.
 
-A través de este desarrollo se pondrán en práctica conocimientos de **backend con Java Spring Boot, bases de datos MySQL, y desarrollo frontend básico**, además de aplicar buenas prácticas en documentación y control de versiones con Git.
+A través de este desarrollo se pondrán en práctica conocimientos de **backend con Java Spring Boot, bases de datos MySQL, y desarrollo frontend**, además de aplicar buenas prácticas en documentación y control de versiones con Git.
 
 El proyecto permitirá afianzar competencias clave en desarrollo web y servirá como muestra de aplicación práctica de lo aprendido en el ciclo formativo.
 
@@ -178,9 +173,7 @@ El proyecto permitirá afianzar competencias clave en desarrollo web y servirá 
 - [GitLab Documentation](https://docs.gitlab.com/)
 - [StackOverflow](https://stackoverflow.com/)
 
-##### fin 1ª entrega(PFC)
 
-# TODO
 ## 1.Análisis
 
 Para el desarrollo de este proyecto se ha optado por una **metodología Kanban**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
@@ -212,7 +205,7 @@ title: Sistema de Panadería
 sequenceDiagram
     Cliente->>Sistema: Consultar catálogo
     Cliente->>Sistema: Realizar pedido
-    Panadero->>Sistema: Gestionar pedidos
+    Panadero->>Sistema: Gestionar pedidos,clientes y productos
 ```
 
 
@@ -222,7 +215,7 @@ El proyecto está dividido en tres partes principales:
 
 **BaseDatos**: MySQL
 
-**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos,pedidos y clientes, almacenando los datos en MySQL mediante JPA, se podrán ver logs en consola mediante el uso del Logger de SpringBoot.
+**Backend**: Desarrollado con Spring Boot, ofrece una API REST para gestionar productos,pedidos y clientes, almacenando los datos en MySQL mediante JPA, se podrán ver logs mediante el uso del Logger de SpringBoot.
 
 **Frontend**: Página web sencilla hecha con HTML, CSS, Bootstrap y JavaScript, que permite listar productos y realizar pedidos.
 
@@ -255,7 +248,7 @@ graph TD
 
 - **Portabilidad:** El proyecto funciona igual en cualquier máquina con Docker, sin importar el sistema operativo.
 - **Persistencia:** Los datos de MySQL se guardan en un volumen, así no se pierden aunque borres los contenedores.
-- **Fácil despliegue:** Un solo comando (`docker-compose up --build`) levanta toda la plataforma.
+- **Fácil despliegue:** Un solo comando (`docker-compose up`) levanta toda la plataforma.
 - **Aislamiento:** Cada servicio corre en su propio contenedor, evitando conflictos de dependencias.
 
 ### ¿Cómo funciona la persistencia de MySQL con Docker?
@@ -505,8 +498,6 @@ gantt
 * **Recursos:** ordenador personal, VSCode, MySQL, Spring Boot, conexión a internet
 
 
-##### fin 2º entrega(PFC)
-
 ---
 
 ## 4. Implementación Técnica del Backend
@@ -628,8 +619,6 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 1. **Recursión infinita en JSON** → Solucionado con `@JsonIgnore`
 2. **Decimales imprecisos** → Migrado de `Double` a `BigDecimal`
 3. **Totales desincronizados** → Añadidos lifecycle hooks
-
-##### fin 3ª entrega (Implementación Backend)
 
 ---
 
@@ -1013,8 +1002,6 @@ Esta arquitectura fue elegida conscientemente considerando:
 
 **Ventaja actual**: Sistema completamente funcional que cumple todos los objetivos del PFC en el tiempo disponible. La migración a Spring Security con sesiones backend será la primera mejora post-defensa.
 
-##### fin 4ª entrega
-
 ---
 
 ## 6. Propuestas de  / Roadmap
@@ -1114,7 +1101,6 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
   - JUnit + Mockito para backend
   - Jest + React Testing Library para frontend
   - Tests de integración con Testcontainers
-  - Coverage mínimo 70%
   - Estimación: 4-5 semanas
 
 - **CI/CD con GitLab Pipelines**
