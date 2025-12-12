@@ -1426,7 +1426,6 @@ Estas atribuciones ya están incluidas implícitamente al usar las librerías v�
 - **Descripción de artefactos**: Código backend Spring Boot (`src/main/java`), frontend estático (`src/main/resources/static`), infra Docker (`docker-compose.yml`, `Dockerfile`, `nginx.conf`), documentación (`doc/doc.md`, `README.md`).
 - **Licencias y dependencias**: ✅ **Completado en sección 8** - Licencia MIT del proyecto + tabla completa de 25+ componentes externos con sus licencias individuales.
 - **Seguimiento + reviews**: Kanban en Trello (sección 1.Análisis) usado para seguimiento de tareas y validación incremental.
-- **Seguimiento + reviews**: Kanban en Trello (sección 1.Análisis) usado para seguimiento de tareas y validación incremental.
 - **Texto justificando cada diagrama**: Cada diagrama (arquitectura, clases, secuencia) tiene texto explicativo.
 - **Comparativa tiempos (estimado vs real)**: Estimado 9 semanas. Real: 9 semanas.
 - **Coste + impacto**: Coste simulado 1600€ (sección 3) y retorno estimado 3000€; impacto en digitalización de pequeños negocios descrito en Introducción/Contexto.
