@@ -84,7 +84,14 @@
     - [7.4. Estado Final del Proyecto](#74-estado-final-del-proyecto)
     - [7.5. Valoración Personal](#75-valoración-personal)
     - [7.6. Aplicabilidad Real](#76-aplicabilidad-real)
-  - [8. Cobertura de rúbrica](#8-cobertura-de-rúbrica)
+  - [8. Licencias y Dependencias](#8-licencias-y-dependencias)
+    - [8.1. Licencia del Proyecto](#81-licencia-del-proyecto)
+    - [8.2. Componentes Backend y sus Licencias](#82-componentes-backend-y-sus-licencias)
+    - [8.3. Componentes Frontend y sus Licencias](#83-componentes-frontend-y-sus-licencias)
+    - [8.4. Infraestructura y Herramientas](#84-infraestructura-y-herramientas)
+    - [8.5. Dependencias de Desarrollo](#85-dependencias-de-desarrollo)
+    - [8.7. Atribuciones Requeridas](#87-atribuciones-requeridas)
+  - [9. Cobertura de rúbrica](#9-cobertura-de-rúbrica)
         - [fin documentación PFC](#fin-documentación-pfc)
 
 ## Introducción
@@ -1284,9 +1291,141 @@ Con las mejoras de seguridad implementadas (Spring Security + HTTPS), podría de
 
 ---
 
-## 8. Cobertura de rúbrica
+## 8. Licencias y Dependencias
 
-- **Licencias y dependencias**: Licencia MIT indicada en `README.md` y `LICENSE`; dependencias listadas en `pom.xml` (Spring Boot, JPA, Validation, OpenAPI, Lombok) y frontend (Bootstrap, DataTables) descritas en secciones 4.1 y 5.1.
+### 8.1. Licencia del Proyecto
+
+Este proyecto está licenciado bajo la **[MIT License](../LICENSE)**, elegida por:
+- **Libertad total** de uso, modificación y distribución
+- **Compatibilidad con open source**
+- **Sencillez legal**: Una de las licencias más permisivas y fáciles de entender
+- **Fomento de la innovación**: Permite que cualquier panadería o negocio adapte el código sin restricciones
+
+**Texto de la licencia MIT** (resumen):
+```
+Copyright (c) 2025 Adrián Fábregas
+
+Se concede permiso gratuito a cualquier persona que obtenga una copia de este software
+para usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o vender
+copias del Software, sujeto a incluir este aviso de copyright en todas las copias.
+```
+
+Archivo completo: [LICENSE](../LICENSE)
+
+---
+
+### 8.2. Componentes Backend y sus Licencias
+
+Todas las dependencias del backend están gestionadas en `pom.xml` de Maven. A continuación se detallan con sus licencias:
+
+| Componente | Versión | Licencia | Uso en el Proyecto |
+|------------|---------|----------|---------------------|
+| **Spring Boot Starter** | 3.5.7 | Apache License 2.0 | Framework base, configuración autoconfigurada |
+| **Spring Boot Starter Web** | 3.5.7 | Apache License 2.0 | Controladores REST, servidor embebido Tomcat |
+| **Spring Boot Starter Data JPA** | 3.5.7 | Apache License 2.0 | Persistencia ORM, repositorios |
+| **Spring Boot Starter Validation** | 3.5.7 | Apache License 2.0 | Jakarta Validation (validaciones DTOs) |
+| **MySQL Connector/J** | 8.0+ | GPL v2 + FOSS Exception | Driver JDBC para MySQL |
+| **Lombok** | 1.18+ | MIT License | Reducción de boilerplate (@Data, @Slf4j) |
+| **Jakarta Validation API** | 3.0+ | Apache License 2.0 | Anotaciones @NotNull, @Size, etc. |
+| **SLF4J** | 2.0+ | MIT License | Para uso de Logging
+| **Logback** | 1.4+ (transitivo) | EPL 1.0 / LGPL 2.1 | Implementación de logging |
+| **SpringDoc OpenAPI** | 2.0+ | Apache License 2.0 | Generación automática de Swagger UI |
+| **Jackson** | 2.15+ (transitivo) | Apache License 2.0 | Serialización/deserialización JSON |
+| **Hibernate** | 6.4+ (transitivo) | LGPL 2.1 | Proveedor JPA |
+- **MySQL Connector**
+- **Hibernate**: Permite su uso como librería sin afectar la licencia del proyecto
+
+**Compatibilidad de licencias:**
+Todas las licencias (Apache 2.0, MIT, LGPL con excepción) son **compatibles con MIT License** y permiten distribución del proyecto sin restricciones.
+
+---
+
+### 8.3. Componentes Frontend y sus Licencias
+
+Las dependencias del frontend se cargan vía CDN (Content Delivery Network) desde jsDelivr. Detalle completo:
+
+| Componente | Versión | Licencia | Uso en el Proyecto | CDN |
+|------------|---------|----------|---------------------|-----|
+| **Bootstrap** | 5.3.8 | MIT License | Framework CSS, componentes UI (modals, badges, alerts...) | jsDelivr |
+| **Bootstrap Icons** | 1.11.3 | MIT License | Iconografía (emojis de productos, botones) | jsDelivr |
+| **jQuery** | 3.7.0 | MIT License | Requerido por DataTables (gestión DOM) | jsDelivr |
+| **DataTables** | 2.3.5 | MIT License | Tablas interactivas (búsqueda, ordenación, paginación...) | jsDelivr |
+| **DataTables Buttons** | 3.2.5 | MIT License | Exportación a CSV, Excel, PDF | jsDelivr |
+| **JSZip** | 3.10.1 | MIT / GPL v3 dual | Generación de archivos Excel (usado por DataTables) | jsDelivr |
+| **pdfmake** | 0.2.7 | MIT License | Generación de archivos PDF (usado por DataTables) | jsDelivr |
+
+**Ventajas del uso de CDN:**
+- **Sin gestión de dependencias local**: No requiere npm ni webpack
+- **Caché del navegador**: Mejora tiempos de carga si el usuario ya visitó otros sitios con Bootstrap
+- **Versiones estables**: URLs específicas garantizan que no cambien inesperadamente
+
+---
+
+### 8.4. Infraestructura y Herramientas
+
+| Componente | Versión | Licencia | Uso en el Proyecto |
+|------------|---------|----------|---------------------|
+| **Docker** | 20.10+ | Apache License 2.0 | Contenedorización de servicios |
+| **Docker Compose** | 1.29+ | Apache License 2.0 | Orquestación multi-contenedor |
+| **Nginx** | 1.25+ | BSD 2-Clause | Proxy inverso + servidor estático |
+| **MySQL** | 8.0 | GPL v2 + FOSS Exception | Base de datos relacional |
+| **Maven** | 3.9+ | Apache License 2.0 | Gestión de dependencias backend |
+
+**MySQL en proyectos MIT:**
+Aunque MySQL es GPL, la excepción FOSS (Free and Open Source Software) permite su uso con licencias permisivas como MIT sin afectar el código del proyecto. El conector MySQL también tiene esta excepción.
+
+---
+
+### 8.5. Dependencias de Desarrollo
+
+Estas herramientas solo se usan durante el desarrollo y no se distribuyen con el proyecto:
+
+| Herramienta | Licencia | Uso |
+|-------------|----------|-----|
+| **VSCode** | MIT License | Editor de código |
+| **Git** | GPL v2 | Control de versiones |
+| **Postman** / **curl** | Varios | Testing manual de API |
+| **Chrome DevTools** | BSD 3-Clause | Debugging frontend |
+
+---
+
+**Resumen de compatibilidad:**
+✅ Todas las dependencias usan licencias compatibles con MIT   
+✅ El proyecto completo puede redistribuirse libremente bajo MIT  
+
+---
+
+### 8.7. Atribuciones Requeridas
+
+Según las licencias utilizadas, se debe incluir los avisos de copyright en distribuciones:
+
+**Bootstrap (MIT):**
+```
+Copyright (c) 2011-2024 The Bootstrap Authors
+Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+```
+
+**DataTables (MIT):**
+```
+Copyright (c) 2008-2024 SpryMedia Ltd.
+Licensed under MIT (https://datatables.net/license/mit)
+```
+
+**Spring Framework (Apache 2.0):**
+```
+Copyright (c) 2002-2024 Pivotal, Inc.
+Licensed under Apache License 2.0
+```
+
+Estas atribuciones ya están incluidas implícitamente al usar las librerías vía CDN/Maven, pero se documentan aquí por transparencia.
+
+---
+
+## 9. Cobertura de rúbrica
+
+- **Descripción de artefactos**: Código backend Spring Boot (`src/main/java`), frontend estático (`src/main/resources/static`), infra Docker (`docker-compose.yml`, `Dockerfile`, `nginx.conf`), documentación (`doc/doc.md`, `README.md`).
+- **Licencias y dependencias**: ✅ **Completado en sección 8** - Licencia MIT del proyecto + tabla completa de 25+ componentes externos con sus licencias individuales.
+- **Seguimiento + reviews**: Kanban en Trello (sección 1.Análisis) usado para seguimiento de tareas y validación incremental.
 - **Seguimiento + reviews**: Kanban en Trello (sección 1.Análisis) usado para seguimiento de tareas y validación incremental.
 - **Texto justificando cada diagrama**: Cada diagrama (arquitectura, clases, secuencia) tiene texto explicativo.
 - **Comparativa tiempos (estimado vs real)**: Estimado 9 semanas. Real: 9 semanas.
