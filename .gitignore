@@ -67,6 +67,6 @@ coverage
 .cache
 
 ### PDFs (non incluir no repo) ###
-*.pdf
+#*.pdf
 
 ##### FIN GITIGNORE #####
