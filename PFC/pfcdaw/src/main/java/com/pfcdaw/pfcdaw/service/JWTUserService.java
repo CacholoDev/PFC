@@ -1,5 +1,5 @@
 package com.pfcdaw.pfcdaw.service;
 
-public class UserService {
+public class JWTUserService {
     
 }

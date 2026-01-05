@@ -66,6 +66,9 @@ coverage
 ### Cache ###
 .cache
 
+### dataSQL ###
+data.sql
+
 ### PDFs (non incluir no repo) ###
 #*.pdf
 

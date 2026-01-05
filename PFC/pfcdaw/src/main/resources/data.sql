@@ -3,16 +3,14 @@
 -- por consola: # mysql -u root -p panaderiaPFC < PFC/pfcdaw/src/main/resources/data-sample.sql
 -- ============================================
 -- INSERTAR CLIENTES/USUARIOS DE PRUEBA (si non existen)
--- ADMIN: admin@panaderia.com (password: admin123)
--- ADMIN: empleado@panaderia.com (password: empleado123)
--- USERS: Resto de clientes (password: user123)
+-- ADMIN: admin@panaderia.com (password: admin123/ñ)
+-- USER: juan.perez@example.com (password: user123/ñ)
+-- NOTA: Contraseñas hasheadas con BCrypt
 INSERT IGNORE INTO clientes (nombre, apellido, email, direccion, nombre_empresa, telefono, password, role)
 VALUES 
-('Admin', 'Panadería', 'admin@panaderia.com', 'Rúa Principal 1, Noia', 'Panadería PFC', '666000000', 'admin123', 'ADMIN'),
-('UserAdmin', 'Panadero2', 'useradmin@panaderia.com', 'Rúa Secundaria 2, Noia', 'Panadería PFC', '666000001', 'admin123', 'ADMIN'),
-('Juan', 'Pérez', 'juan.perez@example.com', 'Rúa de Noia 1', 'Empresa Deportivo', '666666666', 'user123', 'USER'),
-('María', 'García', 'maria.garcia@example.com', 'Avenida Galicia 1, Santiago', 'Empresa Altia', '981820000', 'user123', 'USER'),
-('Anxo', 'López', 'anxo.lopez@example.com', 'Praza da Coruña 1, Coruña', 'Empresa Blizzard', '606060606', 'user123', 'USER');
+('Admin', 'Panadería', 'admin@panaderia.com', 'Rúa Principal 1, Noia', 'Panadería PFC', '666000000', '$2a$10$.4LXWf6h7Drmb2BtjLL4ZO78juPCDxQoICkrW3uJ3miZtGeOdm9eu', 'ADMIN'),
+('Forza', 'Depor', 'forza.Depor@example.com', 'Rúa de Noia 1', 'Empresa Deportivo', '666666666', '$2a$10$DgCgSUmnp/EG7SQP/0KJveGvb9OafJlszphAGWogfbP3uwfqmy5.e', 'USER');
+
 -- ============================================
 -- INSERTAR PRODUCTOS DE PRUEBA (si non existen)
 INSERT IGNORE INTO productos (nombre, descripcion, precio, stock,imagen_url)

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,11 @@ public class ClienteController {
 
     private static final Logger log = LoggerFactory.getLogger(ClienteController.class);
     private final ClienteRepository clienteRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClienteController(ClienteRepository clienteRepository) {
+    public ClienteController(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder) {
         this.clienteRepository = clienteRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -54,6 +57,8 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
         log.info("[POST /clientes] Creando cliente: {}", nuevoCliente.getEmail());
+        // Hashear la contraseña antes de guardar
+        nuevoCliente.setPassword(passwordEncoder.encode(nuevoCliente.getPassword()));
         ClienteEntity clienteGuardado = clienteRepository.save(nuevoCliente);
         log.info("[POST /clientes] Cliente creado con ID: {}", clienteGuardado.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
@@ -88,7 +93,20 @@ public class ClienteController {
                     cliente.setDireccion(clienteActualizado.getDireccion());
                     cliente.setNombreEmpresa(clienteActualizado.getNombreEmpresa());
                     cliente.setTelefono(clienteActualizado.getTelefono());
-                    cliente.setPassword(clienteActualizado.getPassword());
+                    
+                    // Solo hashear si la contraseña cambió (no es un hash BCrypt)
+                    String nuevaPassword = clienteActualizado.getPassword();
+                    if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
+                        // Si NO empieza por $2a$ (formato BCrypt), hashearla
+                        if (!nuevaPassword.startsWith("$2a$") && !nuevaPassword.startsWith("$2b$") && !nuevaPassword.startsWith("$2y$")) {
+                            cliente.setPassword(passwordEncoder.encode(nuevaPassword));
+                            log.debug("[PUT /clientes/{}] Contraseña actualizada y hasheada", id);
+                        } else {
+                            // Ya está hasheada, no volver a hashear
+                            log.debug("[PUT /clientes/{}] Contraseña ya hasheada, no se modifica", id);
+                        }
+                    }
+                    
                     cliente.setRole(clienteActualizado.getRole());
                     ClienteEntity clienteGuardado = clienteRepository.save(cliente);
                     log.info("[PUT /clientes/{}] Actualizado correctamente", id);
