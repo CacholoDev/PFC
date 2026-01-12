@@ -46,6 +46,9 @@ services:
       - SPRING_PROFILES_ACTIVE=docker              # Activa perfil 'docker' de Spring
       - SERVER_PORT=8080
       - APP_UPLOAD_DIR=/app/static/images/        # variable entorno docker + directorio para subir imaxes 
+      - DOCKER_TIMEZONE=Europe/Madrid #nova
+      - JWT_SECRET=${JWT_SECRET} #nova
+      - JWT_EXPIRATION_TIME=${JWT_EXPIRATION_TIME} #nova
       
     depends_on:                     # Non arranca hasta que MySQL este listo
       mysql:
