@@ -8,10 +8,20 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.pfcdaw.pfcdaw.security.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // Inyecta el filtro JWT que creamos
+    private final JwtTokenFilter jwtTokenFilter;
+
+    public SecurityConfig(JwtTokenFilter jwtTokenFilter) {
+        this.jwtTokenFilter = jwtTokenFilter;
+    }
 
     // Bean para encriptar contraseñas con BCrypt
     @Bean
@@ -42,12 +52,18 @@ public class SecurityConfig {
                 .requestMatchers("/*.html", "/css/**", "/js/**", "/assets/**", "/error_pages/**").permitAll() // Frontend estático
                 
                 // PROTEGIDOS (requieren autenticación):
-                // Por ahora DESHABILITAMOS protección para que puedas probar BCrypt primero
-                .anyRequest().permitAll()  // ⚠️ TEMPORAL: después cambiarás a .authenticated()
-            );
+                // Ahora sí activamos la protección: cualquier otra petición necesita JWT válido
+                .anyRequest().authenticated()
+            )
             
-            // 5. DESHABILITAR form login (no usamos formularios de Spring)
+            // 5. AGREGAR EL FILTRO JWT: 
+            // Lo añadimos ANTES del filtro de usuario/contraseña
+            // Así el JWT se valida antes que cualquier otra autenticación
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            
+            // 6. DESHABILITAR form login (no usamos formularios de Spring)
             // No agregamos .formLogin() ni .logout() porque es una API REST
+            ;
 
         return http.build();
     }
