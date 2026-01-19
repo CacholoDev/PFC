@@ -60,7 +60,7 @@ La idea principal es que el cliente(user) pueda logearse/registrarse, realizar p
 
 El objetivo es digitalizar empresas pequeñas en este caso en el sector panadero o cualquier negocio pequeño, simplificando tanto la experiencia de compra del cliente como los pedidos por parte del negocio, con posibilidad de ser ampliado en el futuro con más funcionalidades (como notificaciones, pasarela de pago...). También me gustaría migrar el front a React cuando controle un poco más de la librería y tenga algo más de tiempo ya que con la FCT en Santiago y lo poco que dura la FCT + PFC no dispongo de mucho espacio de tiempo para hacer un proyecto como el que me gustaría desarrollar y el cual seguiré trabajándolo cuando finalice el ciclo.
 
-**Estado y seguridad actuales**: API REST sin sesiones de servidor (stateless); el “login” se guarda en el cliente en `localStorage` y el backend no valida autenticación/roles. Planificado migrar a Spring Security con sesiones / JWT (ver [doc/doc.md](doc/doc.md) sección 6.1).
+**Estado y seguridad actuales**: API REST completamente funcional con **JWT + BCrypt + Spring Security** (Enero 2026). Login genera token JWT válido por 1 hora, todos los endpoints protegidos requieren token, contraseñas hasheadas con BCrypt. Arquitectura stateless (sin sesiones de servidor).
 
 **Diagrama de arquitectura general (actual)**: Frontend estático (HTML/JS/Bootstrap) servido por Nginx, API REST en Spring Boot, MySQL persistente. Login/rol se guarda en `localStorage` (pendiente migrar a Spring Security/JWT), tráfico expuesto por Nginx en `8081`.
 

@@ -890,33 +890,61 @@ localStorage.removeItem('usuario');
 window.location.href = 'login.html';
 ```
 
-**Características**:
-- **Persistencia**: Sesión sobrevive a recargas de página
+**Características actuales**:
+- **Persistencia frontend**: Token se almacena en `localStorage` para mantener sesión
 - **Redirección por rol**: ADMIN → dashboard, USER → mis-pedidos
 - **Datos de usuario**: Nombre, email, rol disponibles en `localStorage` para personalización UI
-- **Protección básica**: Páginas verifican autenticación en `DOMContentLoaded`
+- **Validación servidor**: JwtTokenFilter valida cada petición
+- **Endpoints protegidos**: Spring Security rechaza peticiones sin token válido (401/403)
+- **Expiración automática**: Token expira automáticamente tras 1 hora
 
-**Limitaciones conocidas y consideraciones de seguridad:**
+**Flujo de Seguridad Actual (Enero 2026)**:
 
-> **Nota importante sobre seguridad**: Soy consciente de que los endpoints REST están **expuestos públicamente** sin autenticación a nivel backend. Esta decisión es para priorizar la funcionalidad completa del sistema dentro del tiempo disponible durante la FCT
+```
+CLIENTE (Login)
+  ↓ POST /auth/login { email, password }
+LOGINCONTROLLER
+  ↓ PasswordEncoder.matches(password, hash_en_BD) ← BCrypt
+  ✓ Contraseña válida
+  ↓ JwtTokenProvider.generateToken(cliente) ← JWT con firma HMAC-SHA512
+  ↓ Devuelve { token, id, nombre, rol }
+CLIENTE
+  ↓ localStorage.setItem('token', token)
+  ↓ En siguiente petición: Authorization: Bearer <token>
+JWTTOKENFILTER
+  ↓ Extrae token de header
+  ↓ JwtTokenProvider.validateToken(token) ← Verifica firma + expiración
+  ✓ Token válido
+  ↓ Carga cliente de BD
+  ↓ Crea Authentication y lo coloca en SecurityContext
+SECURITYCONFIG
+  ↓ Verifica si Authentication existe
+  ✓ Sí → Permite acceso
+  ✗ No → 401 Unauthorized
+CONTROLLER
+  ↓ Recibe petición con usuario autenticado
+```
 
-**Vulnerabilidades actuales identificadas:**
-1. **Endpoints sin protección**: Cualquiera puede acceder a `http://localhost:8080/clientes` o enlaces similares como /productos sin autenticación
-2. **localStorage vulnerable a XSS**: JavaScript malicioso podría robar datos de sesión
-3. **Contraseñas en texto plano**: Almacenadas sin cifrado en MySQL
-4. **Sin expiración de sesión**: Usuario permanece logueado indefinidamente
-5. **Sin validación de tokens**: No hay JWT
+**Seguridad Implementada**:
+1. ✅ **BCrypt Password Hashing**: Contraseñas irreversiblemente hasheadas
+2. ✅ **JWT Signing**: Tokens firmados con clave secreta HMAC-SHA512 (imposible falsificar)
+3. ✅ **Stateless Auth**: Sin sesiones en servidor, sin cookies de sesión
+4. ✅ **Token Expiration**: Expiración automática tras 1 hora
+5. ✅ **Spring Security Integration**: JwtTokenFilter + SecurityConfig protegen endpoints
+6. ✅ **Endpoint Protection**: Endpoints privados requieren token válido (exceptuando /auth/**)
+7. ✅ **Role-Based Access**: Token contiene rol para futuros @PreAuthorize checks
 
-**Plan de migración a arquitectura segura** (post-entrega):
+**Vulnerabilidades residuales (conocidas y aceptadas en fase PFC)**:
+- localStorage puede ser accesible por XSS en frontend
+- Token enviado en Authorization header (mitigado con HTTPS en producción)
+- Sin refresh token (requeriría roundtrip servidor)
 
-| Mejora | Tecnología | Impacto en Seguridad |
-|--------|------------|----------------------|
-| **Sessions backend** | Spring Security + HttpSession | ✅ Protección total de endpoints |
-| **Cookies httpOnly** | `Set-Cookie: httpOnly; secure; sameSite` | ✅ Inmune a XSS (JS no puede leerlas) |
-| **Hash contraseñas** | BCryptPasswordEncoder | ✅ Irreversible incluso con acceso a BD |
-| **CSRF Protection** | Spring Security CSRF tokens | ✅ Prevención de ataques cross-site |
-| **Expiración sesiones** | `server.servlet.session.timeout=30m` | ✅ Cierre automático sesiones inactivas |
-| **JWT** (opcional) | jjwt library | ✅ APIs stateless + refresh tokens |
+**Plan futuro**:
+- Agregar refresh token endpoint para extender sesión
+- Implementar logout "blacklist" para revocación inmediata
+- Agregar @PreAuthorize en controllers por rol específico
+- Validación de CORS y headers de seguridad
+
 
 **Justificación técnica de la decisión:**
 - Implementar Spring Security completo requiere bastante tiempo que ahora no dispongo del (configuración + testing CORS + cookies cross-origin)
@@ -973,6 +1001,83 @@ Cada vista tiene su propio archivo JS:
 
 #### **Estado Actual del Sistema de Autenticación**
 
+El sistema ha evolucionado significativamente desde la versión inicial. A partir de enero de 2026, se ha implementado:
+
+**✅ IMPLEMENTADO (Enero 2026):**
+- **BCrypt Password Encoding**: Todas las contraseñas se almacenan hasheadas con BCryptPasswordEncoder
+- **JWT (JSON Web Tokens)**: Generación y validación de tokens stateless con librería jjwt 0.12.6
+- **Spring Security**: Integración completa con filtros JWT y configuración de autorización
+- **JwtTokenFilter**: Filtro que intercepta peticiones, valida tokens y autentica usuarios
+- **Stateless API**: API REST completamente stateless (sin sesiones de servidor, sin cookies)
+
+**🔄 FLUJO ACTUAL DE AUTENTICACIÓN:**
+
+1. **Login (POST /auth/login)**:
+   - Usuario envía email + contraseña
+   - LoginController verifica email en BD
+   - Contraseña se valida con `passwordEncoder.matches()` (BCrypt)
+   - JwtTokenProvider genera token JWT válido por 1 hora
+   - Cliente recibe: `{ token: "eyJh...", id: 5, nombre: "Juan", rol: "USER" }`
+
+2. **Peticiones Autenticadas**:
+   - Cliente envía `Authorization: Bearer <token>` en header
+   - JwtTokenFilter intercepta y valida token (verifica firma + expiración)
+   - Token se decodifica sin ir a servidor (stateless)
+   - Usuario se carga de BD y se autentica en SecurityContext
+   - SecurityConfig permite/rechaza según endpoint
+
+3. **Endpoints Protegidos**:
+   - `/auth/**` → permitAll (login, registro)
+   - `/swagger-ui/**`, `/v3/api-docs/**` → permitAll (documentación)
+   - Archivos estáticos → permitAll
+   - Resto de endpoints → `.authenticated()` (requieren token válido)
+
+**Tabla Comparativa: Evolución de Seguridad**
+
+| Aspecto | Versión Inicial | Versión Actual |
+|--------|---|---|
+| **Almacenamiento contraseñas** | Texto plano ❌ | BCrypt hash ✅ |
+| **Autenticación HTTP** | localStorage sin validación | JWT + Spring Security ✅ |
+| **Validación servidor** | No existe | JwtTokenFilter + SecurityConfig ✅ |
+| **Sesiones** | localStorage (cliente) | Stateless JWT ✅ |
+| **Endpoints protegidos** | No | Sí, excepto /auth/** ✅ |
+| **Roles en BD** | Texto plano | Se usan en token + @PreAuthorize |
+| **Expiración de sesión** | Manual (logout) | Automática (token expira 1h) |
+
+**Componentes Involucrados:**
+
+```
+Código cliente (login.js)
+    ↓ POST /auth/login (email + password)
+LoginUsuarioC (controller)
+    ↓ Valida BCrypt
+JwtTokenProvider.generateToken()
+    ↓ Crea JWT firmado
+Cliente almacena en localStorage
+    ↓ Envía Authorization: Bearer <token>
+JwtTokenFilter (intercepta CADA petición)
+    ↓ Valida firma + expiration
+ClienteRepository (carga usuario de BD)
+    ↓ Crea Authentication
+SecurityContextHolder (guarda usuario)
+    ↓ SecurityConfig.authorizeHttpRequests()
+    ↓ Permite/rechaza según endpoint
+Controller recibe petición autenticada
+```
+
+**Configuración Actual:**
+
+- **JWT Secret**: Variable de entorno `JWT_SECRET` (diferente por entorno)
+- **JWT Expiration**: 3600000ms (1 hora) vía `JWT_EXPIRATION`
+- **Algoritmo**: HMAC-SHA512 (`Jwts.SIG.HS512`)
+- **Claims en token**: email (subject), role, id, issuedAt, expiration
+
+**Próximos Pasos (Post-Defensa):**
+- Agregar endpoints de refresh token para extender sesión sin reauthenticate
+- Implementar logout "blacklist" de tokens (revocación)
+- Agregar `@PreAuthorize` annotations en controllers por rol
+- Cambios en frontend: fetch helper con Authorization header automático
+
 El proyecto implementa **autenticación básica en frontend** mediante `localStorage` con las siguientes características:
 
 **✅ Funcionalidades implementadas:**
@@ -1017,14 +1122,31 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
 
 ### 6.1. Mejoras de Seguridad (Prioridad Alta)
 
-| Mejora | Tecnología | Impacto | Estimación |
-|--------|------------|---------|------------|
-| **Spring Security** | Spring Security 6+ | Autenticación backend completa | 2-3 semanas |
-| **Hash de contraseñas** | BCryptPasswordEncoder | Protección de credenciales en BD | 3-4 días |
-| **Sesiones backend** | HttpSession + Cookies httpOnly | Inmunidad a XSS | 1 semana |
-| **CSRF Protection** | Spring Security CSRF tokens | Prevención ataques cross-site | 2-3 días |
-| **JWT** | jjwt library | APIs stateless + refresh tokens | 1-2 semanas |
-| **Roles y permisos mejorados** | @PreAuthorize, @Secured | Control acceso por endpoint | 1 semana |
+**Estado: PARCIALMENTE COMPLETADA (Enero 2026)**
+
+| Mejora | Tecnología | Impacto | Estado |
+|--------|------------|---------|--------|
+| **Spring Security** | Spring Security 6+ | Autenticación backend completa | ✅ IMPLEMENTADA |
+| **Hash de contraseñas** | BCryptPasswordEncoder | Protección de credenciales en BD | ✅ IMPLEMENTADA |
+| **JWT** | jjwt library 0.12.6 | APIs stateless + validación token | ✅ IMPLEMENTADA |
+| **Sesiones backend** | HttpSession + Cookies httpOnly | Inmunidad a XSS | 🔄 Futura (alternativa a JWT) |
+| **CSRF Protection** | Spring Security CSRF tokens | Prevención ataques cross-site | 🔄 Futura |
+| **Roles y permisos mejorados** | @PreAuthorize, @Secured | Control acceso por endpoint | 🔄 Futura |
+| **Refresh Token** | JWT con rotación | Extender sesión sin reauthenticate | 🔄 Futura |
+
+**Implementado en Enero 2026:**
+- ✅ BCrypt: Todas las contraseñas hasheadas (LoginController + ClienteController)
+- ✅ JWT: Generación en login, validación en cada petición vía JwtTokenFilter
+- ✅ Spring Security: SecurityConfig con filtro JWT + autorización de endpoints
+- ✅ Stateless API: Tokens sin sesión de servidor
+- ✅ Token Expiration: Automática tras 1 hora
+
+**Pendiente post-defensa:**
+- Refresh token para extender sesión sin reauthenticate
+- Revocación de tokens (logout blacklist)
+- @PreAuthorize por rol en controllers
+- Validación adicional CORS y headers de seguridad
+
 
 ### 6.2. Mejoras Funcionales
 

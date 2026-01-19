@@ -30,77 +30,136 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         this.clienteRepository = clienteRepository;
     }
 
+    /**
+     * Intercepta CADA petición HTTP antes de llegar al controller
+     * 
+     * FLUJO:
+     * 1. Cliente envía request CON token JWT en header Authorization
+     * 2. Este filtro EXTRAE el token, lo VALIDA (firma y expiración)
+     * 3. Si es válido, CARGA el usuario de BD y lo AUTENTICA en Spring Security
+     * 4. Controller recibe request CON el usuario ya autenticado en SecurityContext
+     * 5. Si no hay token o es inválido, el request continúa sin autenticar
+     *    (luego SecurityConfig rechazará con 401 si el endpoint es .authenticated())
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Extrae el header Authorization de la petición
+        // ====== PASO 1: EXTRAE EL TOKEN DEL HEADER ======
+        // El cliente envía: Authorization: Bearer <token_muy_largo_aqui>
+        // Buscamos el header Authorization completo
         String authHeader = request.getHeader("Authorization");
         
-        // Verifica si el header existe y tiene el prefijo "Bearer "
+        // Valida que: 1) el header exista, 2) comience con "Bearer "
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            log.debug("Header Authorization encontrado");
+            log.debug("✓ Header Authorization encontrado en la petición");
             
-            // Extrae el token (quita los 7 caracteres de "Bearer ")
+            // Extrae solo el token (quita los 7 caracteres de "Bearer ")
+            // De "Bearer abc123..." obtenemos "abc123..."
             String token = authHeader.substring(7);
             
-            // Valida que el token no esté vacío
+            // Verifica que el token no sea una cadena vacía
             if (token.isEmpty()) {
-                log.warn("Token JWT vacío en la cabecera Authorization");
-            } else if (jwtTokenProvider.validateToken(token)) {
-                // Token es válido, extrae información
-                log.debug("Token JWT válido");
+                log.warn("⚠️ Token JWT vacío (header Authorization presente pero sin valor)");
+            } 
+            // ====== PASO 2: VALIDA LA FIRMA Y EXPIRACIÓN DEL TOKEN ======
+            else if (jwtTokenProvider.validateToken(token)) {
+                // validateToken() usa la CLAVE SECRETA para verificar que:
+                // - La firma sea correcta (no fue modificado en tránsito)
+                // - El token no haya expirado
+                log.debug("✓ Token JWT válido (firma correcta y no expirado)");
                 
                 try {
-                    // Extrae el email (subject) del token
+                    // ====== PASO 3: EXTRAE INFO DEL TOKEN ======
+                    // El token contiene:
+                    // - subject (email del usuario que lo generó)
+                    // - claim "role" (ADMIN o USER)
+                    // - claim "id" (identificador del cliente)
                     String email = jwtTokenProvider.getEmailFromToken(token);
+                    log.debug("Email extraído del token: {}", email);
                     
-                    // Busca el cliente en la base de datos por email
+                    // ====== PASO 4: BUSCA EL USUARIO EN LA BD ======
+                    // Aunque el token ya tiene los datos, lo buscamos en BD para:
+                    // - Verificar que el usuario sigue existiendo (no fue eliminado)
+                    // - Obtener la entidad ClienteEntity completa (nombre, apellido, etc.)
+                    // - Poder pasar la entidad al controller si la necesita
                     ClienteEntity cliente = clienteRepository.findByEmail(email).orElse(null);
                     if (cliente == null) {
-                        log.warn("Cliente no encontrado en BD para el email: {}", email);
+                        log.warn("⚠️ Usuario del token NO encontrado en BD: {}", email);
+                        // No autenticamos (cliente = null), pero continuamos el filtro
                     } else {
-                        log.debug("Cliente cargado desde BD: {} {}", cliente.getNombre(), cliente.getApellido());
+                        log.debug("✓ Usuario cargado desde BD: {} {}", cliente.getNombre(), cliente.getApellido());
                     }
                     
-                    // Extrae el rol del token
+                    // ====== PASO 5: EXTRAE EL ROL DEL TOKEN ======
+                    // El rol también viene en el token, pero lo extraemos para autenticar
                     String role = jwtTokenProvider.getRoleFromToken(token);
                     if (role == null) {
-                        log.warn("Rol no encontrado en el token JWT para el email: {}", email);
+                        log.warn("⚠️ Rol NO encontrado en el token para: {}", email);
                     }
                     
-                    // Solo autentica si TANTO el cliente como el rol son válidos
+                    // ====== PASO 6: AUTENTICA EN SPRING SECURITY ======
+                    // SOLO si AMBOS (cliente y rol) son válidos
+                    // Si uno falla, no autenticamos y el request sigue sin autenticar
                     if (cliente != null && role != null) {
-                        // Construye el objeto Authentication con las autoridades (permisos)
+                        // Crea el objeto Authentication:
+                        // - principal = ClienteEntity (el usuario logueado)
+                        // - credentials = null (no necesario, ya validamos el token)
+                        // - authorities = lista de permisos ("ROLE_ADMIN" o "ROLE_USER")
                         var authentication = new UsernamePasswordAuthenticationToken(
-                            cliente,  // Principal (el usuario)
-                            null,     // Credentials (no necesario aquí, token ya validado)
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))  // Authorities (permisos)
+                            cliente,  // Principal: quién es el usuario
+                            null,     // Credentials: prueba de quién es (token ya validado)
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))  // Authorities: qué puede hacer
                         );
                         
-                        // Coloca el Authentication en el contexto de Spring Security
-                        // Así el controller sabrá que el usuario está autenticado
+                        // ====== PASO 7: GUARDA EL USUARIO EN SPRING SECURITY ======
+                        // Coloca el Authentication en el SecurityContextHolder
+                        // (contexto local del thread de esta petición)
+                        // 
+                        // Ahora CUALQUIER CLASS que haga:
+                        //   SecurityContextHolder.getContext().getAuthentication()
+                        // obtendrá el usuario autenticado
+                        //
+                        // Por ejemplo, en un controller puedes hacer:
+                        //   @GetMapping("/mi-perfil")
+                        //   public ResponseEntity<?> miPerfil() {
+                        //       ClienteEntity usuario = (ClienteEntity) SecurityContextHolder.getContext()
+                        //                                  .getAuthentication().getPrincipal();
+                        //       return ResponseEntity.ok(usuario);
+                        //   }
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        log.info("Usuario autenticado exitosamente: {} con rol: {}", email, role);
+                        log.info("✓ Usuario autenticado en Spring Security: {} (rol: {})", email, role);
                     }
                 } catch (Exception e) {
-                    // Si algo falla al procesar el token, loguea pero continúa
-                    log.error("Error procesando el token JWT: {}", e.getMessage());
+                    // Si algo falla al procesar el token (parsear claims, etc.)
+                    // Loguea el error pero CONTINÚA la cadena de filtros
+                    // (No cierres la conexión, solo no autenticas)
+                    log.error("❌ Error procesando el token JWT: {}", e.getMessage());
                 }
-            } else {
-                // Token existe pero no es válido
-                log.debug("Token JWT inválido o expirado");
+            } 
+            // Token existe en el header pero la validación falló
+            else {
+                log.debug("❌ Token JWT inválido o expirado (firma incorrecta o fecha vencida)");
             }
-        } else {
-            // No hay token en la petición (endpoint público)
-            log.debug("Sin autenticación JWT (endpoint público)");
+        } 
+        // No hay token en la petición (es normal para endpoints públicos)
+        else {
+            log.debug("ℹ️ Sin autenticación JWT (endpoint público o sin token)");
         }
         
-        // Continúa la cadena de filtros (SIEMPRE debe ocurrir)
+        // ====== PASO 8: CONTINÚA LA CADENA DE FILTROS ======
+        // SIEMPRE se ejecuta, independientemente de si autenticamos o no
+        // 
+        // La cadena continúa así:
+        // 1. JwtTokenFilter (AQUÍ) - Autentica si hay token válido
+        // 2. Otros filtros de Spring Security...
+        // 3. SecurityConfig verifica permisos (.authenticated(), .hasRole(), etc.)
+        // 4. Controller
+        // 5. Response
         try {
             filterChain.doFilter(request, response);
         } catch (ServletException | IOException e) {
-            log.error("Error en la cadena de filtros: {}", e.getMessage());
+            log.error("❌ Error en la cadena de filtros: {}", e.getMessage());
             throw e;
         }
     }
