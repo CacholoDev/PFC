@@ -62,7 +62,7 @@ public class SecurityConfig {
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             
             // 6. DESHABILITAR form login (no usamos formularios de Spring)
-            // No agregamos .formLogin() ni .logout() porque es una API REST
+            //  No agregamos .formLogin() ni .logout() porque es una API REST
             ;
 
         return http.build();
