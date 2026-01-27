@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnLogout = document.getElementById("btnLogout");
     btnLogout.addEventListener("click", function () {
         localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
         window.location.href = "login.html";
     });
 });
@@ -48,7 +49,7 @@ function cargarPedidosUsuario(clienteId) {
     `;
 
     // fetch pedidos ID /cliente/{id}
-    fetch(`/pedidos/cliente/${clienteId}`)
+    fetchWithAuth(`/pedidos/cliente/${clienteId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al cargar pedidos");
@@ -178,7 +179,7 @@ function cargarPedidosUsuario(clienteId) {
 
 // function po modal de ver detalles pedido #detallesPedidoBody
 function verDetallesPedido(pedidoId) {
-    fetch(`/pedidos/${pedidoId}`)
+    fetchWithAuth(`/pedidos/${pedidoId}`)
         .then(response => response.json())
         .then(pedido => {
             // pintar detalles no modal #detallesPedidoBody

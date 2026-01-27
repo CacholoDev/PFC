@@ -40,8 +40,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             
-            // 3. CORS: Ya lo tienes configurado en WebConfig, esto lo mantiene
-            .cors(cors -> cors.disable()) // Usa el CORS de WebConfig
+            // 3. CORS: Habilitar usando configuración de WebConfig
+            .cors(cors -> {}) // Usa la configuración de WebConfig (CorsConfigurationSource)
             
             // 4. AUTORIZACIÓN: Qué endpoints son públicos y cuáles protegidos
             .authorizeHttpRequests(auth -> auth

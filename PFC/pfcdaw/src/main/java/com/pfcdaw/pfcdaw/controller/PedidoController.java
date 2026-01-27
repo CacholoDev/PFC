@@ -6,6 +6,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PedidoEntity>> getAllPedidos() {
         log.info("[GET /pedidos] Listando todos los pedidos");
@@ -45,6 +47,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PedidoEntity> getPedidoById(@PathVariable @NonNull Long id) {
         log.info("[GET /pedidos/{}] Buscando pedido", id);
@@ -57,6 +60,7 @@ public class PedidoController {
     }
     
     // Obter todos os pedidos dun cliente específico
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<PedidoEntity>> getPedidosByCliente(@PathVariable Long clienteId) {
         log.info("[GET /pedidos/cliente/{}] Buscando pedidos del cliente", clienteId);
@@ -65,6 +69,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<PedidoEntity> createPedido(@Valid @RequestBody PedidoCreateDto dto) {
         log.info("[POST /pedidos] Creando pedido para cliente: {}", dto.getClienteId());
@@ -77,6 +82,7 @@ public class PedidoController {
         return ResponseEntity.created(location).body(pedidoGuardado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePedido(@PathVariable @NonNull Long id) {
         if (!pedidoRepository.existsById(id)) {
@@ -88,6 +94,7 @@ public class PedidoController {
         return ResponseEntity.noContent().build();
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PedidoEntity> updatePedido(@PathVariable @NonNull Long id,
     @Valid @RequestBody @NonNull PedidoEntity pedidoActualizado) {

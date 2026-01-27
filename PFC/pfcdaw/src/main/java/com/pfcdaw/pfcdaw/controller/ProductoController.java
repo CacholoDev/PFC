@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ public class ProductoController {
     }
 
     // listar productos nn poñemos path porque colle o requestmapping do controlador
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<ProductoEntity>> getAllProductos() {
         log.info("[GET /productos] Listando todos los productos");
@@ -49,6 +51,7 @@ public class ProductoController {
     }
 
     // listar por id
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<ProductoEntity> getProductoById(@PathVariable @NonNull Long id) {
         return productoRepository.findById(id)
@@ -64,6 +67,7 @@ public class ProductoController {
     }
 
     // crear producto
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductoEntity> createProducto(@Valid @RequestBody ProductoEntity producto) {
         log.info("[POST /productos] Creando nuevo producto: {}", producto.getNombre());
@@ -73,6 +77,7 @@ public class ProductoController {
     }
 
     // delete producto
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable @NonNull Long id) {
         if (!productoRepository.existsById(id)) {
@@ -86,6 +91,7 @@ public class ProductoController {
     }
 
     // actualizar producto
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductoEntity> updateProducto(@PathVariable @NonNull Long id,
             @Valid @RequestBody @NonNull ProductoEntity p) {
@@ -117,6 +123,7 @@ public class ProductoController {
     }
 
     // POST para aumentar stock
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/AumStock")
     public ResponseEntity<ProductoEntity> aumentarStock(
             @PathVariable Long id,
@@ -133,6 +140,7 @@ public class ProductoController {
     }
 
     // POST para reducir stock
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/RedStock")
     public ResponseEntity<ProductoEntity> reducirStock(
             @PathVariable Long id,
@@ -149,6 +157,7 @@ public class ProductoController {
     }
 
     // putt actualizar foto con MultiparFile q ven a logica desde o ProductoService
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/ActFoto")
     public ResponseEntity<ProductoEntity> actualizarFoto(@PathVariable Long id,
             @RequestParam MultipartFile imagenFile) {

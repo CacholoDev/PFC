@@ -17,7 +17,7 @@ function cargarPedidos() {
     const tablaPedidos = document.getElementById('tablaPedidos');
     tablaPedidos.innerHTML = 'Cargando pedidos...';
 
-    fetch('/pedidos')
+    fetchWithAuth('/pedidos')
         .then(response => response.json())
         .then(data => {
 
@@ -96,7 +96,7 @@ function cargarPedidos() {
 
 // ver detalles pedido
 function verDetallesPedido(pedidoId) {
-    fetch(`/pedidos/${pedidoId}`)
+    fetchWithAuth(`/pedidos/${pedidoId}`)
         .then(response => response.json())
         .then(pedido => {
 
@@ -165,7 +165,7 @@ function cambiarEstadoPedido(pedidoId) {
         estado: nuevoEstado
     };
     // enviando o backend modo put
-    fetch(`/pedidos/${pedidoId}/estado`, {
+    fetchWithAuth(`/pedidos/${pedidoId}/estado`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

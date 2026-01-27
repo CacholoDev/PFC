@@ -80,6 +80,11 @@ public class PedidoService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "La cantidad del producto " + id + " debe ser mayor a 0");
             }
+            // SEGURIDAD: Evitar cantidades extremas (DoS/overflow)
+            if (cantidad > 1000) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "La cantidad del producto " + id + " no puede superar 1000 unidades por pedido");
+            }
         });
 
         // calcular total, miramos primeiro si o precio nn e null

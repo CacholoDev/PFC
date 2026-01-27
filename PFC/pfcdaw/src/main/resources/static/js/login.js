@@ -66,6 +66,7 @@ async function Login() {
         console.log('Login exitoso:', data);
 
         // LocalStorage
+        localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data));
 
         // Redirixir x rol

@@ -50,7 +50,7 @@ function cargarTablaProductos() {
     const tablaProductos = document.getElementById('tablaProductos');
     tablaProductos.innerHTML = 'Cargando productos...'; // Mensaje de carga
 
-    fetch('/productos')
+    fetchWithAuth('/productos')
         .then(response => response.json())
         .then(data => {
             let tablaHTML = `
@@ -155,7 +155,7 @@ function deleteProducto(id) {
     productoIdAEliminar = id;
 
     // 2. fetch GET /productos/{id} para obter o nome #nombreProductoEliminar
-    fetch(`/productos/${id}`)
+    fetchWithAuth(`/productos/${id}`)
         .then(response => response.json())
         .then(producto => {
             // Rellenar modal co nome do produto
@@ -178,7 +178,7 @@ function deleteProducto(id) {
 
 // confirmarEliminacion function
 function confirmarEliminacion() {
-    fetch(`/productos/${productoIdAEliminar}`, {
+    fetchWithAuth(`/productos/${productoIdAEliminar}`, {
         method: 'DELETE'
     })
         .then(response => {
@@ -258,7 +258,7 @@ function crearProducto() {
     };
 
     // enviar POST o backend
-    fetch('/productos', {
+    fetchWithAuth('/productos', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -277,7 +277,7 @@ function crearProducto() {
                 const formData = new FormData();
                 formData.append('imagenFile', archivoImagenSeleccionado);
 
-                return fetch(`/productos/${productoCreado.id}/ActFoto`, {
+                return fetchWithAuth(`/productos/${productoCreado.id}/ActFoto`, {
                     method: 'PUT',
                     body: formData
                 })
@@ -312,7 +312,7 @@ function modalEditarProducto(id) {
     modoEdicion = true;
     productoIdActual = id;
 
-    fetch(`/productos/${id}`)
+    fetchWithAuth(`/productos/${id}`)
         .then(response => response.json())
         .then(producto => {
             // 1. Rellenar form coos datos do producto
@@ -364,7 +364,7 @@ function editarProducto() {
     };
 
     // 6. Enviar PUT o backend
-    fetch(`/productos/${productoIdActual}`, {
+    fetchWithAuth(`/productos/${productoIdActual}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -398,7 +398,7 @@ function editarProducto() {
 function modalEditarStock(id) {
     productoIdActual = id;
 
-    fetch(`/productos/${id}`)
+    fetchWithAuth(`/productos/${id}`)
         .then(response => response.json())
         .then(producto => {
             // 1. Rellenar form coos datos do producto
@@ -433,7 +433,7 @@ function aumentarStock() {
         return;
     }
     // 5. enviar POST o backend
-    fetch(`/productos/${productoIdActual}/AumStock`, {
+    fetchWithAuth(`/productos/${productoIdActual}/AumStock`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -475,7 +475,7 @@ function reducirStock() {
         return;
     }
     // 5. enviar POST o backend
-    fetch(`/productos/${productoIdActual}/RedStock`, {
+    fetchWithAuth(`/productos/${productoIdActual}/RedStock`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -507,7 +507,7 @@ function reducirStock() {
 function modalEditarFoto(id) {
 
     productoIdActual = id;
-    fetch(`/productos/${id}`)
+    fetchWithAuth(`/productos/${id}`)
         .then(response => response.json())
         .then(producto => {
             // 1. Rellenar form coos datos do producto
@@ -540,7 +540,7 @@ function guardarFotoProducto() {
         const formData = new FormData();
         formData.append('imagenFile', inputFile.files[0]);
         // PUT al endpoint de imagen
-        fetch(`/productos/${productoIdActual}/ActFoto`, {
+        fetchWithAuth(`/productos/${productoIdActual}/ActFoto`, {
             method: 'PUT',
             body: formData
         })

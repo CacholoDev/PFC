@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -48,5 +49,6 @@ public class ProductoEntity {
 
     @OneToMany(mappedBy = "producto", cascade = jakarta.persistence.CascadeType.ALL) 
     @JsonIgnore // evita loops infinitos na serialización
+    @ToString.Exclude // Evita LazyInitializationException ao facer toString fóra de sesión
     private List<LineaPedido> lineasPedido;
 }

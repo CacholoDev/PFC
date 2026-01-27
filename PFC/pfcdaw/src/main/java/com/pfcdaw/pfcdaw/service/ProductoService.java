@@ -68,16 +68,38 @@ public class ProductoService {
     public ProductoEntity actualizarFoto(Long productoId, MultipartFile imagenFile) {
         ProductoEntity producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
-        // validar ficheiro
+        
+        // VALIDACIÓN 1: Archivo no vacío
         if (imagenFile == null || imagenFile.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El archivo de imagen no puede estar vacío");
         }
-        // validar e evitar posibles ataques usando ../ no nombre do arquivo e que non te vacio
+        
+        // VALIDACIÓN 2: Tamaño máximo (5MB)
+        long maxSize = 5 * 1024 * 1024; // 5MB
+        if (imagenFile.getSize() > maxSize) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El archivo no puede superar 5MB. Tamaño actual: " + (imagenFile.getSize() / 1024 / 1024) + "MB");
+        }
+        
+        // VALIDACIÓN 3: Tipo de archivo (solo imágenes)
+        String contentType = imagenFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Solo se permiten archivos de imagen (jpg, png, gif, webp)");
+        }
+        
+        // VALIDACIÓN 4: Extensión del archivo
         String nombreArchivo = imagenFile.getOriginalFilename();
         if (nombreArchivo == null || nombreArchivo.contains("..")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Nombre de archivo inválido: " + nombreArchivo);
+        }
+        
+        String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf(".")).toLowerCase();
+        if (!extension.matches("\\.(jpg|jpeg|png|gif|webp)$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Extensión no permitida. Solo: .jpg, .jpeg, .png, .gif, .webp");
         }
 
         // crear directorio uploads se non existe

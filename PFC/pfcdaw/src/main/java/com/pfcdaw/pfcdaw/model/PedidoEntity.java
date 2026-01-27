@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -42,6 +43,7 @@ public class PedidoEntity {
     private LocalDateTime fechaPedido = LocalDateTime.now();
 
     @OneToMany(mappedBy = "pedido", cascade=jakarta.persistence.CascadeType.ALL,orphanRemoval = true) // cascade para gardar lineas automaticamente cando se .save un pedido # orphanRemoval para eliminar liñas borradas na BD e que non queden colgadas para cando fagamos un editar pedido ou cancelarpedido
+    @ToString.Exclude // Evita LazyInitializationException ao facer toString fóra de sesión
     private List<LineaPedido> lineasPedido;
 
     @DecimalMin(value = "0.0", message = "El total debe ser un valor positivo o cero")

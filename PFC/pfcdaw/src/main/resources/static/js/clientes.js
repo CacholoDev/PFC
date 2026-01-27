@@ -35,7 +35,7 @@ function cargarClientes() {
     const tablaClientes = document.getElementById('tablaClientes');
     tablaClientes.innerHTML = 'Cargando clientes...';
 
-    fetch('/clientes')
+    fetchWithAuth('/clientes')
         .then(response => response.json())
         .then(data => {
             // Crear tabla
@@ -135,7 +135,7 @@ function cargarClientes() {
 // delete cliente
 function deleteCliente(clienteId) {
     if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
-        fetch(`/clientes/${clienteId}`, {
+        fetchWithAuth(`/clientes/${clienteId}`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -211,7 +211,7 @@ function crearCliente() {
     };
 
     // Post cliente
-    fetch('/clientes', {
+    fetchWithAuth('/clientes', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -246,7 +246,7 @@ function editarCliente(clienteId) {
     clienteIdEdicion = clienteId;
 
     // fetch cliente por id
-    fetch(`/clientes/${clienteId}`)
+    fetchWithAuth(`/clientes/${clienteId}`)
         .then(response => response.json())
         .then(cliente => {
             // llenar formulario
@@ -314,7 +314,7 @@ function actualizarCliente(clienteId) {
     };
 
     // enviar PUT request para actualizar cliente
-    fetch(`/clientes/${clienteId}`, {
+    fetchWithAuth(`/clientes/${clienteId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

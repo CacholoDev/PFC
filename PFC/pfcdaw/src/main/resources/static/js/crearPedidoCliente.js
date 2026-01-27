@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function cargarProductosDisponibles() {
     const listaProductosDiv = document.getElementById("listaProductos");
     listaProductosDiv.innerHTML = "Cargando productos...";
-    fetch("/productos")
+    fetchWithAuth("/productos")
       .then((response) => response.json())
       .then((data) => {
         listaProductosDiv.innerHTML = "";
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Enviando pedido:", pedidoDTO);
 
     // 4. Enviar post
-    fetch("/pedidos", {
+    fetchWithAuth("/pedidos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // function verFoto
 function verFotoProducto(productoId) {
-  fetch(`/productos/${productoId}`)
+  fetchWithAuth(`/productos/${productoId}`)
     .then((response) => response.json())
     .then((producto) => {
       // pintar imaxe no modal

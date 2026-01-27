@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
@@ -35,6 +37,7 @@ public class ClienteController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<ClienteEntity>> getAllClientes() {
         log.info("[GET /clientes] Listando todos los clientes");
@@ -43,6 +46,7 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteEntity> getClienteById(@PathVariable @NonNull Long id) {
         log.info("[GET /clientes/{}] Buscando cliente", id);
@@ -54,6 +58,7 @@ public class ClienteController {
                 });
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
         log.info("[POST /clientes] Creando cliente: {}", nuevoCliente.getEmail());
@@ -64,6 +69,7 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable @NonNull Long id) {
         if (!clienteRepository.existsById(id)) {
@@ -75,6 +81,7 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCliente(@PathVariable @NonNull Long id,
         @Valid @RequestBody @NonNull ClienteEntity clienteActualizado) {
@@ -85,7 +92,8 @@ public class ClienteController {
                     ClienteEntity clienteConEmail = clienteRepository.findByEmail(clienteActualizado.getEmail()).orElse(null);
                     if (clienteConEmail != null && !clienteConEmail.getId().equals(cliente.getId())) {
                         log.warn("[PUT /clientes/{}] Email duplicado: {}", id, clienteActualizado.getEmail());
-                        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, 
+                            "El email '" + clienteActualizado.getEmail() + "' ya está en uso por otro cliente");
                     }
                     cliente.setNombre(clienteActualizado.getNombre());
                     cliente.setApellido(clienteActualizado.getApellido());

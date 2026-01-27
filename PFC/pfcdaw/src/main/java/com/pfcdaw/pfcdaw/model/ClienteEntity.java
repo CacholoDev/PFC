@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -71,6 +72,7 @@ public class ClienteEntity {
     @Size(min = 4, max = 100, message = "La contraseña debe tener entre 4 y 100 caracteres")
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Non devolve password en get pero deixa post
+    @ToString.Exclude // Nunca loguear contraseñas, siempre por seguridad
     private String password;
 
     @Enumerated(EnumType.STRING) // Garda Enum como texto na BDD
@@ -81,6 +83,7 @@ public class ClienteEntity {
     // orphanRemoval (borra pedidos vacios)
     @OneToMany(mappedBy = "cliente", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // Evita loops infinitos, consulta pedidos por separado
+    @ToString.Exclude // Evita LazyInitializationException ao facer toString fóra de sesión
     private List<PedidoEntity> pedidos;
 
 }
