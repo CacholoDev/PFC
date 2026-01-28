@@ -251,4 +251,3 @@ El sistema tiene **JWT + Spring Security completamente funcional y seguro** para
 
 Las vulnerabilidades críticas han sido **todas corregidas**. Las recomendaciones futuras son para escalabilidad y producción enterprise.
 
-**Estado actual: PRODUCTION-READY para el alcance del proyecto.**
