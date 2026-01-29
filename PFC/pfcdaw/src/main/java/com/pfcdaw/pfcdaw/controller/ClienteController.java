@@ -58,7 +58,7 @@ public class ClienteController {
                 });
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ClienteEntity> createCliente(@Valid @RequestBody ClienteEntity nuevoCliente) {
         log.info("[POST /clientes] Creando cliente: {}", nuevoCliente.getEmail());
