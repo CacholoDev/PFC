@@ -131,7 +131,7 @@ async function crearCuenta() {
 
     // Post usuario
     try {
-        const response = await fetch('/clientes', {
+        const response = await fetch('/auth/register', {  // ✅ Cambio de /clientes a /auth/register
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -143,18 +143,21 @@ async function crearCuenta() {
             throw new Error(errorData.message || 'Error al crear la cuenta');
         }
         const data = await response.json();
-        alert('Cuenta creada con éxito. Ahora puedes iniciar sesión.');
+        
+        // ✅ Ahora guarda el token (usuario ya logueado)
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data));
+        
+        alert('Cuenta creada con éxito. Serás redirigido automáticamente.');
         console.log('Usuario registrado:', data);
-        // Cerrar modal
+        
+        // ✅ Redirigir según rol (siempre USER en registro)
         setTimeout(() => {
-            const modalElement = document.getElementById('modalRegister');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            modal.hide();
+            window.location.href = 'mis-pedidos.html';
         }, 300);
+        
     } catch (error) {
         console.error('Error al crear cuenta:', error);
         alert('Error al crear la cuenta: ' + error.message);
     }
-
-
 }
