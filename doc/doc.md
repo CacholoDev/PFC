@@ -1562,7 +1562,7 @@ Estas atribuciones ya están incluidas implícitamente al usar las librerías v�
 
 ---
 
-**Fecha finalización**: Diciembre 2025  
+**Fecha finalización**: Diciembre 2025, fecha de continuacion, 2026-
 **Autor**: Adrián Fábregas  
 **Contacto**: adriannoia104@gmail.com  
 **Repositorio**:
