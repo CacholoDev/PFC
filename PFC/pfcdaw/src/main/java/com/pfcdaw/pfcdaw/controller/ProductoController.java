@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -158,9 +159,9 @@ public class ProductoController {
 
     // putt actualizar foto con MultiparFile q ven a logica desde o ProductoService
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}/ActFoto")
+    @PutMapping(value = "/{id}/ActFoto", consumes = "multipart/form-data")
     public ResponseEntity<ProductoEntity> actualizarFoto(@PathVariable Long id,
-            @RequestParam MultipartFile imagenFile) {
+            @RequestPart("imagenFile") MultipartFile imagenFile) {
        
         log.info("[PUT /productos/{}/ActFoto] Actualizando foto", id);
         ProductoEntity productoActualizado = productoService.actualizarFoto(id, imagenFile);
