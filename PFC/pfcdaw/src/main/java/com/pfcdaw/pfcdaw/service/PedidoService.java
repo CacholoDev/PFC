@@ -6,11 +6,10 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.dto.PedidoCreateDto;
+import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.model.EstadoPedidoEnum;
 import com.pfcdaw.pfcdaw.model.LineaPedido;
@@ -45,20 +44,20 @@ public class PedidoService {
     public PedidoEntity createPedido(PedidoCreateDto dto) {
         // comprobamos nulls e listas vacias
         if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payload del pedido es obligatorio");
+            throw new BusinessException("Payload del pedido es obligatorio");
         }
 
         if (dto.getClienteId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "clienteId es obligatorio");
+            throw new BusinessException("clienteId es obligatorio");
         }
 
         if (dto.getProductos() == null || dto.getProductos().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lista de productos vacía");
+            throw new BusinessException("Lista de productos vacía");
         }
 
         // Comprobar que o cliente existe
         ClienteEntity cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente no encontrado"));
+                .orElseThrow(() -> new BusinessException("Cliente no encontrado"));
 
         log.debug("createPedido: clienteId={}, productoIds={}", dto.getClienteId(), dto.getProductos());
 
@@ -71,18 +70,18 @@ public class PedidoService {
                     productos.stream().map(ProductoEntity::getId).toList());
         }
         if (productos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Productos no encontrados");
+            throw new BusinessException("Productos no encontrados");
         }
 
         // Validar cantidades antes de calcular total
         dto.getProductos().forEach((id, cantidad) -> {
             if (cantidad == null || cantidad < 1) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                throw new BusinessException(
                         "La cantidad del producto " + id + " debe ser mayor a 0");
             }
             // SEGURIDAD: Evitar cantidades extremas (DoS/overflow)
             if (cantidad > 1000) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                throw new BusinessException(
                         "La cantidad del producto " + id + " no puede superar 1000 unidades por pedido");
             }
         });
@@ -92,7 +91,7 @@ public class PedidoService {
                 .filter(p -> p.getPrecio() == null)
                 .findAny() // busca productos con precio nulo
                 .ifPresent(p -> { // si atopou algo tira o error
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    throw new BusinessException(
                             "Precio inválido en producto id=" + p.getId());
                 });
 

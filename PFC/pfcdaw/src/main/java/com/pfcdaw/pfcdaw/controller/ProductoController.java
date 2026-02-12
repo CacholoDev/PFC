@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.dto.StockUpdateDto;
+import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ProductoEntity;
 import com.pfcdaw.pfcdaw.repository.ProductoRepository;
 import com.pfcdaw.pfcdaw.service.ProductoService;
@@ -133,8 +133,8 @@ public class ProductoController {
         productoService.aumentarStock(id, dto.getCantidad()); // usa o SERVICE (validacions incluidas)
 
         ProductoEntity productoActualizado = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Producto no encontrado"));
+                .orElseThrow(() -> new BusinessException(
+                        "Producto no encontrado"));
 
         return ResponseEntity.ok(productoActualizado);
     }
@@ -150,8 +150,8 @@ public class ProductoController {
         productoService.reducirStock(id, dto.getCantidad()); // usa o SERVICE (validacions incluidas)
 
         ProductoEntity productoActualizado = productoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Producto no encontrado"));
+                .orElseThrow(() -> new BusinessException(
+                        "Producto no encontrado"));
 
         return ResponseEntity.ok(productoActualizado);
     }

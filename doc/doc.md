@@ -1,20 +1,21 @@
 # Plataforma web de pedidos para panadería
-### [RepoGitLab](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
+
+## [RepoGitHub](https://github.com/CacholoDev/PFC)
 
 - [Plataforma web de pedidos para panadería](#plataforma-web-de-pedidos-para-panadería)
-    - [RepoGitLab](#repogitlab)
+  - [RepoGitHub](#repogithub)
   - [Introducción](#introducción)
   - [Análisis del contexto](#análisis-del-contexto)
   - [Propósito](#propósito)
   - [Objetivos](#objetivos)
   - [Alcance](#alcance)
-    - [Funcionalidades incluidas:](#funcionalidades-incluidas)
+    - [Funcionalidades incluidas](#funcionalidades-incluidas)
     - [Límites: debido al tiempo que tengo para realizar el PFC](#límites-debido-al-tiempo-que-tengo-para-realizar-el-pfc)
-    - [Contexto de uso:](#contexto-de-uso)
+    - [Contexto de uso](#contexto-de-uso)
   - [Conclusiones](#conclusiones)
   - [Referencias, Fuentes consultadas y Recursos externos: Webgrafía](#referencias-fuentes-consultadas-y-recursos-externos-webgrafía)
   - [1.Análisis](#1análisis)
-      - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
+    - [-Diagrama de caso de uso](#-diagrama-de-caso-de-uso)
   - [2. Diseño](#2-diseño)
     - [Arquitectura general (Dockerizada)](#arquitectura-general-dockerizada)
     - [Alternativa: Arquitectura local (XAMPP)](#alternativa-arquitectura-local-xampp)
@@ -60,7 +61,7 @@
       - [**Alertas de Stock Bajo**](#alertas-de-stock-bajo)
       - [**Gestión de Stock Separada**](#gestión-de-stock-separada)
       - [**Modal de Detalles de Pedido (Vista Usuario)**](#modal-de-detalles-de-pedido-vista-usuario)
-      - [**Autenticación con localStorage**](#autenticación-con-localstorage)
+      - [**Autenticacion con JWT (token en localStorage)**](#autenticacion-con-jwt-token-en-localstorage)
       - [**Validaciones Frontend**](#validaciones-frontend)
     - [5.5. Decisiones Técnicas](#55-decisiones-técnicas)
       - [**Vanilla JavaScript vs Frameworks**](#vanilla-javascript-vs-frameworks)
@@ -70,9 +71,11 @@
     - [5.6. Limitaciones](#56-limitaciones)
       - [**Estado cliente-servidor (stateless)**](#estado-cliente-servidor-stateless)
       - [**Estado Actual del Sistema de Autenticación**](#estado-actual-del-sistema-de-autenticación)
+      - [Tabla Comparativa: Evolución de Seguridad](#tabla-comparativa-evolución-de-seguridad)
       - [**Justificación de Decisiones Técnicas**](#justificación-de-decisiones-técnicas)
   - [6. Propuestas de  / Roadmap](#6-propuestas-de---roadmap)
     - [6.1. Mejoras de Seguridad (Prioridad Alta)](#61-mejoras-de-seguridad-prioridad-alta)
+      - [Estado: PARCIALMENTE COMPLETADA (Enero 2026)](#estado-parcialmente-completada-enero-2026)
     - [6.2. Mejoras Funcionales](#62-mejoras-funcionales)
     - [6.3. Mejoras de Experiencia de Usuario](#63-mejoras-de-experiencia-de-usuario)
     - [6.4. Mejoras Técnicas](#64-mejoras-técnicas)
@@ -80,6 +83,12 @@
   - [7. Conclusiones Finales del Proyecto](#7-conclusiones-finales-del-proyecto)
     - [7.1. Objetivos Alcanzados](#71-objetivos-alcanzados)
     - [7.2. Dificultades Encontradas y Soluciones](#72-dificultades-encontradas-y-soluciones)
+      - [1. Precisión en cálculos monetarios](#1-precisión-en-cálculos-monetarios)
+      - [2. Recursión infinita en JSON](#2-recursión-infinita-en-json)
+      - [3. Sincronización de totales](#3-sincronización-de-totales)
+      - [4. Gestión de stock transaccional](#4-gestión-de-stock-transaccional)
+      - [5. Compatibilidad CORS en Docker](#5-compatibilidad-cors-en-docker)
+      - [6. Limitaciones de tiempo FCT+PFC](#6-limitaciones-de-tiempo-fctpfc)
     - [7.3. Lecciones Aprendidas](#73-lecciones-aprendidas)
     - [7.4. Estado Final del Proyecto](#74-estado-final-del-proyecto)
     - [7.5. Valoración Personal](#75-valoración-personal)
@@ -92,7 +101,7 @@
     - [8.5. Dependencias de Desarrollo](#85-dependencias-de-desarrollo)
     - [8.7. Atribuciones Requeridas](#87-atribuciones-requeridas)
   - [9. Cobertura de rúbrica](#9-cobertura-de-rúbrica)
-        - [fin documentación PFC](#fin-documentación-pfc)
+    - [fin documentación PFC](#fin-documentación-pfc)
 
 ## Introducción
 
@@ -130,7 +139,7 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 
 ## Alcance
 
-### Funcionalidades incluidas:
+### Funcionalidades incluidas
 
 - Carrito básico
 - Realización del cliente de pedidos.
@@ -156,13 +165,12 @@ El objetivo principal es la **digitalización de la panader´ia**, con una soluc
 - Web inicial.
 - SpringBoot Security
 
-### Contexto de uso:
+### Contexto de uso
 
 - Proyecto académico de fin de ciclo (DAW).
 - Aplicación de ejemplo para un negocio local.
 - Base para **futuras ampliaciones** (ver detalles en la sección 6.
 - Prototipo funcional con datos de prueba, no una versión en producción.  
-    
 
 ## Conclusiones
 
@@ -180,7 +188,6 @@ El proyecto permitirá afianzar competencias clave en desarrollo web y servirá 
 - [GitLab Documentation](https://docs.gitlab.com/)
 - [StackOverflow](https://stackoverflow.com/)
 
-
 ## 1.Análisis
 
 Para el desarrollo de este proyecto se ha optado por una **metodología Kanban**, ya que permite organizar las tareas de forma visual y flexible. Dado que se trata de un proyecto individual y con tiempo limitado, además de tener que estar haciendo a la par la FCT en Santiago 8h(09:00-17:00) siendo de Noia y me consume mucho tiempo para hacer un buen PFC.
@@ -189,15 +196,15 @@ El enfoque consiste en dividir el trabajo en pequeñas tareas o fases visibles e
 
 Se usa un tablero Trello donde se registran las tareas principales del proyecto:
 
-* Configuración del entorno de desarrollo (Spring Boot, MySQL, VSCode).
-* Creación de la base de datos y conexión desde el backend.
-* Implementación de la API REST.
-* Desarrollo del frontend con HTML, CSS y JavaScript.
-* Pruebas locales y documentación.
+- Configuración del entorno de desarrollo (Spring Boot, MySQL, VSCode).
+- Creación de la base de datos y conexión desde el backend.
+- Implementación de la API REST.
+- Desarrollo del frontend con HTML, CSS y JavaScript.
+- Pruebas locales y documentación.
 
 Enlace a Trello para ver el Kanban: [KanbanTrello](https://trello.com/b/DpZTdW2t/client-workflow-management) - visibilidad publica.
 
-#### -Diagrama de caso de uso
+### -Diagrama de caso de uso
 
 El siguiente diagrama muestra de forma general las **interacciones principales** en la aplicación web de pedidos para panadería.
 
@@ -215,7 +222,6 @@ sequenceDiagram
     Panadero->>Sistema: Gestionar pedidos,clientes y productos
 ```
 
-
 ## 2. Diseño
 
 El proyecto está dividido en tres partes principales:
@@ -226,8 +232,8 @@ El proyecto está dividido en tres partes principales:
 
 **Frontend**: Página web sencilla hecha con HTML, CSS, Bootstrap y JavaScript, que permite listar productos y realizar pedidos.
 
-
 ### Arquitectura general (Dockerizada)
+
 ```mermaid
 graph TD
     Nginx[Nginx Proxy/Frontend]
@@ -242,6 +248,7 @@ graph TD
 ```
 
 ### Alternativa: Arquitectura local (XAMPP)
+
 ```mermaid
 graph TD
     A[Frontend HTML/CSS/JS] <--> B[Spring Boot Backend]
@@ -257,6 +264,7 @@ graph TD
 - **Persistencia:** Los datos de MySQL se guardan en un volumen, así no se pierden aunque borres los contenedores.
 - **Fácil despliegue:** Un solo comando (`docker-compose up`) levanta toda la plataforma.
 - **Aislamiento:** Cada servicio corre en su propio contenedor, evitando conflictos de dependencias.
+- **Multi-stage build:** El backend usa Dockerfile multi-stage (build + runtime) para una imagen mas ligera.
 
 ### ¿Cómo funciona la persistencia de MySQL con Docker?
 
@@ -270,11 +278,13 @@ volumes:
 Esto hace que los datos de la base de datos se almacenen fuera del contenedor, en el sistema de archivos del host. Así, aunque borres o actualices el contenedor de MySQL, los datos permanecen.
 
 Para ver dónde está el volumen en tu máquina, ejecuta:
+
 ```bash
 docker volume inspect mysql_panaderia
 ```
 
 Para borrar todos los datos:
+
 ```bash
 docker volume rm mysql_panaderia
 ```
@@ -284,15 +294,18 @@ docker volume rm mysql_panaderia
 - **El puerto 3306 está ocupado:** Para el servicio MySQL de XAMPP o cualquier otro MySQL local antes de usar Docker.
 - **Permisos en volúmenes:** Si tienes errores de permisos, prueba a borrar el volumen y crearlo de nuevo.
 - **No se ven los cambios en el frontend:** Asegúrate de que el volumen de archivos estáticos está bien mapeado en `docker-compose.yml`.
+- **Error 413 al subir imagenes:** Ajusta `client_max_body_size` en `nginx.conf` y reconstruye el contenedor.
 - **No arranca algún servicio:** Usa `docker compose logs <servicio>` para ver los errores detallados.
 
 ### Despliegue recomendado: Docker Compose
 
 1. Clona el repositorio y entra en la carpeta donde esten los dockerfile, compose...:
+
     ```bash
     cd PFC/pfcdaw
     docker-compose up
     ```
+
     Esto levanta MySQL, backend y Nginx con persistencia de datos.
 
 2. Accede a la app en [http://localhost:8081](http://localhost:8081)
@@ -305,8 +318,8 @@ docker volume rm mysql_panaderia
 ### Localhost: XAMPP/MySQL local
 
 **Para usar localhost:**
-- Como uso variables de entorno si arrancas con docker leera las variables de entorno y estaras en docker, si no si arrancas desde el main o comandos te ira al localhost
 
+- Como uso variables de entorno si arrancas con docker leera las variables de entorno y estaras en docker, si no si arrancas desde el main o comandos te ira al localhost
 
 #### Diagrama de Arquitectura Detallado
 
@@ -334,6 +347,7 @@ flowchart LR
 ```
 
 **Flujo de ejemplo - Crear Pedido**:
+
 1. Usuario hace clic en "Crear Pedido" → `fetch('/pedidos', { method: 'POST', body: pedidoDto })`
 2. **Controller** (`PedidoController`) recibe `PedidoCreateDto` y llama a `pedidoService.createPedido(dto)`
 3. **Service** (`PedidoService`) valida datos, crea entidades `PedidoEntity` + `LineaPedido`, reduce stock
@@ -343,6 +357,7 @@ flowchart LR
 7. JavaScript actualiza la tabla sin recargar página
 
 **Ventajas de esta arquitectura**:
+
 - **Separación de capas**: Controller maneja HTTP, Service lógica de negocio, Repository persistencia
 - **Transaccionalidad**: `@Transactional` en Service garantiza rollback si falla alguna operación
 - **DTOs**: Evitan exponer entidades JPA directamente, permiten validaciones con Jakarta
@@ -433,10 +448,13 @@ sequenceDiagram
     Service-->>Controller: PedidoEntity guardado
     Controller-->>Cliente: 201 Created<br/>{pedido con líneas}
 ```
+
 #### Decisiones de diseño
+
 -Uso de de Logger para ver la info de lo que está pasando en la app por consola
 
-- Autenticación implementada en frontend con roles (ADMIN/USER) y sesiones en localStorage; seguridad backend pendiente (ver sección 6: [Propuestas de Mejora](#6-propuestas-de-mejora), Spring Security/JWT)
+- Autenticacion con JWT + Spring Security: el frontend guarda el token en `localStorage` y lo envia en `Authorization: Bearer <token>`. El backend valida con `JwtTokenFilter` y aplica roles con `@PreAuthorize`.
+- Manejo de errores centralizado con `@ControllerAdvice` y `BusinessException`, devolviendo respuestas JSON uniformes.
 
 - Los datos de conexión a la base de datos se guardan en un archivo .env (Seguridad adicional)(en este caso los subiremos al github, no pondremos gitignore para mostrar el 100% en el PFC y cuando lo termine, poner el .gitignore con el .env cambiando los datos del user/pass).
 
@@ -453,18 +471,19 @@ Se ha integrado **Swagger UI** para documentación interactiva de la API REST. P
 **Probar Swagger**: Usar el boton al lado de cada metodo de "Try It OUT"
 
 **Ventajas**:
+
 - Documentación automática generada desde los controllers
 - Interfaz visual para probar endpoints sin Postman
 - Exportación de especificación OpenAPI 3.0 (JSON/YAML)
 - Actualización automática al modificar código
 
 **Recursos principales documentados**:
+
 - **Clientes**: GET/POST/DELETE (`/clientes`)
 - **Productos**: CRUD completo + gestión de stock (`/productos`, `/productos/{id}/AumStock`, `/productos/{id}/RedStock`)
 - **Pedidos**: GET/POST/PUT para gestión de estados (`/pedidos`, `/pedidos/cliente/{id}`, `/pedidos/{id}/estado`)
 
 **Nota**: El stock se gestiona mediante endpoints dedicados o automáticamente al crear pedidos.
-
 
 ## 3.Planificación
 
@@ -499,11 +518,10 @@ gantt
 
 ### Estimación de recursos y costes
 
-* **Duración:** 9 semanas (~75-85 horas)
-* **Coste simulado:** 20 €/h * 80h → 1600€
-* **Retorno estimado(fictio):** 3000€
-* **Recursos:** ordenador personal, VSCode, MySQL, Spring Boot, conexión a internet
-
+- **Duración:** 9 semanas (~75-85 horas)
+- **Coste simulado:** 20 €/h * 80h → 1600€
+- **Retorno estimado(fictio):** 3000€
+- **Recursos:** ordenador personal, VSCode, MySQL, Spring Boot, conexión a internet
 
 ---
 
@@ -512,7 +530,7 @@ gantt
 ### 4.1. Tecnologías Utilizadas
 
 | Tecnología | Versión | Uso |
-|------------|---------|-----|
+| ------------ | --------- | ----- |
 | Java | 21 | Lenguaje base |
 | Spring Boot | 3.5.7 | Framework backend |
 | Spring Data JPA | 3.5.7 | Persistencia ORM |
@@ -520,14 +538,16 @@ gantt
 | Lombok | Latest | Reducción boilerplate |
 | Jakarta Validation | Latest | Validaciones |
 | SLF4J | Latest | Logging |
-| SpringDoc OpenAPI | Documentación API (Swagger UI) |
+| SpringDoc OpenAPI | Documentación API (Swagger UI) | |
 
 ### 4.2. Decisiones de Arquitectura
 
 #### **Uso de BigDecimal en vez de Double**
+
 **Problema detectado**: Al usar `Double` para precios, operaciones como `1.80 * 3` daban `3.5999999999...` por la representación binaria.
 
 **Solución implementada**: Migración a `BigDecimal` en todos los campos monetarios:
+
 - `ProductoEntity.precio`: `BigDecimal`
 - `LineaPedido.pTotal`: `BigDecimal`
 - `PedidoEntity.total`: `BigDecimal`
@@ -536,14 +556,17 @@ gantt
 **Resultado**: Precisión exacta en cálculos monetarios.
 
 #### **LineaPedido como entidad separada**
+
 En vez de guardar solo IDs de productos en un pedido, se creó una entidad `LineaPedido` que actúa como tabla intermedia entre `PedidoEntity` y `ProductoEntity`.
 
 **Ventajas**:
+
 - Permite cantidad variable por producto
 - Guarda precio histórico (si el precio cambia después, el pedido mantiene el precio original)
 - Permite calcular subtotales por línea
 
 #### **Lifecycle Hooks para recalcular totales**
+
 Se implementaron los métodos `@PrePersist` y `@PreUpdate` en `PedidoEntity` para recalcular automáticamente el total sumando las líneas:
 
 ```java
@@ -563,12 +586,15 @@ public void recalcularTotal() {
 **Ventaja**: Aunque se eliminen productos (cascade) o se modifiquen líneas, el total siempre está sincronizado.
 
 #### **Prevención de recursión infinita en JSON**
+
 **Problema**: Al serializar `PedidoEntity` con Jackson, se generaba:
-```
+
+```java
 Pedido → lineasPedido → LineaPedido → pedido → lineasPedido → ... (∞)
 ```
 
 **Solución**: Añadir `@JsonIgnore` en la referencia inversa:
+
 ```java
 @ManyToOne
 @JsonIgnore  // Corta la recursión
@@ -576,7 +602,9 @@ private PedidoEntity pedido;
 ```
 
 #### **Gestión de stock transaccional**
+
 El servicio `PedidoService` está anotado con `@Transactional`, lo que garantiza:
+
 - Si falla la reducción de stock de algún producto → rollback completo
 - Si falla guardar el pedido → no se reduce stock
 - Atomicidad: o se completa todo o nada
@@ -584,6 +612,7 @@ El servicio `PedidoService` está anotado con `@Transactional`, lo que garantiza
 ### 4.3. Validaciones Implementadas
 
 #### **Nivel DTO** (entrada de datos)
+
 ```java
 @NotNull
 @Size(min = 1, message = "El pedido debe tener al menos un producto")
@@ -591,6 +620,7 @@ private Map<Long, Integer> productos;
 ```
 
 #### **Nivel Entity** (persistencia)
+
 ```java
 @NotBlank(message = "El nombre del producto es obligatorio")
 private String nombre;
@@ -600,6 +630,7 @@ private BigDecimal precio;
 ```
 
 #### **Nivel Service** (lógica de negocio)
+
 - Validación de cliente existente
 - Validación de productos existentes
 - Validación de stock suficiente
@@ -610,6 +641,7 @@ private BigDecimal precio;
 Todos los controllers y services tienen logging estructurado:
 
 **Ejemplo en ProductoController**:
+
 ```java
 log.info("[POST /productos/{}] Creando nuevo producto: {}", producto.getNombre());
 log.debug("[PUT /productos/{}] Antes: nombre={}, precio={}", id, producto.getNombre(), producto.getPrecio());
@@ -617,6 +649,7 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 ```
 
 **Nivel configurado**: `DEBUG` en desarrollo, permite ver:
+
 - Peticiones HTTP entrantes
 - Queries SQL ejecutadas
 - Operaciones de negocio (creación pedido, reducción stock)
@@ -634,7 +667,7 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 ### 5.1. Tecnologías y Bibliotecas
 
 | Tecnología | Versión | Uso |
-|------------|---------|-----|
+| ------------ | --------- | ----- |
 | HTML5 | - | Estructura semántica |
 | CSS3 + Bootstrap | 5.3.8 | Estilos y componentes UI |
 | JavaScript (Vanilla) | ES6+ | Lógica cliente, fetch API |
@@ -647,9 +680,9 @@ log.warn("[DELETE /productos/{}] Producto no encontrado", id);
 
 ### 5.2. Estructura de Archivos
 
-```
+```java
 resources/static/
-├── login.html              # Autenticación básica
+├── login.html              # Autenticación JWT
 ├── dashboard.html          # Panel admin (tabs)
 ├── mis-pedidos.html        # Vista cliente
 ├── css/
@@ -669,6 +702,7 @@ resources/static/
 ### 5.3. Arquitectura Frontend
 
 #### **Comunicación con API REST mediante Fetch**
+
 Todas las operaciones con el backend usan `fetch()` con manejo de promesas:
 
 ```javascript
@@ -679,6 +713,7 @@ fetch('/productos')
 ```
 
 #### **Modales Reutilizables con Estado**
+
 Se usan variables globales (`modoEdicion`, `idActual`) para reutilizar modales en crear/editar:
 
 ```javascript
@@ -701,6 +736,7 @@ function modalEditarProducto(id) {
 **Ventaja**: Reduce duplicación de HTML, un solo modal maneja crear y editar.
 
 #### **Renderizado Dinámico con Template Literals**
+
 Las tablas se construyen dinámicamente usando template strings de ES6:
 
 ```javascript
@@ -722,12 +758,15 @@ data.forEach(producto => {
 ### 5.4. Funcionalidades Implementadas
 
 #### **Sistema de Tabs (dashboard.html)**
+
 Panel admin con navegación por pestañas sin recarga de página:
+
 - **Tab Clientes**: Crear/eliminar clientes, badges de rol (ADMIN/USER)
 - **Tab Productos**: CRUD completo + gestión stock independiente
 - **Tab Pedidos**: Ver todos los pedidos, cambiar estado, ver detalles
 
 #### **DataTables: Búsqueda, Ordenación, Paginación**
+
 Integración de DataTables en todas las tablas con configuración española:
 
 ```javascript
@@ -747,15 +786,18 @@ $('#tablaProductos table').DataTable({
 ```
 
 **Funciones incluidas**:
+
 - Búsqueda en tiempo real
 - Ordenación por columnas
 - Paginación configurable
 - Exportación a CSV, Excel, PDF, Copiar, Imprimir
 
 #### **Sistema de Badges de Color**
+
 Indicadores visuales para estados y roles usando clases Bootstrap:
 
 **Estados de pedido** (pedidos.js):
+
 ```javascript
 function getBadgeClass(estado) {
     switch(estado) {
@@ -769,6 +811,7 @@ function getBadgeClass(estado) {
 ```
 
 **Roles de usuario** (clientes.js):
+
 ```javascript
 function getBadgeRoleClass(role) {
     return role === 'ADMIN' ? 'bg-warning' : 'bg-info';
@@ -776,6 +819,7 @@ function getBadgeRoleClass(role) {
 ```
 
 #### **Alertas de Stock Bajo**
+
 Renderizado condicional con operador ternario cuando stock < 10:
 
 ```javascript
@@ -787,6 +831,7 @@ Renderizado condicional con operador ternario cuando stock < 10:
 **Resultado visual**: Celda roja con emoji de advertencia para productos con stock crítico.
 
 #### **Gestión de Stock Separada**
+
 Modal independiente para aumentar/reducir stock con validaciones frontend:
 
 ```javascript
@@ -810,6 +855,7 @@ function reducirStock() {
 **Ventaja**: Evita modificar stock accidentalmente al editar otros datos del producto.
 
 #### **Modal de Detalles de Pedido (Vista Usuario)**
+
 En `mis-pedidos.html`, los usuarios pueden ver el detalle completo de sus pedidos en un modal Bootstrap:
 
 ```javascript
@@ -836,6 +882,7 @@ function verDetallesPedido(pedidoId) {
 ```
 
 **Características**:
+
 - Petición individual por pedido ID (endpoint `/pedidos/{id}`)
 - Renderizado dinámico de líneas de pedido con template literals
 - Muestra producto, cantidad y subtotal por línea
@@ -843,28 +890,27 @@ function verDetallesPedido(pedidoId) {
 
 **Ventaja**: Usuario puede revisar qué productos incluyó en cada pedido histórico.
 
-#### **Autenticación con localStorage**
-El sistema de autenticación es **básico pero funcional**, usando `localStorage` del navegador para persistir sesión:
+#### **Autenticacion con JWT (token en localStorage)**
+
+El sistema de autenticacion usa **JWT**: el frontend guarda el token en `localStorage` y lo envia en cada peticion autenticada.
 
 **Flujo de login** (`login.js`):
+
 ```javascript
-fetch('/clientes')
-    .then(response => response.json())
-    .then(clientes => {
-        const usuario = clientes.find(c => 
-            c.email === email && c.password === password
-        );
-        
-        if (usuario) {
-            localStorage.setItem('usuario', JSON.stringify(usuario));
-            window.location.href = usuario.rol === 'ADMIN' 
-                ? 'dashboard.html' 
-                : 'mis-pedidos.html';
-        }
-    });
+fetch('/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+})
+  .then(response => response.json())
+  .then(data => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('usuario', JSON.stringify(data));
+  });
 ```
 
 **Protección de rutas** (cada página):
+
 ```javascript
 document.addEventListener('DOMContentLoaded', function() {
     const usuarioTexto = localStorage.getItem('usuario');
@@ -885,12 +931,14 @@ document.addEventListener('DOMContentLoaded', function() {
 ```
 
 **Logout**:
+
 ```javascript
 localStorage.removeItem('usuario');
 window.location.href = 'login.html';
 ```
 
 **Características actuales**:
+
 - **Persistencia frontend**: Token se almacena en `localStorage` para mantener sesión
 - **Redirección por rol**: ADMIN → dashboard, USER → mis-pedidos
 - **Datos de usuario**: Nombre, email, rol disponibles en `localStorage` para personalización UI
@@ -900,7 +948,7 @@ window.location.href = 'login.html';
 
 **Flujo de Seguridad Actual (Enero 2026)**:
 
-```
+```java
 CLIENTE (Login)
   ↓ POST /auth/login { email, password }
 LOGINCONTROLLER
@@ -926,6 +974,7 @@ CONTROLLER
 ```
 
 **Seguridad Implementada**:
+
 1. ✅ **BCrypt Password Hashing**: Contraseñas irreversiblemente hasheadas
 2. ✅ **JWT Signing**: Tokens firmados con clave secreta HMAC-SHA512 (imposible falsificar)
 3. ✅ **Stateless Auth**: Sin sesiones en servidor, sin cookies de sesión
@@ -935,27 +984,32 @@ CONTROLLER
 7. ✅ **Role-Based Access**: Token contiene rol para futuros @PreAuthorize checks
 
 **Vulnerabilidades residuales (conocidas y aceptadas en fase PFC)**:
+
 - localStorage puede ser accesible por XSS en frontend
 - Token enviado en Authorization header (mitigado con HTTPS en producción)
 - Sin refresh token (requeriría roundtrip servidor)
 
 **Plan futuro**:
+
 - Agregar refresh token endpoint para extender sesión
 - Implementar logout "blacklist" para revocación inmediata
+- Rate limiting en `/auth/login`
 - Agregar @PreAuthorize en controllers por rol específico
 - Validación de CORS y headers de seguridad
 
-
 **Justificación técnica de la decisión:**
-- Implementar Spring Security completo requiere bastante tiempo que ahora no dispongo del (configuración + testing CORS + cookies cross-origin)
-- El proyecto ya incluye: backend funcional, frontend completo, DataTables, Swagger, documentación extensa
-- La autenticación básica con localStorage demuestra comprensión de flujos de login/logout/protección de rutas en frontend
-- Esta limitación está **documentada y reconocida**, no es un descuido
 
-**Ventaja actual**: Prototipo funcional completo que cumple los objetivos del PFC en el tiempo disponible. La migración a Spring Security será la primera mejora implementada post-defensa.
+- La autenticación con JWT + Spring Security está implementada y documentada en detalle
+- El proyecto ya incluye: backend funcional, frontend completo, DataTables, Swagger, documentación extensa
+- El uso de `localStorage` para guardar el token es una decisión práctica para el entorno de PFC, con riesgos documentados
+- Las limitaciones restantes (refresh token, blacklist, rate limiting) están planificadas
+
+**Ventaja actual**: Prototipo funcional completo que cumple los objetivos del PFC en el tiempo disponible, con seguridad backend aplicada.
 
 #### **Validaciones Frontend**
+
 Antes de enviar datos al backend, se validan:
+
 - Campos obligatorios no vacíos
 - Cantidades positivas
 - Formato email con regex
@@ -964,12 +1018,16 @@ Antes de enviar datos al backend, se validan:
 ### 5.5. Decisiones Técnicas
 
 #### **Vanilla JavaScript vs Frameworks**
+
 Se optó por JavaScript puro sin React porque:
+
 - Proyecto de alcance limitado debido al tiempo disponible
 **Consideración futura**: Migración a React
 
 #### **Bootstrap como Framework CSS**
+
 Elección de Bootstrap 5 por:
+
 - Componentes prediseñados (modals, badges, alerts, forms...)
 - Responsive
 - Grid system para layouts
@@ -977,13 +1035,17 @@ Elección de Bootstrap 5 por:
 - Compatibilidad con DataTables
 
 #### **DataTables para Tablas Interactivas**
+
 Integración de DataTables en vez de implementación manual porque:
+
 - Ahorra +-30 minutos de desarrollo por tabla
 - Funcionalidad robusta y probada (usado por Netflix, Google)
 - Exportación incluida en extensiones oficiales
 
 #### **Separación de Concerns**
+
 Cada vista tiene su propio archivo JS:
+
 - `clientes.js` → Gestión de clientes
 - `productos.js` → Gestión de productos
 - `pedidos.js` → Vista admin de pedidos
@@ -995,20 +1057,23 @@ Cada vista tiene su propio archivo JS:
 ### 5.6. Limitaciones
 
 #### **Estado cliente-servidor (stateless)**
-- El único estado de usuario vive en el frontend (localStorage) y no es validado en servidor, por lo que el backend no aplica control de sesión.
-- Justificación actual: prototipo académico priorizando rapidez y despliegue simple en Docker/XAMPP.
-- Plan próximo (ver sección 6.1): añadir **Spring Security** con sesiones backend + cookies `httpOnly` (stateful) o JWT (stateless seguro) según necesidad.
+
+- El estado de usuario se maneja con JWT stateless: token en `localStorage` y validacion en servidor en cada peticion.
+- Limitaciones: token en `localStorage` (riesgo XSS) y ausencia de refresh token.
+- Plan proximo (ver sección 6.1): refresh tokens y logout con blacklist.
 
 #### **Estado Actual del Sistema de Autenticación**
 
 El sistema ha evolucionado significativamente desde la versión inicial. A partir de enero de 2026, se ha implementado:
 
 **✅ IMPLEMENTADO (Enero 2026):**
+
 - **BCrypt Password Encoding**: Todas las contraseñas se almacenan hasheadas con BCryptPasswordEncoder
 - **JWT (JSON Web Tokens)**: Generación y validación de tokens stateless con librería jjwt 0.12.6
 - **Spring Security**: Integración completa con filtros JWT y configuración de autorización
 - **JwtTokenFilter**: Filtro que intercepta peticiones, valida tokens y autentica usuarios
 - **Stateless API**: API REST completamente stateless (sin sesiones de servidor, sin cookies)
+- **Manejo global de errores**: `ExceptionHandlerGlobal` + `BusinessException` con respuestas JSON uniformes
 
 **🔄 FLUJO ACTUAL DE AUTENTICACIÓN:**
 
@@ -1032,10 +1097,10 @@ El sistema ha evolucionado significativamente desde la versión inicial. A parti
    - Archivos estáticos → permitAll
    - Resto de endpoints → `.authenticated()` (requieren token válido)
 
-**Tabla Comparativa: Evolución de Seguridad**
+#### Tabla Comparativa: Evolución de Seguridad
 
 | Aspecto | Versión Inicial | Versión Actual |
-|--------|---|---|
+| -------- | --- | --- |
 | **Almacenamiento contraseñas** | Texto plano ❌ | BCrypt hash ✅ |
 | **Autenticación HTTP** | localStorage sin validación | JWT + Spring Security ✅ |
 | **Validación servidor** | No existe | JwtTokenFilter + SecurityConfig ✅ |
@@ -1046,7 +1111,7 @@ El sistema ha evolucionado significativamente desde la versión inicial. A parti
 
 **Componentes Involucrados:**
 
-```
+```java
 Código cliente (login.js)
     ↓ POST /auth/login (email + password)
 LoginUsuarioC (controller)
@@ -1073,46 +1138,54 @@ Controller recibe petición autenticada
 - **Claims en token**: email (subject), role, id, issuedAt, expiration
 
 **Próximos Pasos (Post-Defensa):**
+
 - Agregar endpoints de refresh token para extender sesión sin reauthenticate
 - Implementar logout "blacklist" de tokens (revocación)
+- Rate limiting en `/auth/login`
 - Agregar `@PreAuthorize` annotations en controllers por rol
 - Cambios en frontend: fetch helper con Authorization header automático
 
-El proyecto implementa **autenticación básica en frontend** mediante `localStorage` con las siguientes características:
+El proyecto implementa **autenticación con JWT** (backend) y token en `localStorage` (frontend) con las siguientes características:
 
 **✅ Funcionalidades implementadas:**
+
 - Login con validación de email/contraseña
 - Redirección automática según rol (ADMIN → dashboard / USER → mis-pedidos)
 - Protección de rutas en frontend (redirección a login si no autenticado)
 - Logout con limpieza de sesión
 - Persistencia de datos de usuario entre recargas
+- Peticiones autenticadas con `Authorization: Bearer <token>`
 
 **❌ Limitaciones identificadas:**
 
-1. **Exposición de API REST sin autenticación backend**
-   - **Problema**: Los endpoints como `/clientes`, `/productos`, `/pedidos` son accesibles directamente sin validación
-   - **Riesgo**: Cualquier usuario puede listar/modificar datos sin estar logueado
-   - **Ejemplo**: `curl http://localhost:8080/clientes` devuelve lista completa sin credenciales
+1. **Token en localStorage**
 
-2. **Almacenamiento inseguro de sesión**
-   - **Problema**: `localStorage` es accesible por JavaScript y vulnerable a ataques XSS
-   - **Riesgo**: Scripts maliciosos pueden robar datos de sesión y contraseñas
+- **Problema**: `localStorage` es accesible por JavaScript y vulnerable a ataques XSS
+- **Riesgo**: Scripts maliciosos pueden robar el token
 
-3. **Contraseñas en texto plano**
-   - **Problema**: Campo `password` en `ClienteEntity` sin cifrado
-   - **Riesgo**: Acceso directo a MySQL expone contraseñas reales de usuarios
+1. **Sin refresh token**
 
-4. **Sin mecanismo de expiración**
-   - **Problema**: Sesión permanece activa hasta logout manual
-   - **Riesgo**: Equipos compartidos mantienen sesiones abiertas indefinidamente
+- **Problema**: Cuando expira el token (1h) el usuario debe volver a loguearse
+- **Riesgo**: Mala experiencia de usuario en sesiones largas
+
+1. **Sin revocación inmediata**
+
+- **Problema**: El logout solo borra el token del cliente
+- **Riesgo**: Un token robado sigue siendo válido hasta expirar
+
+1. **Sin rate limiting en login**
+
+- **Problema**: Falta limitar intentos en `/auth/login`
+- **Riesgo**: Ataques de fuerza bruta
 
 #### **Justificación de Decisiones Técnicas**
 
 Esta arquitectura fue elegida conscientemente considerando:
+
 - PFC desarrollado en paralelo con FCT (8h/día Santiago + 2h desplazamiento)
 - Priorización de funcionalidades core del negocio sobre seguridad avanzada que aplicaremos en futuras mejoras
 
-**Ventaja actual**: Sistema completamente funcional que cumple todos los objetivos del PFC en el tiempo disponible. La migración a Spring Security con sesiones backend será la primera mejora post-defensa.
+**Ventaja actual**: Sistema completamente funcional que cumple todos los objetivos del PFC en el tiempo disponible, con JWT y seguridad backend aplicada.
 
 ---
 
@@ -1122,10 +1195,10 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
 
 ### 6.1. Mejoras de Seguridad (Prioridad Alta)
 
-**Estado: PARCIALMENTE COMPLETADA (Enero 2026)**
+#### Estado: PARCIALMENTE COMPLETADA (Enero 2026)
 
 | Mejora | Tecnología | Impacto | Estado |
-|--------|------------|---------|--------|
+| -------- | ------------ | --------- | -------- |
 | **Spring Security** | Spring Security 6+ | Autenticación backend completa | ✅ IMPLEMENTADA |
 | **Hash de contraseñas** | BCryptPasswordEncoder | Protección de credenciales en BD | ✅ IMPLEMENTADA |
 | **JWT** | jjwt library 0.12.6 | APIs stateless + validación token | ✅ IMPLEMENTADA |
@@ -1133,8 +1206,10 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
 | **CSRF Protection** | Spring Security CSRF tokens | Prevención ataques cross-site | 🔄 Futura |
 | **Roles y permisos mejorados** | @PreAuthorize, @Secured | Control acceso por endpoint | 🔄 Futura |
 | **Refresh Token** | JWT con rotación | Extender sesión sin reauthenticate | 🔄 Futura |
+| **Rate limiting /auth/login** | Bucket4j / filtros | Mitigar fuerza bruta | 🔄 Futura |
 
 **Implementado en Enero 2026:**
+
 - ✅ BCrypt: Todas las contraseñas hasheadas (LoginController + ClienteController)
 - ✅ JWT: Generación en login, validación en cada petición vía JwtTokenFilter
 - ✅ Spring Security: SecurityConfig con filtro JWT + autorización de endpoints
@@ -1142,15 +1217,17 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
 - ✅ Token Expiration: Automática tras 1 hora
 
 **Pendiente post-defensa:**
+
 - Refresh token para extender sesión sin reauthenticate
 - Revocación de tokens (logout blacklist)
 - @PreAuthorize por rol en controllers
 - Validación adicional CORS y headers de seguridad
-
+- Rate limiting en `/auth/login`
 
 ### 6.2. Mejoras Funcionales
 
 **Frontend:**
+
 - **Migración a React**
   - Componentes reutilizables
   - Estado global con Redux
@@ -1177,6 +1254,7 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
   - Estimación: 2 semanass
 
 **Backend:**
+
 - **Sistema de notificaciones**
   - Email al cliente cuando cambia estado pedido
   - Spring Mail + plantillas HTML
@@ -1192,7 +1270,6 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
   - Añadir `@Version` en entidades
   - Previene conflictos de concurrencia
   - Estimación: 2 días
-
 
 ### 6.3. Mejoras de Experiencia de Usuario
 
@@ -1284,6 +1361,7 @@ Esta sección recoge todas las mejoras futuras identificadas para evolucionar el
 El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfactoriamente todos los objetivos planteados inicialmente:
 
 ✅ **Backend funcional con Spring Boot:**
+
 - API REST completa con endpoints para productos, clientes y pedidos
 - Persistencia en MySQL con JPA/Hibernate
 - Validaciones en múltiples niveles (DTO, Entity, Service)
@@ -1291,6 +1369,7 @@ El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfacto
 - Documentación automática con Swagger UI
 
 ✅ **Frontend operativo con HTML/CSS/JS/BOOTSTRAP:**
+
 - Interfaz intuitiva con Bootstrap 5
 - Sistema de autenticación con roles (ADMIN/USER)
 - Panel de administración completo con tabs
@@ -1299,6 +1378,7 @@ El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfacto
 - Modales reutilizables para CRUD completo
 
 ✅ **Funcionalidades core implementadas:**
+
 - CRUD completo de productos (con gestión de imágenes)
 - CRUD de clientes con asignación de roles
 - Creación de pedidos con carrito básico
@@ -1307,6 +1387,7 @@ El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfacto
 - Gestión independiente de stock (aumentar/reducir)
 
 ✅ **Despliegue dockerizado:**
+
 - Docker Compose orquestando MySQL, Backend y Nginx
 - Persistencia de datos con volúmenes
 - Proxy inverso con Nginx para seguridad
@@ -1316,33 +1397,40 @@ El proyecto **Plataforma Web de Pedidos para Panadería** ha cumplido satisfacto
 
 Durante el desarrollo se enfrentaron varios desafíos técnicos que fueron resueltos satisfactoriamente:
 
-**1. Precisión en cálculos monetarios**
+#### 1. Precisión en cálculos monetarios
+
 - **Problema**: `Double` generaba decimales imprecisos (1.80 * 3 = 3.5999...)
 - **Solución**: Migración completa a `BigDecimal` en todas las entidades y cálculos
 
-**2. Recursión infinita en JSON**
+#### 2. Recursión infinita en JSON
+
 - **Problema**: Relación bidireccional `PedidoEntity` ↔ `LineaPedido` causaba StackOverflow al serializar
 - **Solución**: Uso estratégico de `@JsonIgnore` en la referencia inversa
 
-**3. Sincronización de totales**
+#### 3. Sincronización de totales
+
 - **Problema**: Total del pedido podía desincronizarse si se eliminaban productos
 - **Solución**: Lifecycle hooks (`@PrePersist`, `@PreUpdate`) recalculan automáticamente
 
-**4. Gestión de stock transaccional**
+#### 4. Gestión de stock transaccional
+
 - **Problema**: Riesgo de vender productos sin stock suficiente
 - **Solución**: `@Transactional` en `PedidoService` garantiza atomicidad (todo o nada)
 
-**5. Compatibilidad CORS en Docker**
+#### 5. Compatibilidad CORS en Docker
+
 - **Problema**: Frontend servido por Nginx no podía comunicarse con backend
 - **Solución**: Nginx como proxy inverso, todo bajo mismo dominio/puerto
 
-**6. Limitaciones de tiempo FCT+PFC**
+#### 6. Limitaciones de tiempo FCT+PFC
+
 - **Problema**: 10h/día entre FCT Santiago y desplazamiento, responsabilidades personales
 - **Solución**: Priorización de funcionalidades core, documentación de limitaciones conocidas
 
 ### 7.3. Lecciones Aprendidas
 
 **Técnicas:**
+
 - **Spring Boot**: Profundización en JPA, relaciones complejas, DTOs, validaciones Jakarta
 - **Arquitectura en capas**: Importancia de separar Controller/Service/Repository
 - **Docker**: Valor de la contenedorización para portabilidad y despliegue
@@ -1350,19 +1438,21 @@ Durante el desarrollo se enfrentaron varios desafíos técnicos que fueron resue
 - **Logs y debugging**: Importancia de logging
 
 **Metodológicas:**
+
 - **Documentación temprana**: Escribir documentación durante desarrollo evita olvidos
 - **Kanban para proyectos individuales**: Trello como herramienta visual de seguimiento
 - **Priorización realista**: Mejor un proyecto funcional que un proyecto incompleto
 - **Iteración incremental**: Desarrollo por capas (backend → frontend → despliegue)
 
 **Personales:**
+
 - **Gestión del tiempo**: Conciliar FCT, PFC y vida personal requiere fuerza mental a mis 31 años
 - **Aprendizaje continuo**: Autodidacta, aprendiendo continuamente por mi cuenta, fué una buena elección la de usar SpringBoot, me he aficionado a Java!
-
 
 ### 7.4. Estado Final del Proyecto
 
 **Métricas del proyecto:**
+
 - **Backend**: 6 Controllers, 6 Services, 5 Entities, 5 Repositories, 4 DTOs
 - **Frontend**: 3 páginas HTML, 6 archivos JavaScript, 3 CSS personalizados
 - **Endpoints API**: 18 endpoints REST documentados en Swagger
@@ -1371,6 +1461,7 @@ Durante el desarrollo se enfrentaron varios desafíos técnicos que fueron resue
 - **Duración desarrollo**: ~9 semanas (90-100h)
 
 **Funcionalidad completa:**
+
 - ✅ Sistema de autenticación con roles
 - ✅ CRUD completo para 3 entidades principales
 - ✅ Gestión avanzada de stock
@@ -1388,12 +1479,14 @@ Durante el desarrollo se enfrentaron varios desafíos técnicos que fueron resue
 Este proyecto ha supuesto un **desafío considerable** pero extremadamente gratificante. Desarrollar una aplicación completa desde cero, abarcando backend, frontend, base de datos, dockerización y documentación exhaustiva, ha consolidado mi comprensión del desarrollo web full-stack.
 
 **Aspectos más satisfactorios:**
+
 - Ver funcionar la aplicación completa desde login hasta creación de pedidos
 - Resolver problemas técnicos complejos (BigDecimal, recursión JSON...)
 - Crear una documentación técnica detallada que facilite mantenimiento futuro
 - Aplicar conocimientos teóricos del ciclo en un proyecto real con valor práctico
 
 **Aspectos mejorables:**
+
 - Hubiese preferido implementar Spring Security completo (limitación temporal)
 - Testing automatizado (JUnit, Mockito) quedó fuera del alcance
 - Frontend en React sería más escalable (decisión consciente por tiempo)
@@ -1404,6 +1497,7 @@ Este proyecto **no termina aquí**. Las mejoras planificadas (Spring Security, m
 ### 7.6. Aplicabilidad Real
 
 Aunque concebido como proyecto académico, esta plataforma tiene **viabilidad real** para pequeños negocios:
+
 - **Bajo coste**: Sin dependencias de servicios externos de pago
 - **Fácil adaptación**: Cambiar "panadería" por cualquier comercio local
 - **Escalable**: Arquitectura preparada para crecer con el negocio
@@ -1418,13 +1512,15 @@ Con las mejoras de seguridad implementadas (Spring Security + HTTPS), podría de
 ### 8.1. Licencia del Proyecto
 
 Este proyecto está licenciado bajo la **[MIT License](../LICENSE)**, elegida por:
+
 - **Libertad total** de uso, modificación y distribución
 - **Compatibilidad con open source**
 - **Sencillez legal**: Una de las licencias más permisivas y fáciles de entender
 - **Fomento de la innovación**: Permite que cualquier panadería o negocio adapte el código sin restricciones
 
 **Texto de la licencia MIT** (resumen):
-```
+
+```java
 Copyright (c) 2025 Adrián Fábregas
 
 Se concede permiso gratuito a cualquier persona que obtenga una copia de este software
@@ -1441,7 +1537,7 @@ Archivo completo: [LICENSE](../LICENSE)
 Todas las dependencias del backend están gestionadas en `pom.xml` de Maven. A continuación se detallan con sus licencias:
 
 | Componente | Versión | Licencia | Uso en el Proyecto |
-|------------|---------|----------|---------------------|
+| --- | --- | --- | --- |
 | **Spring Boot Starter** | 3.5.7 | Apache License 2.0 | Framework base, configuración autoconfigurada |
 | **Spring Boot Starter Web** | 3.5.7 | Apache License 2.0 | Controladores REST, servidor embebido Tomcat |
 | **Spring Boot Starter Data JPA** | 3.5.7 | Apache License 2.0 | Persistencia ORM, repositorios |
@@ -1449,11 +1545,12 @@ Todas las dependencias del backend están gestionadas en `pom.xml` de Maven. A c
 | **MySQL Connector/J** | 8.0+ | GPL v2 + FOSS Exception | Driver JDBC para MySQL |
 | **Lombok** | 1.18+ | MIT License | Reducción de boilerplate (@Data, @Slf4j) |
 | **Jakarta Validation API** | 3.0+ | Apache License 2.0 | Anotaciones @NotNull, @Size, etc. |
-| **SLF4J** | 2.0+ | MIT License | Para uso de Logging
+| **SLF4J** | 2.0+ | MIT License | Para uso de Logging |
 | **Logback** | 1.4+ (transitivo) | EPL 1.0 / LGPL 2.1 | Implementación de logging |
 | **SpringDoc OpenAPI** | 2.0+ | Apache License 2.0 | Generación automática de Swagger UI |
 | **Jackson** | 2.15+ (transitivo) | Apache License 2.0 | Serialización/deserialización JSON |
 | **Hibernate** | 6.4+ (transitivo) | LGPL 2.1 | Proveedor JPA |
+
 - **MySQL Connector**
 - **Hibernate**: Permite su uso como librería sin afectar la licencia del proyecto
 
@@ -1467,7 +1564,7 @@ Todas las licencias (Apache 2.0, MIT, LGPL con excepción) son **compatibles con
 Las dependencias del frontend se cargan vía CDN (Content Delivery Network) desde jsDelivr. Detalle completo:
 
 | Componente | Versión | Licencia | Uso en el Proyecto | CDN |
-|------------|---------|----------|---------------------|-----|
+| --- | --- | --- | --- | --- |
 | **Bootstrap** | 5.3.8 | MIT License | Framework CSS, componentes UI (modals, badges, alerts...) | jsDelivr |
 | **Bootstrap Icons** | 1.11.3 | MIT License | Iconografía (emojis de productos, botones) | jsDelivr |
 | **jQuery** | 3.7.0 | MIT License | Requerido por DataTables (gestión DOM) | jsDelivr |
@@ -1477,6 +1574,7 @@ Las dependencias del frontend se cargan vía CDN (Content Delivery Network) desd
 | **pdfmake** | 0.2.7 | MIT License | Generación de archivos PDF (usado por DataTables) | jsDelivr |
 
 **Ventajas del uso de CDN:**
+
 - **Sin gestión de dependencias local**: No requiere npm ni webpack
 - **Caché del navegador**: Mejora tiempos de carga si el usuario ya visitó otros sitios con Bootstrap
 - **Versiones estables**: URLs específicas garantizan que no cambien inesperadamente
@@ -1486,7 +1584,7 @@ Las dependencias del frontend se cargan vía CDN (Content Delivery Network) desd
 ### 8.4. Infraestructura y Herramientas
 
 | Componente | Versión | Licencia | Uso en el Proyecto |
-|------------|---------|----------|---------------------|
+| ------------ | --------- | ---------- | --------------------- |
 | **Docker** | 20.10+ | Apache License 2.0 | Contenedorización de servicios |
 | **Docker Compose** | 1.29+ | Apache License 2.0 | Orquestación multi-contenedor |
 | **Nginx** | 1.25+ | BSD 2-Clause | Proxy inverso + servidor estático |
@@ -1503,7 +1601,7 @@ Aunque MySQL es GPL, la excepción FOSS (Free and Open Source Software) permite 
 Estas herramientas solo se usan durante el desarrollo y no se distribuyen con el proyecto:
 
 | Herramienta | Licencia | Uso |
-|-------------|----------|-----|
+| ------------- | ---------- | ----- |
 | **VSCode** | MIT License | Editor de código |
 | **Git** | GPL v2 | Control de versiones |
 | **Postman** / **curl** | Varios | Testing manual de API |
@@ -1512,7 +1610,7 @@ Estas herramientas solo se usan durante el desarrollo y no se distribuyen con el
 ---
 
 **Resumen de compatibilidad:**
-✅ Todas las dependencias usan licencias compatibles con MIT   
+✅ Todas las dependencias usan licencias compatibles con MIT
 ✅ El proyecto completo puede redistribuirse libremente bajo MIT  
 
 ---
@@ -1522,19 +1620,22 @@ Estas herramientas solo se usan durante el desarrollo y no se distribuyen con el
 Según las licencias utilizadas, se debe incluir los avisos de copyright en distribuciones:
 
 **Bootstrap (MIT):**
-```
+
+```java
 Copyright (c) 2011-2024 The Bootstrap Authors
 Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 ```
 
 **DataTables (MIT):**
-```
+
+```java
 Copyright (c) 2008-2024 SpryMedia Ltd.
 Licensed under MIT (https://datatables.net/license/mit)
 ```
 
 **Spring Framework (Apache 2.0):**
-```
+
+```java
 Copyright (c) 2002-2024 Pivotal, Inc.
 Licensed under Apache License 2.0
 ```
@@ -1564,12 +1665,12 @@ Estas atribuciones ya están incluidas implícitamente al usar las librerías v�
 
 **Fecha finalización**: Diciembre 2025, fecha de continuacion, 2026-
 **Autor**: Adrián Fábregas  
-**Contacto**: adriannoia104@gmail.com  
+**Contacto**: <adriannoia104@gmail.com>  
 **Repositorio**:
+
 - [https://github.com/CacholoDev/PFC](https://github.com/CacholoDev/PFC)
 - [https://gitlab.iessanclemente.net/dawd/a22adrianfh](https://gitlab.iessanclemente.net/dawd/a22adrianfh)
 
-##### fin documentación PFC
+### fin documentación PFC
 
 ---
-

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
 
@@ -92,7 +92,7 @@ public class ClienteController {
                     ClienteEntity clienteConEmail = clienteRepository.findByEmail(clienteActualizado.getEmail()).orElse(null);
                     if (clienteConEmail != null && !clienteConEmail.getId().equals(cliente.getId())) {
                         log.warn("[PUT /clientes/{}] Email duplicado: {}", id, clienteActualizado.getEmail());
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, 
+                        throw new BusinessException( 
                             "El email '" + clienteActualizado.getEmail() + "' ya está en uso por otro cliente");
                     }
                     cliente.setNombre(clienteActualizado.getNombre());

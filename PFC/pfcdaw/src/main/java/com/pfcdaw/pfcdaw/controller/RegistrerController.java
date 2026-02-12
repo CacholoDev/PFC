@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.dto.RegisterDTO;
+import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.model.LoginRoleEnum;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
@@ -45,7 +45,7 @@ public class RegistrerController {
         // 1. Verificar que el email NO exista
         if (clienteRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
             log.warn("[POST /auth/register] Email ya existe: {}", registerDTO.getEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT, 
+            throw new BusinessException( 
                 "El email '" + registerDTO.getEmail() + "' ya está en uso");
         }
         
