@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,9 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.pfcdaw.pfcdaw.dto.LoginDto;
+import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
 import com.pfcdaw.pfcdaw.security.JwtTokenProvider;
@@ -44,13 +43,13 @@ public class LoginUsuarioC {
         ClienteEntity cliente = clienteRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> {
                     log.warn("[POST /auth/login] Cliente no encontrado: {}", loginDto.getEmail());
-                    return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo inválido");
+                    return new BusinessException("Correo inválido");
                 });
         
         // Verificar contraseña con BCrypt (comparando texto plano vs hash)
         if (!passwordEncoder.matches(loginDto.getPassword(), cliente.getPassword())) {
             log.warn("[POST /auth/login] Contraseña incorrecta para el cliente: {}", loginDto.getEmail());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña inválida");
+            throw new BusinessException("Contraseña inválida");
         }
         
         // Login exitoso - GENERAR TOKEN JWT
