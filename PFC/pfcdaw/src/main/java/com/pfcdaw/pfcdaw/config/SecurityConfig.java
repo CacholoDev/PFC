@@ -49,7 +49,9 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()              // Login y registro
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger
                 .requestMatchers("/error").permitAll()                // Páginas de error
+                .requestMatchers("/favicon.ico").permitAll()          // Favicon (icono del navegador)
                 .requestMatchers("/*.html", "/css/**", "/js/**", "/assets/**", "/error_pages/**").permitAll() // Frontend estático
+                .requestMatchers("/actuator/health").permitAll()      // Health check público (para monitoreo)
                 
                 // PROTEGIDOS (requieren autenticación):
                 // Ahora sí activamos la protección: cualquier otra petición necesita JWT válido
