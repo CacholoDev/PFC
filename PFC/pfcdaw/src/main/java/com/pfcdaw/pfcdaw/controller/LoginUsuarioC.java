@@ -17,6 +17,7 @@ import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
 import com.pfcdaw.pfcdaw.security.JwtTokenProvider;
+import com.pfcdaw.pfcdaw.service.LimitesIntentosService;
 
 import jakarta.validation.Valid;
 
@@ -28,27 +29,37 @@ public class LoginUsuarioC {
     private final ClienteRepository clienteRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final LimitesIntentosService limitesIntentosService;
 
-    public LoginUsuarioC(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public LoginUsuarioC(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, LimitesIntentosService limitesIntentosService) {
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.limitesIntentosService = limitesIntentosService;
     }
 
     @PreAuthorize("permitAll()")
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginDto loginDto) {
+        String email = loginDto.getEmail();
+
+        // Verificar límites de intentos usando Bucket4J
+        if (!limitesIntentosService.tryLogin(email)) {
+            long remainingTokens = limitesIntentosService.getAvailableTokens(email);
+            log.warn("[POST /auth/login] Límite de intentos excedido para: {} (restantes: {})", email, remainingTokens);
+            throw new BusinessException("Demasiados intentos fallidos. Intenta nuevamente más tarde.");
+        }
+
         // Buscar cliente por email
-        log.info("[POST /auth/login] Intentando login para: {}", loginDto.getEmail());
-        ClienteEntity cliente = clienteRepository.findByEmail(loginDto.getEmail())
+        log.info("[POST /auth/login] Intentando login para: {}", email);
+        ClienteEntity cliente = clienteRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.warn("[POST /auth/login] Cliente no encontrado: {}", loginDto.getEmail());
+                    log.warn("[POST /auth/login] Cliente no encontrado: {}", email);
                     return new BusinessException("Correo inválido");
                 });
-        
         // Verificar contraseña con BCrypt (comparando texto plano vs hash)
         if (!passwordEncoder.matches(loginDto.getPassword(), cliente.getPassword())) {
-            log.warn("[POST /auth/login] Contraseña incorrecta para el cliente: {}", loginDto.getEmail());
+            log.warn("[POST /auth/login] Contraseña incorrecta para el cliente: {}", email);
             throw new BusinessException("Contraseña inválida");
         }
         
