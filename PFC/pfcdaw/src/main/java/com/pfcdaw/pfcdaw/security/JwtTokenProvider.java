@@ -31,23 +31,40 @@ public class JwtTokenProvider {
     @Value("${app.jwt.expiration}")
     private Long jwtExpirationMs;
 
+    @Value("${app.jwt.refresh-expiration}")
+    private Long refreshExpirationMs;
+
     /**
      * Genera un token JWT para un cliente
      * @param cliente - El cliente para el cual generar el token
      * @return String - El token JWT generado
      */
     public String generateToken(ClienteEntity cliente) {
+        return buildToken(cliente, jwtExpirationMs, "access");
+    }
+
+    /**
+     * Genera un refresh token JWT para un cliente
+     * @param cliente - El cliente para el cual generar el refresh token
+     * @return String - El refresh token JWT generado
+     */
+    public String generateRefreshToken(ClienteEntity cliente) {
+        return buildToken(cliente, refreshExpirationMs, "refresh");
+    }
+
+    private String buildToken(ClienteEntity cliente, Long expirationMs, String type) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        
+
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-        
-        log.debug("Generando token JWT para: {}", cliente.getEmail());
-        
+        Date expiryDate = new Date(now.getTime() + expirationMs);
+
+        log.debug("Generando token JWT (tipo: {}) para: {}", type, cliente.getEmail());
+
         return Jwts.builder()
                 .subject(cliente.getEmail())
                 .claim("role", cliente.getRole().toString())
                 .claim("id", cliente.getId())
+                .claim("type", type)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key, Jwts.SIG.HS512)
@@ -85,13 +102,7 @@ public class JwtTokenProvider {
     public String getEmailFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        
-        return claims.getSubject();
+        return getClaims(token).getSubject();
     }
 
     /**
@@ -102,13 +113,7 @@ public class JwtTokenProvider {
     public String getRoleFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        
-        return claims.get("role", String.class);
+        return getClaims(token).get("role", String.class);
     }
 
     /**
@@ -119,13 +124,26 @@ public class JwtTokenProvider {
     public Long getIdFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         
-        Claims claims = Jwts.parser()
+        return getClaims(token).get("id", Long.class);
+    }
+
+    /**
+     * Verifica si un token es de tipo refresh
+     * @param token - El token JWT
+     * @return true si el claim type es "refresh"
+     */
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(getClaims(token).get("type", String.class));
+    }
+
+    private Claims getClaims(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        
-        return claims.get("id", Long.class);
     }
 
 }
