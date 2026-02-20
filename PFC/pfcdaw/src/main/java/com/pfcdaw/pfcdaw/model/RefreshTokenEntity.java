@@ -71,17 +71,9 @@ public class RefreshTokenEntity {
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String token;
 
-    /**
-     * Fecha de expiración del refresh token
-     * Ejemplo: 2026-02-25 (7 días desde la creación)
-     */
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    /**
-     * Fecha de creación (automática)
-     * Hibernate lo rellena con LocalDateTime.now() al hacer .save()
-     */
     @CreationTimestamp
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

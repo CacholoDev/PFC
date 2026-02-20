@@ -4,24 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pfcdaw.pfcdaw.model.RefreshTokenEntity;
 
-/**
- * Repositorio para gestionar Refresh Tokens en BD
- * 
- * Métodos automáticos que Spring JPA genera:
- * - save(entity) → guarda un refresh token
- * - findById(id) → busca por ID
- * - delete(entity) → elimina un token
- * - findAll() → obtiene todos
- * 
- * Métodos custom que definimos abajo:
- * - findByToken() → busca un token específico (para validar en /auth/refresh)
- * - findByClienteIdAndRevokedFalse() → tokens válidos de un cliente
- */
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, Long> {
 
     /**
@@ -57,6 +46,8 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
      * 
      * @param clienteId - ID del cliente
      */
+    @Modifying
+    @Transactional
     @Query("UPDATE RefreshTokenEntity rt SET rt.revoked = true WHERE rt.cliente.id = :clienteId")
     void revokeAllTokensByClienteId(@Param("clienteId") Long clienteId);
 }

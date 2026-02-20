@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pfcdaw.pfcdaw.dto.LoginDto;
+import com.pfcdaw.pfcdaw.dto.RefreshTokenRequestDto;
 import com.pfcdaw.pfcdaw.exception.BusinessException;
 import com.pfcdaw.pfcdaw.model.ClienteEntity;
+import com.pfcdaw.pfcdaw.model.RefreshTokenEntity;
 import com.pfcdaw.pfcdaw.repository.ClienteRepository;
 import com.pfcdaw.pfcdaw.security.JwtTokenProvider;
 import com.pfcdaw.pfcdaw.service.LimitesIntentosService;
+import com.pfcdaw.pfcdaw.service.RefreshTokenService;
 
 import jakarta.validation.Valid;
 
@@ -30,12 +33,14 @@ public class LoginUsuarioC {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final LimitesIntentosService limitesIntentosService;
+    private final RefreshTokenService refreshTokenService;
 
-    public LoginUsuarioC(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, LimitesIntentosService limitesIntentosService) {
+    public LoginUsuarioC(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, LimitesIntentosService limitesIntentosService, RefreshTokenService refreshTokenService) {
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.limitesIntentosService = limitesIntentosService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PreAuthorize("permitAll()")
@@ -66,18 +71,39 @@ public class LoginUsuarioC {
         // Login exitoso - GENERAR TOKEN JWT
         log.info("[POST /auth/login] Login exitoso: {} (rol: {})", cliente.getEmail(), cliente.getRole());
         
-        // Genera el JWT token usando el JwtTokenProvider
+        // Genera el access token y refresh token
         String token = jwtTokenProvider.generateToken(cliente);
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(cliente);
         log.debug("[POST /auth/login] Token JWT generado para: {}", cliente.getEmail());
         
         // Devolver datos del cliente + el token JWT
         return ResponseEntity.ok(Map.of(
                 "token", token,  // ⭐ El token JWT para incluir en futuros requests
+                "refreshToken", refreshToken.getToken(),
                 "id", cliente.getId(),
                 "nombre", cliente.getNombre(),
                 "apellido", cliente.getApellido(),
                 "email", cliente.getEmail(),
                 "rol", cliente.getRole()));
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refresh(@Valid @RequestBody RefreshTokenRequestDto request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtTokenProvider.validateToken(refreshToken) || !jwtTokenProvider.isRefreshToken(refreshToken)) {
+            throw new BusinessException("Refresh token invalido");
+        }
+
+        RefreshTokenEntity currentToken = refreshTokenService.validateRefreshToken(refreshToken);
+        RefreshTokenEntity newToken = refreshTokenService.rotateRefreshToken(currentToken);
+
+        String accessToken = jwtTokenProvider.generateToken(currentToken.getCliente());
+
+        return ResponseEntity.ok(Map.of(
+                "token", accessToken,
+                "refreshToken", newToken.getToken()));
     }
 
 }
