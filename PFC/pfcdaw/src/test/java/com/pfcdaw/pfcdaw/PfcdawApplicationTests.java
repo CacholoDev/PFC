@@ -41,7 +41,6 @@ class PfcdawApplicationTests {
 	// OPCIÓN 2: Test sin Spring (más rápido, recomendado para generar hashes)
 	@Test
 	void generateHashWithoutSpring() {
-		// No necesitas levantar Spring para generar hashes
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		
 		String adminPassword = "admin123/ñ";

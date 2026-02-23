@@ -183,21 +183,70 @@ log.info("Login exitoso: {}", email);  // ✅ OK
 
 ---
 
-## ⚠️ PENDIENTES / RECOMENDACIONES FUTURAS
+## ✅ NUEVAS IMPLEMENTACIONES (Febrero 2026)
 
-### 1. Rate Limiting
+### 1. ✅ Rate Limiting - COMPLETADO
 
-**Problema:** Sin límite de peticiones por IP/usuario  
-**Riesgo:** Fuerza bruta en /auth/login  
-**Solución:** Implementar Bucket4j o Spring Security rate limiting
+**Implementación:** Bucket4j en `/auth/login`  
+**Configuración:**
+- 5 intentos cada 15 minutos por email
+- Buckets en memoria `ConcurrentHashMap<String, Bucket>`
+- Recarga automática: 5 tokens/15min
 
+**Código:**
 ```java
-// Ejemplo con Bucket4j
-@RateLimiter(name = "loginLimiter", fallbackMethod = "rateLimitFallback")
-@PostMapping("/auth/login")
+// LimitesIntentosService
+private Bucket createNewBucket() {
+    Bandwidth limit = Bandwidth.builder()
+        .capacity(5)
+        .refillIntervally(5, Duration.ofMinutes(15))
+        .build();
+    return Bucket.builder().addLimit(limit).build();
+}
 ```
 
-### 2. Refresh Tokens
+**Resultado:** Protección efectiva contra fuerza bruta.
+
+### 2. ✅ Refresh Tokens - COMPLETADO
+
+**Implementación:** Sistema de dos tokens con persistencia en BD  
+**Características:**
+- Access token: ~2 horas (uso diario)
+- Refresh token: 7 días (renovación)
+- Tabla `refresh_tokens` con control de revocación
+- Rotación automática (refresh usado → invalidado)
+
+**Flujo:**
+1. Login → devuelve access + refresh
+2. Access expira → POST `/auth/refresh` con refresh
+3. Valida refresh → genera nuevo access + nuevo refresh
+4. Refresh anterior → `revoked = true`
+
+**Revocación global:**
+```java
+@Query("UPDATE RefreshTokenEntity rt SET rt.revoked = true WHERE rt.cliente.id = :clienteId")
+void revokeAllTokensByClienteId(@Param("clienteId") Long clienteId);
+```
+
+**Resultado:** Logout instantáneo en todos los dispositivos al cambiar contraseña.
+
+### 3. ✅ Actuator Health - COMPLETADO
+
+**Endpoint:** `/actuator/health`  
+**Acceso:** Público (básico), ADMIN (detalles)  
+**Configuración:**
+```properties
+management.endpoints.web.exposure.include=health
+management.endpoint.health.show-details=when-authorized
+```
+
+**Uso:** Monitorización de estado del backend (health checks, CI/CD).
+
+---
+
+## ⚠️ PENDIENTES / RECOMENDACIONES FUTURAS
+
+### 1. Helmet.js / Security Headers
 
 **Problema:** Token expira en 1 hora, usuario debe re-loguear  
 **Solución:** Implementar refresh tokens (JWT de larga duración)
