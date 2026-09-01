@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/favicon.ico").permitAll()          // Favicon (icono del navegador)
                 .requestMatchers("/*.html", "/css/**", "/js/**", "/assets/**", "/error_pages/**").permitAll() // Frontend estático
                 .requestMatchers("/actuator/health").permitAll()      // Health check público (para monitoreo)
-                
+                .requestMatchers("/", "/login.html", "/index.html").permitAll() //raiz
                 // PROTEGIDOS (requieren autenticación):
                 // Ahora sí activamos la protección: cualquier otra petición necesita JWT válido
                 .anyRequest().authenticated()
